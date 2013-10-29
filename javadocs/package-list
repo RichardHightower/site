@@ -1,0 +1,15 @@
+org.boon
+org.boon.core
+org.boon.core.reflection
+org.boon.core.reflection.fields
+org.boon.criteria
+org.boon.datarepo
+org.boon.datarepo.impl
+org.boon.datarepo.impl.decorators
+org.boon.datarepo.impl.indexes
+org.boon.datarepo.impl.maps
+org.boon.datarepo.modification
+org.boon.datarepo.spi
+org.boon.json
+org.boon.predicates
+org.boon.primitive
