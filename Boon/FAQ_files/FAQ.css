@@ -1,15 +1,87 @@
 .style {
     padding: 4px;
 }
-.style_1 {
-    line-height: 15px;
-    vertical-align: 6px;
+.paragraph_style {
+    color: rgb(255, 255, 255);
+    font-family: 'Futura-Medium', 'Futura', 'Trebuchet MS', sans-serif;
+    font-size: 24px;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 35px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    opacity: 1.00;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0px;
+    text-transform: none;
 }
-.style_2 {
-    line-height: 15px;
-    vertical-align: 3px;
+.paragraph_style_1 {
+    color: rgb(255, 255, 255);
+    font-family: 'Futura-CondensedExtraBold', 'Futura', 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+    font-stretch: condensed;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 20px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    opacity: 1.00;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0px;
+    text-transform: none;
+}
+.style_External_485_5519 {
+    position: relative;
+}
+.paragraph_style_2 {
+    color: rgb(255, 255, 255);
+    font-family: 'Futura-Medium', 'Futura', 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 27px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    opacity: 1.00;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0px;
+    text-transform: none;
 }
 .style_SkipStroke_2 {
+    background: transparent;
+    opacity: 1.00;
+}
+.style_External_640_39 {
+    position: relative;
+}
+.style_SkipStroke {
+    background: transparent;
+    opacity: 1.00;
+}
+.style_SkipStroke_1 {
     background: transparent;
     opacity: 1.00;
 }
@@ -20,25 +92,6 @@
 .style_SkipStroke_4 {
     background: transparent;
     opacity: 1.00;
-}
-.style_SkipStroke {
-    background: transparent;
-    opacity: 1.00;
-}
-.style_SkipStroke_1 {
-    background: transparent;
-    opacity: 1.00;
-}
-.style_SkipStroke_5 {
-    background: transparent;
-    opacity: 1.00;
-}
-.style_SkipStroke_6 {
-    background: transparent;
-    opacity: 1.00;
-}
-.style_External_187_205 {
-    position: relative;
 }
 .Body {
     color: rgb(255, 255, 255);
@@ -84,28 +137,6 @@
     text-indent: 0px;
     text-transform: none;
 }
-.Date {
-    color: rgb(210, 210, 210);
-    font-family: 'Futura-Medium', 'Futura', 'Trebuchet MS', sans-serif;
-    font-size: 12px;
-    font-stretch: normal;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 15px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-    opacity: 1.00;
-    padding-bottom: 0px;
-    padding-top: 0px;
-    text-align: left;
-    text-decoration: none;
-    text-indent: 0px;
-    text-transform: uppercase;
-}
 .Header {
     color: rgb(255, 255, 255);
     font-family: 'Futura-Medium', 'Futura', 'Trebuchet MS', sans-serif;
@@ -128,65 +159,14 @@
     text-indent: 0px;
     text-transform: uppercase;
 }
-.Next {
-    color: rgb(210, 210, 210);
-    font-family: 'Futura-Medium', 'Futura', 'Trebuchet MS', sans-serif;
-    font-size: 12px;
-    font-stretch: normal;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 15px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-    opacity: 1.00;
-    padding-bottom: 0px;
-    padding-top: 0px;
-    text-align: right;
-    text-decoration: none;
-    text-indent: 0px;
-    text-transform: uppercase;
-    vertical-align: 3px;
-}
-.Normal_External_640_39 {
-    position: relative;
-}
 .Normal {
     padding: 4px;
 }
-.Normal_External_640_326 {
+.Normal_External_485_5519 {
     position: relative;
 }
-.Normal_External_640_23 {
+.Normal_External_640_39 {
     position: relative;
-}
-.Normal_External_640_29 {
-    position: relative;
-}
-.Previous {
-    color: rgb(210, 210, 210);
-    font-family: 'Futura-Medium', 'Futura', 'Trebuchet MS', sans-serif;
-    font-size: 12px;
-    font-stretch: normal;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 15px;
-    margin-bottom: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: 0px;
-    opacity: 1.00;
-    padding-bottom: 0px;
-    padding-top: 0px;
-    text-align: left;
-    text-decoration: none;
-    text-indent: 0px;
-    text-transform: uppercase;
 }
 .Title {
     color: rgb(203, 203, 203);
@@ -214,10 +194,6 @@
     background: transparent;
     opacity: 1.00;
 }
-.graphic_generic_datefield_textbox_style_default_SkipStroke {
-    background: transparent;
-    opacity: 1.00;
-}
 .graphic_generic_header_textbox_style_default_SkipStroke {
     background: transparent;
     opacity: 1.00;
@@ -230,16 +206,20 @@
     background: transparent;
     opacity: 1.00;
 }
-.graphic_textbox_layout_style_default_External_319_30 {
+.graphic_image_style_default_2_SkipStroke {
+    background: transparent;
+    opacity: 1.00;
+}
+.graphic_shape_layout_style_default {
+    padding: 4px;
+}
+.graphic_shape_layout_style_default_External_485_29 {
     position: relative;
 }
 .graphic_textbox_layout_style_default {
     padding: 4px;
 }
-.graphic_textbox_layout_style_default_External_187_205 {
-    position: relative;
-}
-.graphic_textbox_layout_style_default_External_320_30 {
+.graphic_textbox_layout_style_default_External_138_187 {
     position: relative;
 }
 .graphic_textbox_style_default_SkipStroke {
