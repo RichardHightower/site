@@ -6,6 +6,6 @@ function hostedOnDM()
 {return false;}
 function onPageLoad()
 {loadMozillaCSS('Welcome_files/WelcomeMoz.css')
-adjustLineHeightIfTooBig('id1');adjustFontSizeIfTooBig('id1');adjustLineHeightIfTooBig('id2');adjustFontSizeIfTooBig('id2');adjustLineHeightIfTooBig('id3');adjustFontSizeIfTooBig('id3');Widget.onload();fixupAllIEPNGBGs();fixAllIEPNGs('Media/transparent.gif');IMpreload('Welcome_files','shapeimage_3','0');IMpreload('Welcome_files','shapeimage_4','0');IMpreload('Welcome_files','shapeimage_5','0');applyEffects()}
+adjustLineHeightIfTooBig('id1');adjustFontSizeIfTooBig('id1');adjustLineHeightIfTooBig('id2');adjustFontSizeIfTooBig('id2');adjustLineHeightIfTooBig('id3');adjustFontSizeIfTooBig('id3');Widget.onload();fixupAllIEPNGBGs();fixAllIEPNGs('Media/transparent.gif');IMpreload('Welcome_files','shapeimage_3','0');IMpreload('Welcome_files','shapeimage_4','0');IMpreload('Welcome_files','shapeimage_5','0');IMpreload('Welcome_files','shapeimage_7','0');IMpreload('Welcome_files','shapeimage_7','1');applyEffects()}
 function onPageUnload()
 {Widget.onunload();}
