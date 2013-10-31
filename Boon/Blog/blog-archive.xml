@@ -3,7 +3,11 @@
   <channel>
     <title>Blog</title>
     <link>file://localhost/Users/rick/github/boon-site/Boon/Blog</link>
-    <description>Donec arcu risus diam amet sit. Congue tortor cursus risus vestibulum commodo nisl, luctus augue amet quis aenean maecenas sit, donec velit iusto, morbi felis elit et nibh. Vestibulum volutpat dui lacus consectetuer, mauris at suspendisse.</description>
+    <description>Boon has been many places.
+
+Have you?
+
+BOON!</description>
     <item>
       <title>Reflections on the lake</title>
       <link>file://localhost/Users/rick/github/boon-site/Boon/Blog/Entries/2013/10/30_Reflections_on_the_lake.html</link>
