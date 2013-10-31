@@ -4,13 +4,13 @@
 .paragraph_style {
     color: rgb(255, 255, 255);
     font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
-    font-size: 72px;
+    font-size: 48px;
     font-stretch: normal;
     font-style: normal;
     font-variant: normal;
     font-weight: 400;
     letter-spacing: 0;
-    line-height: 92px;
+    line-height: 62px;
     margin-bottom: 0px;
     margin-left: 0px;
     margin-right: 0px;
@@ -47,6 +47,10 @@
     text-decoration: none;
     text-indent: 0px;
     text-transform: none;
+}
+.style_SkipStroke_1 {
+    background: transparent;
+    opacity: 1.00;
 }
 .paragraph_style_2 {
     color: rgb(255, 255, 255);
@@ -92,14 +96,10 @@
     text-indent: 0px;
     text-transform: none;
 }
-.style_External_630_99 {
+.style_External_630_69 {
     position: relative;
 }
 .style_SkipStroke {
-    background: transparent;
-    opacity: 1.00;
-}
-.style_SkipStroke_1 {
     background: transparent;
     opacity: 1.00;
 }
@@ -161,7 +161,7 @@
 .Normal_External_631_198 {
     position: relative;
 }
-.Normal_External_630_99 {
+.Normal_External_630_69 {
     position: relative;
 }
 .Title {
