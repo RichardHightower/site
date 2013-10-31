@@ -5,7 +5,7 @@ setTransparentGifURL('../Media/transparent.gif');function applyEffects()
 function hostedOnDM()
 {return false;}
 function photocastSubscribe()
-{photocastHelper("file://localhost/Users/rick/github/boon-site/boon/Boon/Blog/rss.xml");}
+{photocastHelper("file://localhost/Users/rick/github/boon-site/Boon/Blog/rss.xml");}
 function onPageLoad()
 {loadMozillaCSS('Blog_files/BlogMoz.css')
 adjustLineHeightIfTooBig('id1');adjustFontSizeIfTooBig('id1');adjustLineHeightIfTooBig('id2');adjustFontSizeIfTooBig('id2');detectBrowser();adjustLineHeightIfTooBig('id3');adjustFontSizeIfTooBig('id3');adjustLineHeightIfTooBig('id5');adjustFontSizeIfTooBig('id5');Widget.onload();fixupAllIEPNGBGs();fixAllIEPNGs('../Media/transparent.gif');fixupIECSS3Opacity('id4');applyEffects()}

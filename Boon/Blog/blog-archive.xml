@@ -2,17 +2,17 @@
 <rss xmlns:iweb="http://www.apple.com/iweb" version="2.0">
   <channel>
     <title>Blog</title>
-    <link>file://localhost/Users/rick/github/boon-site/boon/Boon/Blog</link>
+    <link>file://localhost/Users/rick/github/boon-site/Boon/Blog</link>
     <description>Donec arcu risus diam amet sit. Congue tortor cursus risus vestibulum commodo nisl, luctus augue amet quis aenean maecenas sit, donec velit iusto, morbi felis elit et nibh. Vestibulum volutpat dui lacus consectetuer, mauris at suspendisse.</description>
     <item>
       <title>Reflections on the lake</title>
-      <link>file://localhost/Users/rick/github/boon-site/boon/Boon/Blog/Entries/2013/10/30_Reflections_on_the_lake.html</link>
+      <link>file://localhost/Users/rick/github/boon-site/Boon/Blog/Entries/2013/10/30_Reflections_on_the_lake.html</link>
       <guid isPermaLink="false">dc58216f-daa7-4e17-90f3-4f69f2452a7e</guid>
       <pubDate>Wed, 30 Oct 2013 01:38:49 -0700</pubDate>
-      <iweb:comment enabled="0" count="0" link="file://localhost/Users/rick/github/boon-site/boon/Boon/Blog/Entries/2013/10/30_Reflections_on_the_lake.html#comment_layer"></iweb:comment>
+      <iweb:comment enabled="0" count="0" link="file://localhost/Users/rick/github/boon-site/Boon/Blog/Entries/2013/10/30_Reflections_on_the_lake.html#comment_layer"></iweb:comment>
     </item>
     <iweb:dateFormat>EEEE, MMMM d, y</iweb:dateFormat>
-    <iweb:baseURL>file://localhost/Users/rick/github/boon-site/boon/Boon/Blog</iweb:baseURL>
+    <iweb:baseURL>file://localhost/Users/rick/github/boon-site/Boon/Blog</iweb:baseURL>
     <iweb:maximumSummaryItems>5</iweb:maximumSummaryItems>
   </channel>
 </rss>
