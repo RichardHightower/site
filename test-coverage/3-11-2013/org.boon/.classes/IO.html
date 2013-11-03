@@ -1,0 +1,869 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: IO</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon</a> ]
+</div>
+
+<h1>Coverage Summary for Class: IO (org.boon)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">IO</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (23/ 46)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    38.6%
+  </span>
+  <span class="absValue">
+    (85/ 220)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">IO$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/ 8)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">IO$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70%
+  </span>
+  <span class="absValue">
+    (14/ 20)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">IO$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70.6%
+  </span>
+  <span class="absValue">
+    (12/ 17)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    55.8%
+  </span>
+  <span class="absValue">
+    (29/ 52)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44.9%
+  </span>
+  <span class="absValue">
+    (119/ 265)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.core.Sys;
+<i>4</i>&nbsp;import org.boon.core.Typ;
+<i>5</i>&nbsp;import org.boon.primitive.CharBuf;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.io.*;
+<i>8</i>&nbsp;import java.net.URI;
+<i>9</i>&nbsp;import java.nio.charset.Charset;
+<i>10</i>&nbsp;import java.nio.charset.StandardCharsets;
+<i>11</i>&nbsp;import java.nio.file.*;
+<i>12</i>&nbsp;import java.util.ArrayList;
+<i>13</i>&nbsp;import java.util.List;
+<i>14</i>&nbsp;//import java.util.stream.CloseableStream;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;import static org.boon.Str.idx;
+<i>17</i>&nbsp;import static org.boon.Str.slc;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;@SuppressWarnings(&quot;unchecked&quot;)
+<b class="fc"><i>21</i>&nbsp;public class IO {</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;
+<b class="fc"><i>24</i>&nbsp;    public final static Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    public final static String FILE_SCHEMA = &quot;file&quot;;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;//    @Java8
+<i>30</i>&nbsp;//    public static CloseableStream&lt;Path&gt; listStream(Path path) {
+<i>31</i>&nbsp;//        CloseableStream&lt;Path&gt; list = null;
+<i>32</i>&nbsp;//        try {
+<i>33</i>&nbsp;//            list = Files.list(path);
+<i>34</i>&nbsp;//        } catch (IOException ex) {
+<i>35</i>&nbsp;//            return Exceptions.handle(CloseableStream.class, ex);
+<i>36</i>&nbsp;//        }
+<i>37</i>&nbsp;//        return list;
+<i>38</i>&nbsp;//    }
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    public static List&lt;String&gt; list(String path) {
+<b class="nc"><i>42</i>&nbsp;        final Path pathFromFileSystem = path(path);</b>
+<b class="nc"><i>43</i>&nbsp;        return list ( pathFromFileSystem );</b>
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public static List&lt;String&gt; list( final Path pathFromFileSystem ) {
+<i>47</i>&nbsp;
+<b class="nc"><i>48</i>&nbsp;        List&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;        try {
+<b class="nc"><i>51</i>&nbsp;            try (DirectoryStream&lt;Path&gt; stream = Files.newDirectoryStream( pathFromFileSystem )) {</b>
+<b class="nc"><i>52</i>&nbsp;                for (Path entry: stream) {</b>
+<b class="nc"><i>53</i>&nbsp;                    result.add(entry.toAbsolutePath().toString());</b>
+<b class="nc"><i>54</i>&nbsp;                }</b>
+<b class="nc"><i>55</i>&nbsp;            }</b>
+<b class="nc"><i>56</i>&nbsp;            return result;</b>
+<b class="nc"><i>57</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>58</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<i>59</i>&nbsp;        }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public static List&lt;String&gt; listByGlob(final String path, final String glob) {
+<b class="nc"><i>64</i>&nbsp;        final Path pathFromFileSystem = path(path);</b>
+<b class="nc"><i>65</i>&nbsp;        return  listByGlob(pathFromFileSystem, glob);</b>
+<i>66</i>&nbsp;    }
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    public static List&lt;String&gt; listByGlob(Path pathFromFileSystem, String glob) {
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;        List&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;        try {
+<b class="nc"><i>74</i>&nbsp;            try (DirectoryStream&lt;Path&gt; stream = Files.newDirectoryStream(pathFromFileSystem, glob)) {</b>
+<b class="nc"><i>75</i>&nbsp;                for (Path entry: stream) {</b>
+<b class="nc"><i>76</i>&nbsp;                    result.add(entry.toAbsolutePath().toString());</b>
+<b class="nc"><i>77</i>&nbsp;                }</b>
+<b class="nc"><i>78</i>&nbsp;            }</b>
+<b class="nc"><i>79</i>&nbsp;            return result;</b>
+<b class="nc"><i>80</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>81</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<i>82</i>&nbsp;        }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    public static List&lt;String&gt; listByFileExtension(final String path, final String ext) {
+<b class="nc"><i>88</i>&nbsp;        final Path pathFromFileSystem = path(path);</b>
+<b class="nc"><i>89</i>&nbsp;        return  listByFileExtension(pathFromFileSystem, ext);</b>
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    public static List&lt;String&gt; listByFileExtension(final Path pathFromFileSystem, final String ext) {
+<b class="nc"><i>93</i>&nbsp;        final String extToLookForGlob = &quot;*.&quot; + ext;</b>
+<i>94</i>&nbsp;
+<b class="nc"><i>95</i>&nbsp;        List&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;        try {
+<b class="nc"><i>98</i>&nbsp;            try (DirectoryStream&lt;Path&gt; stream = Files.newDirectoryStream(pathFromFileSystem, extToLookForGlob)) {</b>
+<b class="nc"><i>99</i>&nbsp;                for (Path entry: stream) {</b>
+<b class="nc"><i>100</i>&nbsp;                    result.add(entry.toAbsolutePath().toString());</b>
+<b class="nc"><i>101</i>&nbsp;                }</b>
+<b class="nc"><i>102</i>&nbsp;            }</b>
+<b class="nc"><i>103</i>&nbsp;            return result;</b>
+<b class="nc"><i>104</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>105</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<i>106</i>&nbsp;        }
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;    }
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    public static List&lt;String&gt; listByFileExtensionRecursive(final String path, final String ext) {
+<b class="nc"><i>112</i>&nbsp;        final Path pathFromFileSystem = path(path);</b>
+<b class="nc"><i>113</i>&nbsp;        return  listByFileExtensionRecursive(pathFromFileSystem, ext);</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    public static List&lt;String&gt; listByFileExtensionRecursive(final Path pathFromFileSystem, final String ext) {
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        final String extToLookForGlob = &quot;*.&quot; + ext;</b>
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;        List&lt;String&gt; result = new ArrayList&lt;&gt;();</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;        return doListByFileExtensionRecursive( result, pathFromFileSystem, extToLookForGlob);</b>
+<i>124</i>&nbsp;    }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;   private static List&lt;String&gt; doListByFileExtensionRecursive(  final List&lt;String&gt; result,
+<i>127</i>&nbsp;                                                                final Path pathFromFileSystem,
+<i>128</i>&nbsp;                                                                final String glob) {
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;        try {
+<b class="nc"><i>133</i>&nbsp;            try (DirectoryStream&lt;Path&gt; stream = Files.newDirectoryStream(pathFromFileSystem, glob)) {</b>
+<b class="nc"><i>134</i>&nbsp;                for (Path entry: stream) {</b>
+<b class="nc"><i>135</i>&nbsp;                    result.add(entry.toAbsolutePath().toString());</b>
+<b class="nc"><i>136</i>&nbsp;                }</b>
+<b class="nc"><i>137</i>&nbsp;            }</b>
+<b class="nc"><i>138</i>&nbsp;            try (DirectoryStream&lt;Path&gt; stream = Files.newDirectoryStream(pathFromFileSystem)) {</b>
+<b class="nc"><i>139</i>&nbsp;                for (Path entry: stream) {</b>
+<b class="nc"><i>140</i>&nbsp;                    if ( Files.isDirectory( entry ) ) {</b>
+<b class="nc"><i>141</i>&nbsp;                        doListByFileExtensionRecursive(result, entry, glob);</b>
+<i>142</i>&nbsp;                    }
+<b class="nc"><i>143</i>&nbsp;                }</b>
+<b class="nc"><i>144</i>&nbsp;            }</b>
+<i>145</i>&nbsp;
+<b class="nc"><i>146</i>&nbsp;            return result;</b>
+<b class="nc"><i>147</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>148</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<i>149</i>&nbsp;        }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    }
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    public static String readChild(Path parentDir, String childFileName) {
+<i>154</i>&nbsp;        try {
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;            final Path newFilePath = path(parentDir.toString(),</b>
+<i>157</i>&nbsp;                    childFileName);
+<i>158</i>&nbsp;
+<b class="nc"><i>159</i>&nbsp;            return read(newFilePath);</b>
+<b class="nc"><i>160</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>161</i>&nbsp;            return Exceptions.handle(String.class, ex);</b>
+<i>162</i>&nbsp;        }
+<i>163</i>&nbsp;    }
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;    public static String read(Path path) {
+<i>166</i>&nbsp;        try {
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;            return read(Files.newBufferedReader(path, DEFAULT_CHARSET));</b>
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;        } catch (IOException ex) {</b>
+<b class="nc"><i>171</i>&nbsp;            return Exceptions.handle(String.class, ex);</b>
+<i>172</i>&nbsp;        }
+<i>173</i>&nbsp;    }
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;    public static String read(InputStream inputStream, String charset) {
+<i>176</i>&nbsp;
+<b class="fc"><i>177</i>&nbsp;        try (Reader reader = new InputStreamReader(inputStream, charset)) {</b>
+<b class="fc"><i>178</i>&nbsp;            return read(reader);</b>
+<b class="fc"><i>179</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>180</i>&nbsp;            return Exceptions.handle(String.class, ex);</b>
+<i>181</i>&nbsp;        }
+<i>182</i>&nbsp;    }
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;    public static String read(InputStream inputStream) {
+<i>185</i>&nbsp;
+<b class="fc"><i>186</i>&nbsp;        try (Reader reader = new InputStreamReader(inputStream)) {</b>
+<b class="fc"><i>187</i>&nbsp;            return read(reader);</b>
+<b class="fc"><i>188</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>189</i>&nbsp;            return Exceptions.handle(String.class, ex);</b>
+<i>190</i>&nbsp;        }
+<i>191</i>&nbsp;
+<i>192</i>&nbsp;    }
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;    public static String read(Reader reader) {
+<i>195</i>&nbsp;
+<i>196</i>&nbsp;
+<b class="fc"><i>197</i>&nbsp;        CharBuf builder = CharBuf.create(256);</b>
+<i>198</i>&nbsp;
+<b class="fc"><i>199</i>&nbsp;        try (Reader r = reader) {</b>
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;
+<i>202</i>&nbsp;            int i;
+<b class="fc"><i>203</i>&nbsp;            while ((i = reader.read()) != -1) {</b>
+<b class="fc"><i>204</i>&nbsp;                builder.add((char) i);</b>
+<i>205</i>&nbsp;            }
+<i>206</i>&nbsp;
+<i>207</i>&nbsp;
+<b class="fc"><i>208</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>209</i>&nbsp;            return Exceptions.handle(String.class, ex);</b>
+<b class="fc"><i>210</i>&nbsp;        }</b>
+<i>211</i>&nbsp;
+<b class="fc"><i>212</i>&nbsp;        return builder.toString();</b>
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    }
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;    public static String read(File file) {
+<b class="fc"><i>217</i>&nbsp;        try (Reader reader = new FileReader(file)) {</b>
+<b class="fc"><i>218</i>&nbsp;            return read(reader);</b>
+<b class="fc"><i>219</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>220</i>&nbsp;            return Exceptions.handle(String.class, ex);</b>
+<i>221</i>&nbsp;        }
+<i>222</i>&nbsp;    }
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;    public static List&lt;String&gt; readLines(Reader reader) {
+<i>225</i>&nbsp;
+<b class="fc"><i>226</i>&nbsp;        try (BufferedReader bufferedReader = new BufferedReader(reader)) {</b>
+<i>227</i>&nbsp;
+<b class="fc"><i>228</i>&nbsp;            return readLines(bufferedReader);</b>
+<i>229</i>&nbsp;
+<b class="fc"><i>230</i>&nbsp;        } catch (Exception ex) {</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<i>233</i>&nbsp;        }
+<i>234</i>&nbsp;    }
+<i>235</i>&nbsp;
+<i>236</i>&nbsp;    public static void eachLine(Reader reader, EachLine eachLine) {
+<i>237</i>&nbsp;
+<b class="fc"><i>238</i>&nbsp;        try (BufferedReader bufferedReader = new BufferedReader(reader)) {</b>
+<i>239</i>&nbsp;
+<b class="fc"><i>240</i>&nbsp;            eachLine(bufferedReader, eachLine);</b>
+<i>241</i>&nbsp;
+<b class="fc"><i>242</i>&nbsp;        } catch (Exception ex) {</b>
+<i>243</i>&nbsp;
+<b class="nc"><i>244</i>&nbsp;            Exceptions.handle(List.class, ex);</b>
+<b class="fc"><i>245</i>&nbsp;        }</b>
+<b class="fc"><i>246</i>&nbsp;    }</b>
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;    public static List&lt;String&gt; readLines(InputStream is) {
+<i>249</i>&nbsp;
+<b class="fc"><i>250</i>&nbsp;        try (Reader reader = new InputStreamReader(is, DEFAULT_CHARSET)) {</b>
+<i>251</i>&nbsp;
+<b class="fc"><i>252</i>&nbsp;            return readLines(reader);</b>
+<i>253</i>&nbsp;
+<b class="fc"><i>254</i>&nbsp;        } catch (Exception ex) {</b>
+<i>255</i>&nbsp;
+<b class="nc"><i>256</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<i>257</i>&nbsp;        }
+<i>258</i>&nbsp;    }
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    public static void eachLine(InputStream is, EachLine eachLine) {
+<i>261</i>&nbsp;
+<b class="fc"><i>262</i>&nbsp;        try (Reader reader = new InputStreamReader(is, DEFAULT_CHARSET)) {</b>
+<i>263</i>&nbsp;
+<b class="fc"><i>264</i>&nbsp;            eachLine(reader, eachLine);</b>
+<i>265</i>&nbsp;
+<b class="fc"><i>266</i>&nbsp;        } catch (Exception ex) {</b>
+<i>267</i>&nbsp;
+<b class="nc"><i>268</i>&nbsp;            Exceptions.handle(ex);</b>
+<b class="fc"><i>269</i>&nbsp;        }</b>
+<b class="fc"><i>270</i>&nbsp;    }</b>
+<i>271</i>&nbsp;
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;    public static List&lt;String&gt; readLines(BufferedReader reader) {
+<b class="fc"><i>274</i>&nbsp;        List&lt;String&gt; lines = new ArrayList&lt;&gt;(80);</b>
+<i>275</i>&nbsp;
+<b class="fc"><i>276</i>&nbsp;        try (BufferedReader bufferedReader = reader) {</b>
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;
+<i>279</i>&nbsp;            String line;
+<b class="fc"><i>280</i>&nbsp;            while ((line = bufferedReader.readLine()) != null) {</b>
+<b class="fc"><i>281</i>&nbsp;                lines.add(line);</b>
+<i>282</i>&nbsp;            }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;
+<b class="fc"><i>285</i>&nbsp;        } catch (Exception ex) {</b>
+<i>286</i>&nbsp;
+<b class="nc"><i>287</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<b class="fc"><i>288</i>&nbsp;        }</b>
+<b class="fc"><i>289</i>&nbsp;        return lines;</b>
+<i>290</i>&nbsp;    }
+<i>291</i>&nbsp;
+<b class="nc"><i>292</i>&nbsp;    public static interface EachLine {</b>
+<i>293</i>&nbsp;        public boolean line(String line, int index);
+<i>294</i>&nbsp;    }
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;    public static void eachLine(BufferedReader reader, EachLine eachLine) {
+<i>297</i>&nbsp;
+<b class="fc"><i>298</i>&nbsp;        try (BufferedReader bufferedReader = reader) {</b>
+<i>299</i>&nbsp;
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;            String line;
+<b class="fc"><i>302</i>&nbsp;            int lineNumber = 0;</b>
+<i>303</i>&nbsp;
+<b class="fc"><i>304</i>&nbsp;            while ((line = bufferedReader.readLine()) != null &amp;&amp;</b>
+<b class="fc"><i>305</i>&nbsp;                    eachLine.line(line, lineNumber++)) { //</b>
+<i>306</i>&nbsp;                // no op
+<i>307</i>&nbsp;            }
+<b class="fc"><i>308</i>&nbsp;        } catch (Exception ex) {</b>
+<i>309</i>&nbsp;
+<b class="nc"><i>310</i>&nbsp;            Exceptions.handle(ex);</b>
+<b class="fc"><i>311</i>&nbsp;        }</b>
+<i>312</i>&nbsp;
+<b class="fc"><i>313</i>&nbsp;    }</b>
+<i>314</i>&nbsp;
+<i>315</i>&nbsp;    public static void eachLine(File file, EachLine eachLine) {
+<b class="nc"><i>316</i>&nbsp;        try (FileReader reader = new FileReader(file)) {</b>
+<b class="nc"><i>317</i>&nbsp;            eachLine(reader, eachLine);</b>
+<b class="nc"><i>318</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>319</i>&nbsp;            Exceptions.handle(List.class, ex);</b>
+<b class="nc"><i>320</i>&nbsp;        }</b>
+<b class="nc"><i>321</i>&nbsp;    }</b>
+<i>322</i>&nbsp;
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;    public static List&lt;String&gt; readLines(File file) {
+<b class="fc"><i>325</i>&nbsp;        try (FileReader reader = new FileReader(file)) {</b>
+<b class="fc"><i>326</i>&nbsp;            return readLines(reader);</b>
+<b class="fc"><i>327</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>328</i>&nbsp;            return Exceptions.handle(List.class, ex);</b>
+<i>329</i>&nbsp;        }
+<i>330</i>&nbsp;    }
+<i>331</i>&nbsp;
+<i>332</i>&nbsp;
+<i>333</i>&nbsp;
+<i>334</i>&nbsp;    public static List&lt;String&gt; readLines(final String location) {
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;
+<b class="fc"><i>337</i>&nbsp;        final String path = getWindowsPathIfNeeded( location );</b>
+<i>338</i>&nbsp;
+<b class="fc"><i>339</i>&nbsp;        final URI uri = createURI( path );</b>
+<i>340</i>&nbsp;
+<b class="fc"><i>341</i>&nbsp;        return (List&lt;String&gt;) Exceptions.tryIt(Typ.list, new Exceptions.TrialWithReturn&lt;List&gt;() {</b>
+<i>342</i>&nbsp;            @Override
+<i>343</i>&nbsp;            public List&lt;String&gt; tryIt() throws Exception {
+<b class="fc"><i>344</i>&nbsp;                if (uri.getScheme() == null) {</b>
+<i>345</i>&nbsp;
+<b class="fc"><i>346</i>&nbsp;                    Path thePath = FileSystems.getDefault().getPath( path );</b>
+<b class="fc"><i>347</i>&nbsp;                    return Files.readAllLines(thePath, DEFAULT_CHARSET);</b>
+<i>348</i>&nbsp;
+<b class="fc"><i>349</i>&nbsp;                } else if (uri.getScheme().equals(FILE_SCHEMA)) {</b>
+<i>350</i>&nbsp;
+<b class="fc"><i>351</i>&nbsp;                    Path thePath = FileSystems.getDefault().getPath(uri.getPath());</b>
+<b class="fc"><i>352</i>&nbsp;                    return Files.readAllLines(thePath, DEFAULT_CHARSET);</b>
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;                } else {
+<b class="fc"><i>355</i>&nbsp;                    return readLines(location, uri);</b>
+<i>356</i>&nbsp;                }
+<i>357</i>&nbsp;            }
+<i>358</i>&nbsp;        });
+<i>359</i>&nbsp;    }
+<i>360</i>&nbsp;
+<i>361</i>&nbsp;    public static URI createURI(final String path) {
+<b class="fc"><i>362</i>&nbsp;        if ( !Sys.isWindows() )  {</b>
+<b class="fc"><i>363</i>&nbsp;            return URI.create(path);</b>
+<i>364</i>&nbsp;
+<i>365</i>&nbsp;        } else {
+<i>366</i>&nbsp;
+<b class="nc"><i>367</i>&nbsp;            if ( path.contains(&quot;\\&quot;) || path.startsWith(&quot;C:&quot;) || path.startsWith(&quot;D:&quot;)) {</b>
+<b class="nc"><i>368</i>&nbsp;                String newPath = new File(path).toURI().toString();</b>
+<b class="nc"><i>369</i>&nbsp;                if (newPath.startsWith(&quot;file:/C:&quot;)) {</b>
+<b class="nc"><i>370</i>&nbsp;                    newPath = slc ( newPath, 8);</b>
+<b class="nc"><i>371</i>&nbsp;                    return URI.create(newPath);</b>
+<i>372</i>&nbsp;                } else {
+<b class="nc"><i>373</i>&nbsp;                    return URI.create(newPath);</b>
+<i>374</i>&nbsp;                }
+<i>375</i>&nbsp;
+<i>376</i>&nbsp;            } else {
+<b class="nc"><i>377</i>&nbsp;                return URI.create(path);</b>
+<i>378</i>&nbsp;            }
+<i>379</i>&nbsp;        }
+<i>380</i>&nbsp;    }
+<i>381</i>&nbsp;
+<i>382</i>&nbsp;
+<i>383</i>&nbsp;    public static void eachLine(final String location, final EachLine eachLine) {
+<i>384</i>&nbsp;
+<b class="fc"><i>385</i>&nbsp;        final URI uri = createURI(location);</b>
+<i>386</i>&nbsp;
+<b class="fc"><i>387</i>&nbsp;        Exceptions.tryIt(new Exceptions.Trial() {</b>
+<i>388</i>&nbsp;            @Override
+<i>389</i>&nbsp;            public void tryIt() throws Exception {
+<i>390</i>&nbsp;
+<i>391</i>&nbsp;
+<b class="fc"><i>392</i>&nbsp;                if (uri.getScheme() == null) {</b>
+<i>393</i>&nbsp;
+<b class="fc"><i>394</i>&nbsp;                    Path thePath = FileSystems.getDefault().getPath(location);</b>
+<b class="fc"><i>395</i>&nbsp;                    BufferedReader buf = Files.newBufferedReader(</b>
+<i>396</i>&nbsp;                            thePath, DEFAULT_CHARSET);
+<b class="fc"><i>397</i>&nbsp;                    eachLine(buf, eachLine);</b>
+<i>398</i>&nbsp;
+<b class="fc"><i>399</i>&nbsp;                } else if (uri.getScheme().equals(FILE_SCHEMA)) {</b>
+<i>400</i>&nbsp;
+<i>401</i>&nbsp;
+<b class="fc"><i>402</i>&nbsp;                    Path thePath = null;</b>
+<i>403</i>&nbsp;
+<b class="fc"><i>404</i>&nbsp;                    if (Sys.isWindows()) {</b>
+<b class="nc"><i>405</i>&nbsp;                        String path = uri.toString();</b>
+<i>406</i>&nbsp;
+<b class="nc"><i>407</i>&nbsp;                        path = path.replace(&#39;/&#39;, Sys.windowsPathSeparator()) ;</b>
+<b class="nc"><i>408</i>&nbsp;                        if ( slc(path, 0, 6).equals( &quot;file:\\&quot; ) ) {</b>
+<b class="nc"><i>409</i>&nbsp;                                path = slc (path, 6 ) ;</b>
+<i>410</i>&nbsp;                        }
+<b class="nc"><i>411</i>&nbsp;                        thePath = FileSystems.getDefault().getPath(path);</b>
+<b class="nc"><i>412</i>&nbsp;                    }  else {</b>
+<b class="fc"><i>413</i>&nbsp;                        thePath = FileSystems.getDefault().getPath( uri.getPath () );</b>
+<i>414</i>&nbsp;
+<i>415</i>&nbsp;                    }
+<b class="fc"><i>416</i>&nbsp;                    BufferedReader buf = Files.newBufferedReader(</b>
+<i>417</i>&nbsp;                            thePath, DEFAULT_CHARSET);
+<b class="fc"><i>418</i>&nbsp;                    eachLine(buf, eachLine);</b>
+<i>419</i>&nbsp;
+<i>420</i>&nbsp;
+<b class="fc"><i>421</i>&nbsp;                } else {</b>
+<b class="fc"><i>422</i>&nbsp;                    eachLine(location, uri, eachLine);</b>
+<i>423</i>&nbsp;                }
+<i>424</i>&nbsp;
+<b class="fc"><i>425</i>&nbsp;            }</b>
+<i>426</i>&nbsp;
+<i>427</i>&nbsp;        });
+<b class="fc"><i>428</i>&nbsp;    }</b>
+<i>429</i>&nbsp;
+<i>430</i>&nbsp;    private static String getWindowsPathIfNeeded(String path) {
+<b class="fc"><i>431</i>&nbsp;        if (Sys.isWindows()) {</b>
+<i>432</i>&nbsp;
+<b class="nc"><i>433</i>&nbsp;            if ( !path.startsWith(&quot;http&quot;) ) {</b>
+<b class="nc"><i>434</i>&nbsp;                path = path.replace(&#39;/&#39;, Sys.windowsPathSeparator()) ;</b>
+<b class="nc"><i>435</i>&nbsp;                if ( slc(path, 0, 6).equals( &quot;file:\\&quot; ) ) {</b>
+<b class="nc"><i>436</i>&nbsp;                    path = slc (path, 6 ) ;</b>
+<i>437</i>&nbsp;                }
+<i>438</i>&nbsp;            }
+<i>439</i>&nbsp;
+<b class="nc"><i>440</i>&nbsp;            if ( path.startsWith(&quot;.\\&quot;)) {</b>
+<b class="nc"><i>441</i>&nbsp;                path = slc(path, 2) ;</b>
+<i>442</i>&nbsp;            }
+<i>443</i>&nbsp;        }
+<b class="fc"><i>444</i>&nbsp;        return path;</b>
+<i>445</i>&nbsp;    }
+<i>446</i>&nbsp;
+<i>447</i>&nbsp;    public static String read(final String location) {
+<b class="fc"><i>448</i>&nbsp;        final URI uri = createURI(location);</b>
+<i>449</i>&nbsp;
+<b class="fc"><i>450</i>&nbsp;        return Exceptions.tryIt( String.class, new Exceptions.TrialWithReturn&lt;String&gt;() {</b>
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;            @Override
+<i>453</i>&nbsp;            public String tryIt() throws Exception {
+<i>454</i>&nbsp;
+<b class="fc"><i>455</i>&nbsp;                String path = location;</b>
+<i>456</i>&nbsp;
+<b class="fc"><i>457</i>&nbsp;                path = getWindowsPathIfNeeded(path);</b>
+<i>458</i>&nbsp;
+<b class="fc"><i>459</i>&nbsp;                if (uri.getScheme() == null) {</b>
+<i>460</i>&nbsp;
+<b class="fc"><i>461</i>&nbsp;                    Path thePath = FileSystems.getDefault().getPath(path);</b>
+<b class="fc"><i>462</i>&nbsp;                    return read(Files.newBufferedReader(thePath, DEFAULT_CHARSET));</b>
+<i>463</i>&nbsp;
+<b class="fc"><i>464</i>&nbsp;                } else if (uri.getScheme().equals(FILE_SCHEMA)) {</b>
+<i>465</i>&nbsp;
+<b class="fc"><i>466</i>&nbsp;                    Path thePath = null;</b>
+<b class="fc"><i>467</i>&nbsp;                    if (Sys.isWindows()) {</b>
+<b class="nc"><i>468</i>&nbsp;                        String newPath = uri.getPath();</b>
+<b class="nc"><i>469</i>&nbsp;                        if (newPath.startsWith(&quot;/C:&quot;)) {</b>
+<b class="nc"><i>470</i>&nbsp;                            newPath = slc (newPath, 3);</b>
+<i>471</i>&nbsp;                        }
+<b class="nc"><i>472</i>&nbsp;                        thePath  = FileSystems.getDefault().getPath( newPath );</b>
+<b class="nc"><i>473</i>&nbsp;                    } else {</b>
+<b class="fc"><i>474</i>&nbsp;                        thePath = FileSystems.getDefault().getPath(uri.getPath());</b>
+<i>475</i>&nbsp;                    }
+<i>476</i>&nbsp;
+<b class="fc"><i>477</i>&nbsp;                    return read(Files.newBufferedReader(thePath, DEFAULT_CHARSET));</b>
+<i>478</i>&nbsp;
+<i>479</i>&nbsp;                } else {
+<b class="fc"><i>480</i>&nbsp;                    return read(location, uri);</b>
+<i>481</i>&nbsp;                }
+<i>482</i>&nbsp;
+<i>483</i>&nbsp;
+<i>484</i>&nbsp;            }
+<i>485</i>&nbsp;        });
+<i>486</i>&nbsp;
+<i>487</i>&nbsp;    }
+<i>488</i>&nbsp;
+<i>489</i>&nbsp;
+<i>490</i>&nbsp;private static List&lt;String&gt; readLines(String location, URI uri) throws Exception {
+<i>491</i>&nbsp;    try {
+<b class="fc"><i>492</i>&nbsp;            String path = location;</b>
+<b class="fc"><i>493</i>&nbsp;            path = getWindowsPathIfNeeded(path);</b>
+<i>494</i>&nbsp;
+<b class="fc"><i>495</i>&nbsp;            FileSystem fileSystem = FileSystems.getFileSystem(uri);</b>
+<b class="nc"><i>496</i>&nbsp;            Path fsPath = fileSystem.getPath(path);</b>
+<i>497</i>&nbsp;
+<i>498</i>&nbsp;            //Paths.get()
+<b class="nc"><i>499</i>&nbsp;            return Files.readAllLines(fsPath, DEFAULT_CHARSET);</b>
+<b class="fc"><i>500</i>&nbsp;        } catch (ProviderNotFoundException ex) {</b>
+<b class="fc"><i>501</i>&nbsp;            return readLines(uri.toURL().openStream());</b>
+<i>502</i>&nbsp;        }
+<i>503</i>&nbsp;    }
+<i>504</i>&nbsp;
+<i>505</i>&nbsp;
+<i>506</i>&nbsp;    private static void eachLine(String location, URI uri, EachLine eachLine) throws Exception {
+<i>507</i>&nbsp;        try {
+<b class="fc"><i>508</i>&nbsp;            FileSystem fileSystem = FileSystems.getFileSystem(uri);</b>
+<b class="nc"><i>509</i>&nbsp;            Path fsPath = fileSystem.getPath(location);</b>
+<b class="nc"><i>510</i>&nbsp;            BufferedReader buf = Files.newBufferedReader(fsPath, DEFAULT_CHARSET);</b>
+<b class="nc"><i>511</i>&nbsp;            eachLine(buf, eachLine);</b>
+<i>512</i>&nbsp;
+<i>513</i>&nbsp;
+<b class="fc"><i>514</i>&nbsp;        } catch (ProviderNotFoundException ex) {</b>
+<b class="fc"><i>515</i>&nbsp;            eachLine(uri.toURL().openStream(), eachLine);</b>
+<b class="nc"><i>516</i>&nbsp;        }</b>
+<b class="fc"><i>517</i>&nbsp;    }</b>
+<i>518</i>&nbsp;
+<i>519</i>&nbsp;    private static String read(String location, URI uri) throws Exception {
+<i>520</i>&nbsp;        try {
+<b class="fc"><i>521</i>&nbsp;            FileSystem fileSystem = FileSystems.getFileSystem(uri);</b>
+<b class="nc"><i>522</i>&nbsp;            Path fsPath = fileSystem.getPath(location);</b>
+<b class="nc"><i>523</i>&nbsp;            return read(Files.newBufferedReader(fsPath, DEFAULT_CHARSET));</b>
+<b class="fc"><i>524</i>&nbsp;        } catch (ProviderNotFoundException ex) {</b>
+<b class="fc"><i>525</i>&nbsp;            return read(uri.toURL().openStream());</b>
+<i>526</i>&nbsp;        }
+<i>527</i>&nbsp;    }
+<i>528</i>&nbsp;
+<i>529</i>&nbsp;
+<i>530</i>&nbsp;    public static void write(OutputStream out, String content, Charset charset) {
+<i>531</i>&nbsp;
+<b class="fc"><i>532</i>&nbsp;        try (OutputStream o = out) {</b>
+<b class="fc"><i>533</i>&nbsp;            o.write(content.getBytes(charset));</b>
+<b class="fc"><i>534</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>535</i>&nbsp;            Exceptions.handle(ex);</b>
+<b class="fc"><i>536</i>&nbsp;        }</b>
+<i>537</i>&nbsp;
+<b class="fc"><i>538</i>&nbsp;    }</b>
+<i>539</i>&nbsp;
+<i>540</i>&nbsp;    public static void writeChild(Path parentDir, String childFileName, String childContents) {
+<i>541</i>&nbsp;
+<i>542</i>&nbsp;        try {
+<i>543</i>&nbsp;
+<b class="nc"><i>544</i>&nbsp;            final Path newFilePath = path(parentDir.toString(),</b>
+<i>545</i>&nbsp;                    childFileName);
+<i>546</i>&nbsp;
+<b class="nc"><i>547</i>&nbsp;            write(newFilePath, childContents);</b>
+<b class="nc"><i>548</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>549</i>&nbsp;            Exceptions.handle(ex);</b>
+<b class="nc"><i>550</i>&nbsp;        }</b>
+<b class="nc"><i>551</i>&nbsp;    }</b>
+<i>552</i>&nbsp;
+<i>553</i>&nbsp;    public static Path createChildDirectory(Path parentDir, String childDir) {
+<i>554</i>&nbsp;
+<i>555</i>&nbsp;        try {
+<i>556</i>&nbsp;
+<i>557</i>&nbsp;
+<b class="nc"><i>558</i>&nbsp;            final Path newDir = path(parentDir.toString(),</b>
+<i>559</i>&nbsp;                    childDir);
+<i>560</i>&nbsp;
+<i>561</i>&nbsp;
+<b class="nc"><i>562</i>&nbsp;            if (!Files.exists(newDir)) {</b>
+<b class="nc"><i>563</i>&nbsp;                Files.createDirectory(newDir);</b>
+<i>564</i>&nbsp;            }
+<i>565</i>&nbsp;
+<b class="nc"><i>566</i>&nbsp;            return newDir;</b>
+<i>567</i>&nbsp;
+<b class="nc"><i>568</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>569</i>&nbsp;            return Exceptions.handle(Path.class, ex);</b>
+<i>570</i>&nbsp;        }
+<i>571</i>&nbsp;    }
+<i>572</i>&nbsp;
+<i>573</i>&nbsp;    public static Path createDirectory(Path dir) {
+<i>574</i>&nbsp;
+<i>575</i>&nbsp;        try {
+<i>576</i>&nbsp;
+<i>577</i>&nbsp;
+<b class="nc"><i>578</i>&nbsp;            if (!Files.exists(dir)) {</b>
+<b class="nc"><i>579</i>&nbsp;                return Files.createDirectory(dir);</b>
+<i>580</i>&nbsp;            }  else {
+<b class="nc"><i>581</i>&nbsp;                return null;</b>
+<i>582</i>&nbsp;            }
+<i>583</i>&nbsp;
+<b class="nc"><i>584</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>585</i>&nbsp;            return Exceptions.handle(Path.class, ex);</b>
+<i>586</i>&nbsp;        }
+<i>587</i>&nbsp;    }
+<i>588</i>&nbsp;
+<i>589</i>&nbsp;    public static Path createDirectory(String dir) {
+<i>590</i>&nbsp;
+<i>591</i>&nbsp;        try {
+<i>592</i>&nbsp;
+<b class="nc"><i>593</i>&nbsp;            final Path newDir = path(dir);</b>
+<b class="nc"><i>594</i>&nbsp;            createDirectory(newDir);</b>
+<i>595</i>&nbsp;
+<b class="nc"><i>596</i>&nbsp;            return newDir;</b>
+<i>597</i>&nbsp;
+<b class="nc"><i>598</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>599</i>&nbsp;            return Exceptions.handle(Path.class, ex);</b>
+<i>600</i>&nbsp;        }
+<i>601</i>&nbsp;    }
+<i>602</i>&nbsp;
+<i>603</i>&nbsp;    public static FileSystem fileSystem() {
+<b class="nc"><i>604</i>&nbsp;        return FileSystems.getDefault();</b>
+<i>605</i>&nbsp;    }
+<i>606</i>&nbsp;
+<i>607</i>&nbsp;    public static Path path(String path) {
+<b class="nc"><i>608</i>&nbsp;        return Paths.get(path);</b>
+<i>609</i>&nbsp;    }
+<i>610</i>&nbsp;
+<i>611</i>&nbsp;    public static Path path(String path, String... more) {
+<b class="nc"><i>612</i>&nbsp;        return Paths.get(path, more);</b>
+<i>613</i>&nbsp;    }
+<i>614</i>&nbsp;
+<i>615</i>&nbsp;    public static Path path(Path path, String... more) {
+<b class="nc"><i>616</i>&nbsp;        return Paths.get(path.toString(), more);</b>
+<i>617</i>&nbsp;    }
+<i>618</i>&nbsp;
+<i>619</i>&nbsp;    public static void write(Path file, String contents) {
+<b class="nc"><i>620</i>&nbsp;        write(file, contents.getBytes(DEFAULT_CHARSET));</b>
+<b class="nc"><i>621</i>&nbsp;    }</b>
+<i>622</i>&nbsp;
+<i>623</i>&nbsp;    public static void write(Path file, byte[] contents) {
+<i>624</i>&nbsp;        try {
+<b class="nc"><i>625</i>&nbsp;            Files.write(file, contents);</b>
+<i>626</i>&nbsp;
+<b class="nc"><i>627</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>628</i>&nbsp;            Exceptions.handle(ex);</b>
+<b class="nc"><i>629</i>&nbsp;        }</b>
+<b class="nc"><i>630</i>&nbsp;    }</b>
+<i>631</i>&nbsp;
+<i>632</i>&nbsp;    public static void write(OutputStream out, String content) {
+<i>633</i>&nbsp;
+<b class="fc"><i>634</i>&nbsp;        try (OutputStream o = out) {</b>
+<b class="fc"><i>635</i>&nbsp;            o.write(content.getBytes(DEFAULT_CHARSET));</b>
+<b class="fc"><i>636</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>637</i>&nbsp;            Exceptions.handle(ex);</b>
+<b class="fc"><i>638</i>&nbsp;        }</b>
+<i>639</i>&nbsp;
+<b class="fc"><i>640</i>&nbsp;    }</b>
+<i>641</i>&nbsp;
+<i>642</i>&nbsp;
+<i>643</i>&nbsp;    public static void main(String[] args) throws Throwable {
+<i>644</i>&nbsp;//        Map&lt;String, String&gt; env = new HashMap&lt;&gt;();
+<i>645</i>&nbsp;//        env.put(&quot;create&quot;, &quot;true&quot;);
+<i>646</i>&nbsp;//        // locate file system by using the syntax
+<i>647</i>&nbsp;//        // defined in java.net.JarURLConnection
+<i>648</i>&nbsp;//        URI uri = URI.create(&quot;jar:file:/codeSamples/zipfs/zipfstest.zip&quot;);
+<i>649</i>&nbsp;//
+<i>650</i>&nbsp;//        try (FileSystem zipfs = FileSystems.newFileSystem(uri, env)) {
+<i>651</i>&nbsp;//            Path externalTxtFile = Paths.get(&quot;/codeSamples/zipfs/SomeTextFile.txt&quot;);
+<i>652</i>&nbsp;//            Path pathInZipfile = zipfs.getPath(&quot;/SomeTextFile.txt&quot;);
+<i>653</i>&nbsp;//            // copy a file into the zip file
+<i>654</i>&nbsp;//            Files.copy( externalTxtFile,pathInZipfile,
+<i>655</i>&nbsp;//                    StandardCopyOption.REPLACE_EXISTING );
+<i>656</i>&nbsp;//        }
+<i>657</i>&nbsp;
+<i>658</i>&nbsp;
+<b class="nc"><i>659</i>&nbsp;    }</b>
+<i>660</i>&nbsp;
+<i>661</i>&nbsp;
+<i>662</i>&nbsp;    //JDK 8 versions of methods on hold
+<i>663</i>&nbsp;
+<i>664</i>&nbsp;
+<i>665</i>&nbsp;//    public static List&lt;String&gt; readLines(final String location) {
+<i>666</i>&nbsp;//
+<i>667</i>&nbsp;//        final URI uri = URI.create(location);
+<i>668</i>&nbsp;//
+<i>669</i>&nbsp;//        return Exceptions.tryIt(List.class, () -&gt; {
+<i>670</i>&nbsp;//
+<i>671</i>&nbsp;//            if (uri.getScheme() == null) {
+<i>672</i>&nbsp;//
+<i>673</i>&nbsp;//                Path thePath = FileSystems.getDefault().getPath(location);
+<i>674</i>&nbsp;//                return Files.readAllLines(thePath, DEFAULT_CHARSET);
+<i>675</i>&nbsp;//
+<i>676</i>&nbsp;//            } else if (uri.getScheme().equals(FILE_SCHEMA)) {
+<i>677</i>&nbsp;//
+<i>678</i>&nbsp;//                Path thePath = FileSystems.getDefault().getPath(uri.getPath());
+<i>679</i>&nbsp;//                return Files.readAllLines(thePath, DEFAULT_CHARSET);
+<i>680</i>&nbsp;//
+<i>681</i>&nbsp;//            } else {
+<i>682</i>&nbsp;//                return readLines(location, uri);
+<i>683</i>&nbsp;//            }
+<i>684</i>&nbsp;//
+<i>685</i>&nbsp;//        });
+<i>686</i>&nbsp;//
+<i>687</i>&nbsp;//    }
+<i>688</i>&nbsp;
+<i>689</i>&nbsp;
+<i>690</i>&nbsp;
+<i>691</i>&nbsp;//    public static void eachLine(final String location, EachLine eachLine) {
+<i>692</i>&nbsp;//
+<i>693</i>&nbsp;//        final URI uri = URI.create(location);
+<i>694</i>&nbsp;//
+<i>695</i>&nbsp;//        Exceptions.tryIt(() -&gt; {
+<i>696</i>&nbsp;//
+<i>697</i>&nbsp;//            if (uri.getScheme() == null) {
+<i>698</i>&nbsp;//
+<i>699</i>&nbsp;//                Path thePath = FileSystems.getDefault().getPath(location);
+<i>700</i>&nbsp;//                BufferedReader buf = Files.newBufferedReader(
+<i>701</i>&nbsp;//                        thePath, DEFAULT_CHARSET);
+<i>702</i>&nbsp;//                eachLine(buf, eachLine);
+<i>703</i>&nbsp;//
+<i>704</i>&nbsp;//            } else if (uri.getScheme().equals(FILE_SCHEMA)) {
+<i>705</i>&nbsp;//
+<i>706</i>&nbsp;//                Path thePath = FileSystems.getDefault().getPath(uri.getPath());
+<i>707</i>&nbsp;//
+<i>708</i>&nbsp;//                BufferedReader buf = Files.newBufferedReader(
+<i>709</i>&nbsp;//                        thePath, DEFAULT_CHARSET);
+<i>710</i>&nbsp;//                eachLine(buf, eachLine);
+<i>711</i>&nbsp;//
+<i>712</i>&nbsp;//
+<i>713</i>&nbsp;//            } else {
+<i>714</i>&nbsp;//                eachLine(location, uri, eachLine);
+<i>715</i>&nbsp;//            }
+<i>716</i>&nbsp;//
+<i>717</i>&nbsp;//        });
+<i>718</i>&nbsp;//
+<i>719</i>&nbsp;//    }
+<i>720</i>&nbsp;
+<i>721</i>&nbsp;
+<i>722</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

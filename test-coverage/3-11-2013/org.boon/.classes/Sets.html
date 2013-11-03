@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Sets</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Sets (org.boon)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Sets</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.6%
+  </span>
+  <span class="absValue">
+    (41/ 42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.1%
+  </span>
+  <span class="absValue">
+    (102/ 104)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Sets$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    97.8%
+  </span>
+  <span class="absValue">
+    (44/ 45)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98.1%
+  </span>
+  <span class="absValue">
+    (105/ 107)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import java.util.*;
+<i>5</i>&nbsp;import java.util.Arrays;
+<i>6</i>&nbsp;import java.util.concurrent.ConcurrentSkipListSet;
+<i>7</i>&nbsp;import java.util.concurrent.CopyOnWriteArraySet;
+<i>8</i>&nbsp;
+<b class="nc"><i>9</i>&nbsp;public class Sets {</b>
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    /* Creation */
+<i>12</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; set(Collection&lt;V&gt; collection) {
+<b class="fc"><i>13</i>&nbsp;        return new LinkedHashSet&lt;&gt;(collection);</b>
+<i>14</i>&nbsp;    }
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    public static &lt;V&gt; Enumeration&lt;V&gt; enumeration(final Set&lt;V&gt; set) {
+<b class="fc"><i>18</i>&nbsp;        final Iterator&lt;V&gt; iter = set.iterator();</b>
+<b class="fc"><i>19</i>&nbsp;        return new Enumeration&lt;V&gt;() {</b>
+<i>20</i>&nbsp;            @Override
+<i>21</i>&nbsp;            public boolean hasMoreElements() {
+<b class="fc"><i>22</i>&nbsp;                return iter.hasNext();</b>
+<i>23</i>&nbsp;            }
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;            @Override
+<i>26</i>&nbsp;            public V nextElement() {
+<b class="fc"><i>27</i>&nbsp;                return iter.next();</b>
+<i>28</i>&nbsp;            }
+<i>29</i>&nbsp;        };
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    }
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; set(Class&lt;V&gt; clazz) {
+<b class="fc"><i>35</i>&nbsp;        return new LinkedHashSet&lt;&gt;();</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; set(Iterable&lt;V&gt; iterable) {
+<b class="fc"><i>39</i>&nbsp;        Set&lt;V&gt; set = new LinkedHashSet&lt;&gt;();</b>
+<b class="fc"><i>40</i>&nbsp;        for (V o : iterable) {</b>
+<b class="fc"><i>41</i>&nbsp;            set.add(o);</b>
+<b class="fc"><i>42</i>&nbsp;        }</b>
+<b class="fc"><i>43</i>&nbsp;        return set;</b>
+<i>44</i>&nbsp;    }
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; set(Enumeration&lt;V&gt; enumeration) {
+<b class="fc"><i>47</i>&nbsp;        Set&lt;V&gt; set = new LinkedHashSet&lt;&gt;();</b>
+<b class="fc"><i>48</i>&nbsp;        while (enumeration.hasMoreElements()) {</b>
+<b class="fc"><i>49</i>&nbsp;            set.add(enumeration.nextElement());</b>
+<i>50</i>&nbsp;        }
+<b class="fc"><i>51</i>&nbsp;        return set;</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; set(Iterator&lt;V&gt; iterator) {
+<b class="fc"><i>56</i>&nbsp;        Set&lt;V&gt; set = new LinkedHashSet&lt;&gt;();</b>
+<b class="fc"><i>57</i>&nbsp;        while (iterator.hasNext()) {</b>
+<b class="fc"><i>58</i>&nbsp;            set.add(iterator.next());</b>
+<i>59</i>&nbsp;        }
+<b class="fc"><i>60</i>&nbsp;        return set;</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    @SafeVarargs
+<i>65</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; set(final V... array) {
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;
+<b class="fc"><i>68</i>&nbsp;        Set &lt;V&gt; set = new LinkedHashSet&lt;&gt;();</b>
+<i>69</i>&nbsp;
+<b class="fc"><i>70</i>&nbsp;        for (V v : array) {</b>
+<b class="fc"><i>71</i>&nbsp;            set.add(v);</b>
+<i>72</i>&nbsp;        }
+<b class="fc"><i>73</i>&nbsp;        return set;</b>
+<i>74</i>&nbsp;    }
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; sortedSet(Iterator&lt;V&gt; iterator) {
+<b class="fc"><i>78</i>&nbsp;        NavigableSet&lt;V&gt; set = new TreeSet&lt;&gt;();</b>
+<b class="fc"><i>79</i>&nbsp;        while (iterator.hasNext()) {</b>
+<b class="fc"><i>80</i>&nbsp;            set.add(iterator.next());</b>
+<i>81</i>&nbsp;        }
+<b class="fc"><i>82</i>&nbsp;        return set;</b>
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; sortedSet(Class&lt;V&gt; clazz) {
+<b class="fc"><i>86</i>&nbsp;        return new TreeSet&lt;&gt;();</b>
+<i>87</i>&nbsp;    }
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; sortedSet(Iterable&lt;V&gt; iterable) {
+<b class="fc"><i>90</i>&nbsp;        NavigableSet&lt;V&gt; set = new TreeSet&lt;&gt;();</b>
+<b class="fc"><i>91</i>&nbsp;        for (V o : iterable) {</b>
+<b class="fc"><i>92</i>&nbsp;            set.add(o);</b>
+<b class="fc"><i>93</i>&nbsp;        }</b>
+<b class="fc"><i>94</i>&nbsp;        return set;</b>
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; sortedSet(Enumeration&lt;V&gt; enumeration) {
+<b class="fc"><i>98</i>&nbsp;        NavigableSet&lt;V&gt; set = new TreeSet&lt;&gt;();</b>
+<b class="fc"><i>99</i>&nbsp;        while (enumeration.hasMoreElements()) {</b>
+<b class="fc"><i>100</i>&nbsp;            set.add(enumeration.nextElement());</b>
+<i>101</i>&nbsp;        }
+<b class="fc"><i>102</i>&nbsp;        return set;</b>
+<i>103</i>&nbsp;    }
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    @SafeVarargs
+<i>106</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; sortedSet(final V... array) {
+<b class="fc"><i>107</i>&nbsp;        NavigableSet &lt;V&gt; set = new TreeSet&lt;&gt;();</b>
+<i>108</i>&nbsp;
+<b class="fc"><i>109</i>&nbsp;        for (V v : array) {</b>
+<b class="fc"><i>110</i>&nbsp;            set.add(v);</b>
+<i>111</i>&nbsp;        }
+<b class="fc"><i>112</i>&nbsp;        return set;</b>
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; sortedSet(Collection&lt;V&gt; collection) {
+<b class="fc"><i>116</i>&nbsp;        return new TreeSet&lt;&gt;(collection);</b>
+<i>117</i>&nbsp;    }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; safeSortedSet(Iterator&lt;V&gt; iterator) {
+<b class="fc"><i>121</i>&nbsp;        NavigableSet&lt;V&gt; set = new ConcurrentSkipListSet&lt;&gt;();</b>
+<b class="fc"><i>122</i>&nbsp;        while (iterator.hasNext()) {</b>
+<b class="fc"><i>123</i>&nbsp;            set.add(iterator.next());</b>
+<i>124</i>&nbsp;        }
+<b class="fc"><i>125</i>&nbsp;        return set;</b>
+<i>126</i>&nbsp;    }
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; safeSortedSet(Class&lt;V&gt; clazz) {
+<b class="fc"><i>129</i>&nbsp;        return new ConcurrentSkipListSet&lt;&gt;();</b>
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; safeSortedSet(Iterable&lt;V&gt; iterable) {
+<b class="fc"><i>133</i>&nbsp;        NavigableSet&lt;V&gt; set = new ConcurrentSkipListSet&lt;&gt;();</b>
+<b class="fc"><i>134</i>&nbsp;        for (V o : iterable) {</b>
+<b class="fc"><i>135</i>&nbsp;            set.add(o);</b>
+<b class="fc"><i>136</i>&nbsp;        }</b>
+<b class="fc"><i>137</i>&nbsp;        return set;</b>
+<i>138</i>&nbsp;    }
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; safeSortedSet(Enumeration&lt;V&gt; enumeration) {
+<b class="fc"><i>141</i>&nbsp;        NavigableSet&lt;V&gt; set = new ConcurrentSkipListSet&lt;&gt;();</b>
+<b class="fc"><i>142</i>&nbsp;        while (enumeration.hasMoreElements()) {</b>
+<b class="fc"><i>143</i>&nbsp;            set.add(enumeration.nextElement());</b>
+<i>144</i>&nbsp;        }
+<b class="fc"><i>145</i>&nbsp;        return set;</b>
+<i>146</i>&nbsp;    }
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;    @SafeVarargs
+<i>149</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; safeSortedSet(final V... array) {
+<i>150</i>&nbsp;
+<b class="fc"><i>151</i>&nbsp;        NavigableSet &lt;V&gt; set = new ConcurrentSkipListSet&lt;&gt;();</b>
+<i>152</i>&nbsp;
+<b class="fc"><i>153</i>&nbsp;        for (V v : array) {</b>
+<b class="fc"><i>154</i>&nbsp;            set.add(v);</b>
+<i>155</i>&nbsp;        }
+<b class="fc"><i>156</i>&nbsp;        return set;</b>
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    }
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; safeSortedSet(Collection&lt;V&gt; collection) {
+<b class="fc"><i>162</i>&nbsp;        return new ConcurrentSkipListSet&lt;&gt;(collection);</b>
+<i>163</i>&nbsp;    }
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; safeSet(Class&lt;V&gt; clazz) {
+<b class="fc"><i>166</i>&nbsp;        return new CopyOnWriteArraySet&lt;&gt;();</b>
+<i>167</i>&nbsp;    }
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; safeSet(Iterable&lt;V&gt; iterable) {
+<b class="fc"><i>170</i>&nbsp;        Set&lt;V&gt; set = new CopyOnWriteArraySet&lt;&gt;();</b>
+<b class="fc"><i>171</i>&nbsp;        for (V o : iterable) {</b>
+<b class="fc"><i>172</i>&nbsp;            set.add(o);</b>
+<b class="fc"><i>173</i>&nbsp;        }</b>
+<b class="fc"><i>174</i>&nbsp;        return set;</b>
+<i>175</i>&nbsp;    }
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; safeSet(Enumeration&lt;V&gt; enumeration) {
+<b class="fc"><i>178</i>&nbsp;        Set&lt;V&gt; set = new CopyOnWriteArraySet&lt;&gt;();</b>
+<b class="fc"><i>179</i>&nbsp;        while (enumeration.hasMoreElements()) {</b>
+<b class="fc"><i>180</i>&nbsp;            set.add(enumeration.nextElement());</b>
+<i>181</i>&nbsp;        }
+<b class="fc"><i>182</i>&nbsp;        return set;</b>
+<i>183</i>&nbsp;    }
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; safeSet(Iterator&lt;V&gt; iterator) {
+<b class="fc"><i>187</i>&nbsp;        Set&lt;V&gt; set = new CopyOnWriteArraySet&lt;&gt;();</b>
+<b class="fc"><i>188</i>&nbsp;        while (iterator.hasNext()) {</b>
+<b class="fc"><i>189</i>&nbsp;            set.add(iterator.next());</b>
+<i>190</i>&nbsp;        }
+<b class="fc"><i>191</i>&nbsp;        return set;</b>
+<i>192</i>&nbsp;    }
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;    @SafeVarargs
+<i>196</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; safeSet(final V... array) {
+<b class="fc"><i>197</i>&nbsp;        Set &lt;V&gt; set = new CopyOnWriteArraySet&lt;&gt;();</b>
+<i>198</i>&nbsp;
+<b class="fc"><i>199</i>&nbsp;        for (V v : array) {</b>
+<b class="fc"><i>200</i>&nbsp;            set.add(v);</b>
+<i>201</i>&nbsp;        }
+<b class="fc"><i>202</i>&nbsp;        return set;</b>
+<i>203</i>&nbsp;    }
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; safeSet(Collection&lt;V&gt; collection) {
+<b class="fc"><i>206</i>&nbsp;        return new CopyOnWriteArraySet&lt;&gt;(collection);</b>
+<i>207</i>&nbsp;    }
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;    @Universal
+<i>211</i>&nbsp;    public static int len(Set&lt;?&gt; set) {
+<b class="fc"><i>212</i>&nbsp;        return set.size();</b>
+<i>213</i>&nbsp;    }
+<i>214</i>&nbsp;
+<i>215</i>&nbsp;    @Universal
+<i>216</i>&nbsp;    public static &lt;V&gt; boolean in(V value, Set&lt;?&gt; set) {
+<b class="fc"><i>217</i>&nbsp;        return set.contains(value);</b>
+<i>218</i>&nbsp;    }
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;    @Universal
+<i>221</i>&nbsp;    public static &lt;V&gt; void add(Set&lt;V&gt; set, V value) {
+<b class="fc"><i>222</i>&nbsp;        set.add(value);</b>
+<b class="fc"><i>223</i>&nbsp;    }</b>
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;    @Universal
+<i>226</i>&nbsp;    public static &lt;T&gt; T idx(NavigableSet&lt;T&gt; set, final T index) {
+<i>227</i>&nbsp;
+<b class="fc"><i>228</i>&nbsp;        return set.higher(index);</b>
+<i>229</i>&nbsp;    }
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;    @Universal
+<i>232</i>&nbsp;    public static &lt;T&gt; T idx(Set&lt;T&gt; set, final T index) {
+<i>233</i>&nbsp;
+<b class="fc"><i>234</i>&nbsp;        if (set instanceof NavigableSet) {</b>
+<b class="fc"><i>235</i>&nbsp;            return idx((NavigableSet&lt;T&gt;)set, index);</b>
+<i>236</i>&nbsp;        } else {
+<b class="nc"><i>237</i>&nbsp;            throw new IllegalArgumentException(&quot;Set must be a NavigableSet for idx operation to work&quot;);</b>
+<i>238</i>&nbsp;        }
+<i>239</i>&nbsp;    }
+<i>240</i>&nbsp;
+<i>241</i>&nbsp;    public static &lt;T&gt; T after(NavigableSet&lt;T&gt; set, final T index) {
+<i>242</i>&nbsp;
+<b class="fc"><i>243</i>&nbsp;        return set.higher(index);</b>
+<i>244</i>&nbsp;    }
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;    public static &lt;T&gt; T before(NavigableSet&lt;T&gt; set, final T index) {
+<i>247</i>&nbsp;
+<b class="fc"><i>248</i>&nbsp;        return set.lower(index);</b>
+<i>249</i>&nbsp;    }
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;    @Universal
+<i>252</i>&nbsp;    public static &lt;V&gt; SortedSet&lt;V&gt; slc(NavigableSet&lt;V&gt; set, V startIndex, V endIndex) {
+<b class="fc"><i>253</i>&nbsp;        return set.subSet(startIndex, endIndex);</b>
+<i>254</i>&nbsp;    }
+<i>255</i>&nbsp;
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    @Universal
+<i>258</i>&nbsp;    public static &lt;V&gt; SortedSet&lt;V&gt; slcEnd(NavigableSet&lt;V&gt; set, V fromIndex) {
+<b class="fc"><i>259</i>&nbsp;        return set.tailSet(fromIndex);</b>
+<i>260</i>&nbsp;    }
+<i>261</i>&nbsp;
+<i>262</i>&nbsp;
+<i>263</i>&nbsp;    @Universal
+<i>264</i>&nbsp;    public static &lt;V&gt; SortedSet&lt;V&gt; slc(NavigableSet&lt;V&gt; set, V toIndex) {
+<b class="fc"><i>265</i>&nbsp;        return set.headSet(toIndex);</b>
+<i>266</i>&nbsp;    }
+<i>267</i>&nbsp;
+<i>268</i>&nbsp;    @Universal
+<i>269</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; copy(HashSet&lt;V&gt; collection) {
+<b class="fc"><i>270</i>&nbsp;        return new LinkedHashSet&lt;&gt;(collection);</b>
+<i>271</i>&nbsp;    }
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;    @Universal
+<i>274</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; copy(TreeSet&lt;V&gt; collection) {
+<b class="fc"><i>275</i>&nbsp;        return new TreeSet&lt;&gt;(collection);</b>
+<i>276</i>&nbsp;    }
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;    @Universal
+<i>279</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; copy(CopyOnWriteArraySet&lt;V&gt; collection) {
+<b class="fc"><i>280</i>&nbsp;        return new CopyOnWriteArraySet&lt;&gt;(collection);</b>
+<i>281</i>&nbsp;    }
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;    @Universal
+<i>284</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; copy(ConcurrentSkipListSet&lt;V&gt; collection) {
+<b class="fc"><i>285</i>&nbsp;        return new ConcurrentSkipListSet&lt;&gt;(collection);</b>
+<i>286</i>&nbsp;    }
+<i>287</i>&nbsp;
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;    @Universal
+<i>290</i>&nbsp;    public static &lt;V&gt; NavigableSet&lt;V&gt; copy(NavigableSet&lt;V&gt; collection) {
+<b class="fc"><i>291</i>&nbsp;        if (collection instanceof ConcurrentSkipListSet)  {</b>
+<b class="fc"><i>292</i>&nbsp;            return copy( (ConcurrentSkipListSet&lt;V&gt;) collection );</b>
+<i>293</i>&nbsp;        } else {
+<b class="fc"><i>294</i>&nbsp;            return copy( (TreeSet&lt;V&gt;) collection );</b>
+<i>295</i>&nbsp;        }
+<i>296</i>&nbsp;    }
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;
+<i>299</i>&nbsp;    @Universal
+<i>300</i>&nbsp;    public static &lt;V&gt; Set&lt;V&gt; copy(Set&lt;V&gt; collection) {
+<b class="fc"><i>301</i>&nbsp;        if ( collection instanceof NavigableSet ) {</b>
+<i>302</i>&nbsp;
+<b class="fc"><i>303</i>&nbsp;            return copy( (NavigableSet&lt;V&gt;) collection );</b>
+<i>304</i>&nbsp;
+<i>305</i>&nbsp;
+<b class="fc"><i>306</i>&nbsp;        } else if ( collection instanceof CopyOnWriteArraySet)  {</b>
+<i>307</i>&nbsp;
+<b class="fc"><i>308</i>&nbsp;            return copy( (CopyOnWriteArraySet&lt;V&gt;) collection );</b>
+<i>309</i>&nbsp;
+<i>310</i>&nbsp;        } else {
+<i>311</i>&nbsp;
+<b class="fc"><i>312</i>&nbsp;            return copy( (LinkedHashSet&lt;V&gt;) collection );</b>
+<i>313</i>&nbsp;        }
+<i>314</i>&nbsp;    }
+<i>315</i>&nbsp;
+<i>316</i>&nbsp;
+<i>317</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

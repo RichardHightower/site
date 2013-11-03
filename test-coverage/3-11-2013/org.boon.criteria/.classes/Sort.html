@@ -1,0 +1,244 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Sort</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.criteria</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Sort (org.boon.criteria)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Sort</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55%
+  </span>
+  <span class="absValue">
+    (11/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59%
+  </span>
+  <span class="absValue">
+    (36/ 61)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.criteria;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import java.util.*;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import org.boon.core.reflection.fields.FieldAccess;
+<i>7</i>&nbsp;import org.boon.core.reflection.Reflection;
+<i>8</i>&nbsp;import org.boon.Ordering;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public class Sort {
+<i>12</i>&nbsp;
+<b class="fc"><i>13</i>&nbsp;    private String name = &quot;this&quot;;</b>
+<i>14</i>&nbsp;    private SortType type;
+<b class="fc"><i>15</i>&nbsp;    private List&lt;Sort&gt; sorts = new ArrayList&lt;&gt;();</b>
+<i>16</i>&nbsp;    private String toString;
+<i>17</i>&nbsp;    private int hashCode;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    private List&lt;Comparator&gt; comparators;
+<i>21</i>&nbsp;    private Comparator comparator;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    public static Sort sorts(Sort... sorts) {
+<b class="nc"><i>24</i>&nbsp;        if (sorts == null || sorts.length == 0) {</b>
+<b class="nc"><i>25</i>&nbsp;            return null;</b>
+<i>26</i>&nbsp;        }
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;        Sort main = sorts[0];</b>
+<b class="nc"><i>29</i>&nbsp;        for (int index = 1; index &lt; sorts.length; index++) {</b>
+<b class="nc"><i>30</i>&nbsp;            main.then(sorts[index]);</b>
+<i>31</i>&nbsp;        }
+<b class="nc"><i>32</i>&nbsp;        return main;</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public static Sort asc(String name) {
+<b class="fc"><i>36</i>&nbsp;        return new Sort(name, SortType.ASCENDING);</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    public static Sort desc(String name) {
+<b class="nc"><i>41</i>&nbsp;        return new Sort(name, SortType.DESCENDING);</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;    public Sort() {</b>
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<b class="fc"><i>47</i>&nbsp;    public Sort(String name, SortType type) {</b>
+<b class="fc"><i>48</i>&nbsp;        this.name = name;</b>
+<b class="fc"><i>49</i>&nbsp;        this.type = type;</b>
+<b class="fc"><i>50</i>&nbsp;        this.hashCode = doHashCode();</b>
+<b class="fc"><i>51</i>&nbsp;        this.toString = doToString();</b>
+<b class="fc"><i>52</i>&nbsp;    }</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    public SortType getType() {
+<b class="fc"><i>55</i>&nbsp;        return type;</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public String getName() {
+<b class="fc"><i>59</i>&nbsp;        return name;</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    private String doToString() {
+<b class="fc"><i>63</i>&nbsp;        return &quot;Sort{&quot; +</b>
+<i>64</i>&nbsp;                &quot;name=&#39;&quot; + name + &#39;\&#39;&#39; +
+<i>65</i>&nbsp;                &quot;, type=&quot; + type +
+<i>66</i>&nbsp;                &#39;}&#39;;
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    public Sort then(Sort sort) {
+<b class="nc"><i>71</i>&nbsp;        this.sorts.add(sort);</b>
+<b class="nc"><i>72</i>&nbsp;        return this;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public Sort then(String name) {
+<b class="fc"><i>76</i>&nbsp;        this.sorts.add(new Sort(name, SortType.ASCENDING));</b>
+<b class="fc"><i>77</i>&nbsp;        return this;</b>
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    public Sort thenAsc(String name) {
+<b class="nc"><i>81</i>&nbsp;        this.sorts.add(new Sort(name, SortType.ASCENDING));</b>
+<b class="nc"><i>82</i>&nbsp;        return this;</b>
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    public Sort thenDesc(String name) {
+<b class="nc"><i>86</i>&nbsp;        this.sorts.add(new Sort(name, SortType.DESCENDING));</b>
+<b class="nc"><i>87</i>&nbsp;        return this;</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    @Override
+<i>91</i>&nbsp;    public String toString() {
+<b class="nc"><i>92</i>&nbsp;        return toString;</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    @Override
+<i>96</i>&nbsp;    public boolean equals(Object o) {
+<b class="nc"><i>97</i>&nbsp;        if (this == o) return true;</b>
+<b class="nc"><i>98</i>&nbsp;        if (!(o instanceof Sort)) return false;</b>
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;        Sort sort = (Sort) o;</b>
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        if (!name.equals(sort.name)) return false;</b>
+<b class="nc"><i>103</i>&nbsp;        if (type != sort.type) return false;</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        return true;</b>
+<i>106</i>&nbsp;    }
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;    private int doHashCode() {
+<b class="fc"><i>109</i>&nbsp;        int result = name.hashCode();</b>
+<b class="fc"><i>110</i>&nbsp;        result = 31 * result + type.hashCode();</b>
+<b class="fc"><i>111</i>&nbsp;        return result;</b>
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    @Override
+<i>116</i>&nbsp;    public int hashCode() {
+<b class="nc"><i>117</i>&nbsp;        return hashCode;</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    public void sort(List list, Map&lt;String, FieldAccess&gt; fields) {
+<b class="nc"><i>121</i>&nbsp;        Collections.sort(list, this.comparator(fields));</b>
+<b class="nc"><i>122</i>&nbsp;    }</b>
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    public void sort(List list) {
+<b class="fc"><i>126</i>&nbsp;        if (list == null || list.size() == 0) {</b>
+<b class="fc"><i>127</i>&nbsp;            return;</b>
+<i>128</i>&nbsp;        }
+<i>129</i>&nbsp;
+<b class="fc"><i>130</i>&nbsp;        Object item = list.iterator().next();</b>
+<i>131</i>&nbsp;
+<b class="fc"><i>132</i>&nbsp;        Map&lt;String, FieldAccess&gt; fields = Reflection.getFieldsFromObject(item);</b>
+<b class="fc"><i>133</i>&nbsp;        Collections.sort(list, this.comparator(fields));</b>
+<b class="fc"><i>134</i>&nbsp;    }</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;    public Comparator comparator(Map&lt;String, FieldAccess&gt; fields) {
+<b class="fc"><i>137</i>&nbsp;        if (comparator == null) {</b>
+<b class="fc"><i>138</i>&nbsp;            comparator = Ordering.universalComparator(this.getName(), fields,</b>
+<b class="fc"><i>139</i>&nbsp;                    this.getType() == SortType.ASCENDING, this.childComparators(fields));</b>
+<i>140</i>&nbsp;        }
+<b class="fc"><i>141</i>&nbsp;        return comparator;</b>
+<i>142</i>&nbsp;    }
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;    private List&lt;Comparator&gt; childComparators(Map&lt;String, FieldAccess&gt; fields) {
+<b class="fc"><i>145</i>&nbsp;        if (this.comparators == null) {</b>
+<b class="fc"><i>146</i>&nbsp;            this.comparators = new ArrayList&lt;Comparator&gt;(this.sorts.size() + 1);</b>
+<i>147</i>&nbsp;
+<b class="fc"><i>148</i>&nbsp;            for (Sort sort : sorts) {</b>
+<b class="fc"><i>149</i>&nbsp;                Comparator comparator = Ordering.universalComparator(</b>
+<b class="fc"><i>150</i>&nbsp;                        sort.getName(),</b>
+<i>151</i>&nbsp;                        fields,
+<i>152</i>&nbsp;                        sort.type == SortType.ASCENDING,
+<b class="fc"><i>153</i>&nbsp;                        sort.childComparators(fields)</b>
+<i>154</i>&nbsp;                );
+<b class="fc"><i>155</i>&nbsp;                this.comparators.add(comparator);</b>
+<b class="fc"><i>156</i>&nbsp;            }</b>
+<i>157</i>&nbsp;        }
+<b class="fc"><i>158</i>&nbsp;        return this.comparators;</b>
+<i>159</i>&nbsp;    }
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

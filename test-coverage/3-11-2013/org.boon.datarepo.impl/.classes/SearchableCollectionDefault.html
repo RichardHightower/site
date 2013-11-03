@@ -1,0 +1,770 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SearchableCollectionDefault</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SearchableCollectionDefault (org.boon.datarepo.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SearchableCollectionDefault</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    43.5%
+  </span>
+  <span class="absValue">
+    (27/ 62)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35%
+  </span>
+  <span class="absValue">
+    (112/ 320)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.datarepo.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.datarepo.Filter;
+<i>4</i>&nbsp;import org.boon.datarepo.LookupIndex;
+<i>5</i>&nbsp;import org.boon.datarepo.ResultSet;
+<i>6</i>&nbsp;import org.boon.datarepo.SearchableCollection;
+<i>7</i>&nbsp;import org.boon.datarepo.impl.indexes.UniqueLookupIndex;
+<i>8</i>&nbsp;import org.boon.criteria.Criteria;
+<i>9</i>&nbsp;import org.boon.criteria.Selector;
+<i>10</i>&nbsp;import org.boon.criteria.Sort;
+<i>11</i>&nbsp;import org.boon.criteria.Visitor;
+<i>12</i>&nbsp;import org.boon.datarepo.spi.FilterComposer;
+<i>13</i>&nbsp;import org.boon.datarepo.spi.SearchIndex;
+<i>14</i>&nbsp;import org.boon.datarepo.spi.SearchableCollectionComposer;
+<i>15</i>&nbsp;import org.boon.predicates.Function;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import java.util.*;
+<i>19</i>&nbsp;import java.util.logging.Logger;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import org.boon.core.reflection.fields.FieldAccess;
+<i>23</i>&nbsp;import org.boon.core.reflection.Reflection;
+<i>24</i>&nbsp;import static org.boon.Lists.list;
+<i>25</i>&nbsp;import static org.boon.core.reflection.Reflection.toMap;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;import static org.boon.core.reflection.Reflection.isArray;
+<i>28</i>&nbsp;
+<b class="fc"><i>29</i>&nbsp;public class SearchableCollectionDefault&lt;KEY, ITEM&gt; implements SearchableCollection&lt;KEY, ITEM&gt;, SearchableCollectionComposer {</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<b class="fc"><i>32</i>&nbsp;    private Logger log = Logger.getLogger(RepoDefault.class.getName());</b>
+<i>33</i>&nbsp;
+<b class="fc"><i>34</i>&nbsp;    protected Map&lt;String, LookupIndex&gt; lookupIndexMap = new LinkedHashMap&lt;&gt;();</b>
+<b class="fc"><i>35</i>&nbsp;    protected Map&lt;String, SearchIndex&gt; searchIndexMap = new LinkedHashMap&lt;&gt;();</b>
+<b class="fc"><i>36</i>&nbsp;    protected List&lt;LookupIndex&gt; indexes = new ArrayList&lt;LookupIndex&gt;();</b>
+<i>37</i>&nbsp;    protected Filter filter;
+<i>38</i>&nbsp;
+<b class="fc"><i>39</i>&nbsp;    protected Map&lt;String, FieldAccess&gt; fields = new LinkedHashMap&lt;&gt;();</b>
+<i>40</i>&nbsp;    protected UniqueLookupIndex&lt;KEY, ITEM&gt; primaryIndex;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    protected Function&lt;ITEM, KEY&gt; primaryKeyGetter;
+<i>43</i>&nbsp;    protected String primaryKeyName;
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;
+<b class="fc"><i>46</i>&nbsp;    protected boolean removeDuplication = true;</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public boolean delete(ITEM item) {
+<b class="fc"><i>51</i>&nbsp;        for (LookupIndex index : indexes) {</b>
+<b class="fc"><i>52</i>&nbsp;            index.delete((ITEM) item);</b>
+<b class="fc"><i>53</i>&nbsp;        }</b>
+<b class="fc"><i>54</i>&nbsp;        return true;</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    public boolean add(ITEM item) {
+<b class="fc"><i>58</i>&nbsp;        for (LookupIndex index : indexes) {</b>
+<b class="fc"><i>59</i>&nbsp;            index.add(item);</b>
+<b class="fc"><i>60</i>&nbsp;        }</b>
+<b class="fc"><i>61</i>&nbsp;        return true;</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    public ITEM get(KEY key) {
+<b class="fc"><i>66</i>&nbsp;        LookupIndex lookupIndex = primaryIndex;</b>
+<b class="fc"><i>67</i>&nbsp;        return (ITEM) lookupIndex.get(key);</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    public KEY getKey(ITEM item) {
+<b class="fc"><i>71</i>&nbsp;        return (KEY) this.primaryKeyGetter.apply(item);</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public void setRemoveDuplication(boolean removeDuplication) {
+<b class="fc"><i>76</i>&nbsp;        this.removeDuplication = removeDuplication;</b>
+<b class="fc"><i>77</i>&nbsp;    }</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    @Override
+<i>80</i>&nbsp;    public int count(KEY key, String property, int value) {
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>85</i>&nbsp;            throw new IllegalStateException(String.format(</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;            &quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +
+<b class="nc"><i>88</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));</b>
+<i>89</i>&nbsp;        }
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        return index.count(key);</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    @Override
+<i>96</i>&nbsp;    public int count(KEY key, String property, short value) {
+<b class="nc"><i>97</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>100</i>&nbsp;            throw new IllegalStateException(String.format(&quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +</b>
+<b class="nc"><i>101</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));</b>
+<i>102</i>&nbsp;        }
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;        return index.count(key);</b>
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    @Override
+<i>108</i>&nbsp;    public int count(KEY key, String property, byte value) {
+<b class="nc"><i>109</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>110</i>&nbsp;
+<b class="nc"><i>111</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>112</i>&nbsp;            throw new IllegalStateException(String.format(&quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +</b>
+<b class="nc"><i>113</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));</b>
+<i>114</i>&nbsp;        }
+<i>115</i>&nbsp;
+<b class="nc"><i>116</i>&nbsp;        return index.count(key);</b>
+<i>117</i>&nbsp;    }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    @Override
+<i>120</i>&nbsp;    public int count(KEY key, String property, long value) {
+<b class="nc"><i>121</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>124</i>&nbsp;            throw new IllegalStateException(</b>
+<b class="nc"><i>125</i>&nbsp;                    String.format(&quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +</b>
+<b class="nc"><i>126</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));</b>
+<i>127</i>&nbsp;        }
+<i>128</i>&nbsp;
+<b class="nc"><i>129</i>&nbsp;        return index.count(key);</b>
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    @Override
+<i>133</i>&nbsp;    public int count(KEY key, String property, char value) {
+<b class="nc"><i>134</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>135</i>&nbsp;
+<b class="nc"><i>136</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>137</i>&nbsp;            throw new IllegalStateException(</b>
+<b class="nc"><i>138</i>&nbsp;                    String.format(&quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +</b>
+<b class="nc"><i>139</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));</b>
+<i>140</i>&nbsp;        }
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;        return index.count(key);</b>
+<i>143</i>&nbsp;    }
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    @Override
+<i>146</i>&nbsp;    public int count(KEY key, String property, float value) {
+<b class="nc"><i>147</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>148</i>&nbsp;
+<b class="nc"><i>149</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>150</i>&nbsp;            throw new IllegalStateException(</b>
+<b class="nc"><i>151</i>&nbsp;                    String.format(&quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +</b>
+<b class="nc"><i>152</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));</b>
+<i>153</i>&nbsp;        }
+<i>154</i>&nbsp;
+<b class="nc"><i>155</i>&nbsp;        return index.count(key);</b>
+<i>156</i>&nbsp;    }
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    @Override
+<i>159</i>&nbsp;    public int count(KEY key, String property, double value) {
+<b class="nc"><i>160</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>161</i>&nbsp;
+<b class="nc"><i>162</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>163</i>&nbsp;            throw new IllegalStateException(</b>
+<b class="nc"><i>164</i>&nbsp;                    String.format(&quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +</b>
+<b class="nc"><i>165</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));</b>
+<i>166</i>&nbsp;        }
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;        return index.count(key);</b>
+<i>169</i>&nbsp;    }
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    @Override
+<i>172</i>&nbsp;    public int count(KEY key, String property, Object value) {
+<b class="nc"><i>173</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<i>174</i>&nbsp;
+<b class="nc"><i>175</i>&nbsp;        if (index == null) {</b>
+<b class="nc"><i>176</i>&nbsp;            throw new IllegalStateException(</b>
+<b class="nc"><i>177</i>&nbsp;                    String.format(&quot;No searchIndex was found so you can&#39;t do a count for \n &quot; +</b>
+<i>178</i>&nbsp;                    &quot;key %s \t property %s \t set %s&quot;, key, property, value));
+<i>179</i>&nbsp;        }
+<i>180</i>&nbsp;
+<b class="nc"><i>181</i>&nbsp;        return index.count(key);</b>
+<i>182</i>&nbsp;    }
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;    @Override
+<i>185</i>&nbsp;    public &lt;T&gt; T max(KEY key, String property, Class&lt;T&gt; type) {
+<b class="nc"><i>186</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>187</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>188</i>&nbsp;            ITEM item = (ITEM) index.max();</b>
+<b class="nc"><i>189</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>190</i>&nbsp;                return (T) this.fields.get(property).getValue(item);</b>
+<i>191</i>&nbsp;            }
+<i>192</i>&nbsp;        }
+<b class="nc"><i>193</i>&nbsp;        return null;</b>
+<i>194</i>&nbsp;    }
+<i>195</i>&nbsp;
+<i>196</i>&nbsp;    @Override
+<i>197</i>&nbsp;    public String maxString(KEY key, String property) {
+<b class="nc"><i>198</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>199</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>200</i>&nbsp;            ITEM item = (ITEM) index.max();</b>
+<b class="nc"><i>201</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>202</i>&nbsp;                return (String) this.fields.get(property).getObject(item);</b>
+<i>203</i>&nbsp;            }
+<i>204</i>&nbsp;        }
+<b class="nc"><i>205</i>&nbsp;        return null;</b>
+<i>206</i>&nbsp;    }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    @Override
+<i>209</i>&nbsp;    public Number maxNumber(KEY key, String property) {
+<b class="nc"><i>210</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>211</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>212</i>&nbsp;            ITEM item = (ITEM) index.max();</b>
+<b class="nc"><i>213</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>214</i>&nbsp;                return (Number) this.fields.get(property).getValue(item);</b>
+<i>215</i>&nbsp;            }
+<i>216</i>&nbsp;        }
+<b class="nc"><i>217</i>&nbsp;        return Double.NaN;</b>
+<i>218</i>&nbsp;    }
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;    @Override
+<i>221</i>&nbsp;    public int maxInt(KEY key, String property) {
+<b class="nc"><i>222</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>223</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>224</i>&nbsp;            ITEM item = (ITEM) index.max();</b>
+<b class="nc"><i>225</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>226</i>&nbsp;                return this.fields.get(property).getInt(item);</b>
+<i>227</i>&nbsp;            }
+<i>228</i>&nbsp;        }
+<b class="nc"><i>229</i>&nbsp;        return Integer.MIN_VALUE;</b>
+<i>230</i>&nbsp;    }
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;    @Override
+<i>233</i>&nbsp;    public long maxLong(KEY key, String property) {
+<b class="nc"><i>234</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>235</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>236</i>&nbsp;            ITEM item = (ITEM) index.max();</b>
+<b class="nc"><i>237</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>238</i>&nbsp;                FieldAccess field = this.fields.get(property);</b>
+<i>239</i>&nbsp;
+<b class="nc"><i>240</i>&nbsp;                if (field.getType() == long.class) {</b>
+<b class="nc"><i>241</i>&nbsp;                    return field.getLong(item);</b>
+<i>242</i>&nbsp;                }
+<i>243</i>&nbsp;            }
+<i>244</i>&nbsp;        }
+<b class="nc"><i>245</i>&nbsp;        return Long.MIN_VALUE;</b>
+<i>246</i>&nbsp;    }
+<i>247</i>&nbsp;
+<i>248</i>&nbsp;    @Override
+<i>249</i>&nbsp;    public double maxDouble(KEY key, String property) {
+<b class="nc"><i>250</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>251</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>252</i>&nbsp;            ITEM item = (ITEM) index.max();</b>
+<b class="nc"><i>253</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>254</i>&nbsp;                return this.fields.get(property).getDouble(item);</b>
+<i>255</i>&nbsp;            }
+<i>256</i>&nbsp;        }
+<b class="nc"><i>257</i>&nbsp;        return Integer.MIN_VALUE;</b>
+<i>258</i>&nbsp;    }
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    @Override
+<i>261</i>&nbsp;    public &lt;T&gt; T min(KEY key, String property, Class&lt;T&gt; type) {
+<b class="nc"><i>262</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>263</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>264</i>&nbsp;            ITEM item = (ITEM) index.min();</b>
+<b class="nc"><i>265</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>266</i>&nbsp;                return (T) this.fields.get(property).getValue(item);</b>
+<i>267</i>&nbsp;            }
+<i>268</i>&nbsp;        }
+<b class="nc"><i>269</i>&nbsp;        return null;</b>
+<i>270</i>&nbsp;    }
+<i>271</i>&nbsp;
+<i>272</i>&nbsp;    @Override
+<i>273</i>&nbsp;    public String minString(KEY key, String property) {
+<b class="nc"><i>274</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>275</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>276</i>&nbsp;            ITEM item = (ITEM) index.min();</b>
+<b class="nc"><i>277</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>278</i>&nbsp;                return (String) this.fields.get(property).getObject(item);</b>
+<i>279</i>&nbsp;            }
+<i>280</i>&nbsp;        }
+<b class="nc"><i>281</i>&nbsp;        return &quot;&quot;;</b>
+<i>282</i>&nbsp;    }
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;    @Override
+<i>285</i>&nbsp;    public Number minNumber(KEY key, String property) {
+<b class="nc"><i>286</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>287</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>288</i>&nbsp;            ITEM item = (ITEM) index.min();</b>
+<b class="nc"><i>289</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>290</i>&nbsp;                return (Number) this.fields.get(property).getValue(item);</b>
+<i>291</i>&nbsp;            }
+<i>292</i>&nbsp;        }
+<b class="nc"><i>293</i>&nbsp;        return Double.NaN;</b>
+<i>294</i>&nbsp;    }
+<i>295</i>&nbsp;
+<i>296</i>&nbsp;    @Override
+<i>297</i>&nbsp;    public int minInt(KEY key, String property) {
+<b class="nc"><i>298</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>299</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>300</i>&nbsp;            ITEM item = (ITEM) index.min();</b>
+<b class="nc"><i>301</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>302</i>&nbsp;                return this.fields.get(property).getInt(item);</b>
+<i>303</i>&nbsp;            }
+<i>304</i>&nbsp;        }
+<b class="nc"><i>305</i>&nbsp;        return Integer.MAX_VALUE;</b>
+<i>306</i>&nbsp;    }
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;    @Override
+<i>309</i>&nbsp;    public long minLong(KEY key, String property) {
+<b class="nc"><i>310</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>311</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>312</i>&nbsp;            ITEM item = (ITEM) index.min();</b>
+<b class="nc"><i>313</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>314</i>&nbsp;                FieldAccess field = this.fields.get(property);</b>
+<i>315</i>&nbsp;
+<b class="nc"><i>316</i>&nbsp;                if (field.getType() == long.class) {</b>
+<b class="nc"><i>317</i>&nbsp;                    return field.getLong(item);</b>
+<i>318</i>&nbsp;                }
+<i>319</i>&nbsp;            }
+<i>320</i>&nbsp;        }
+<b class="nc"><i>321</i>&nbsp;        return Long.MAX_VALUE;</b>
+<i>322</i>&nbsp;    }
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;    @Override
+<i>325</i>&nbsp;    public double minDouble(KEY key, String property) {
+<b class="nc"><i>326</i>&nbsp;        SearchIndex index = this.searchIndexMap.get(property);</b>
+<b class="nc"><i>327</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>328</i>&nbsp;            ITEM item = (ITEM) index.min();</b>
+<b class="nc"><i>329</i>&nbsp;            if (item != null) {</b>
+<b class="nc"><i>330</i>&nbsp;                return this.fields.get(property).getDouble(item);</b>
+<i>331</i>&nbsp;            }
+<i>332</i>&nbsp;        }
+<b class="nc"><i>333</i>&nbsp;        return Double.MAX_VALUE;</b>
+<i>334</i>&nbsp;    }
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;    @Override
+<i>337</i>&nbsp;    public ResultSet&lt;ITEM&gt; results(Criteria... expressions) {
+<b class="fc"><i>338</i>&nbsp;        return this.filter.filter(expressions);</b>
+<i>339</i>&nbsp;    }
+<i>340</i>&nbsp;
+<i>341</i>&nbsp;    @Override
+<i>342</i>&nbsp;    public List&lt;ITEM&gt; query(Criteria... expressions) {
+<b class="fc"><i>343</i>&nbsp;        if (expressions == null || expressions.length == 0) {</b>
+<b class="fc"><i>344</i>&nbsp;            return this.all();</b>
+<i>345</i>&nbsp;        } else {
+<b class="fc"><i>346</i>&nbsp;            if (this.removeDuplication) {</b>
+<b class="fc"><i>347</i>&nbsp;                return (List&lt;ITEM&gt;) this.filter.filter(expressions).removeDuplication().asList();</b>
+<i>348</i>&nbsp;            } else {
+<b class="fc"><i>349</i>&nbsp;                return (List&lt;ITEM&gt;) this.filter.filter(expressions).asList();</b>
+<i>350</i>&nbsp;            }
+<i>351</i>&nbsp;        }
+<i>352</i>&nbsp;    }
+<i>353</i>&nbsp;
+<i>354</i>&nbsp;    @Override
+<i>355</i>&nbsp;    public List&lt;ITEM&gt; sortedQuery(final String sortBy, Criteria... expressions) {
+<b class="fc"><i>356</i>&nbsp;        Sort asc = Sort.asc(sortBy);</b>
+<b class="fc"><i>357</i>&nbsp;        return sortedQuery(asc, expressions);</b>
+<i>358</i>&nbsp;    }
+<i>359</i>&nbsp;
+<i>360</i>&nbsp;    @Override
+<i>361</i>&nbsp;    public List&lt;ITEM&gt; sortedQuery(Sort sortBy, Criteria... expressions) {
+<b class="fc"><i>362</i>&nbsp;        List&lt;ITEM&gt; results = this.query(expressions);</b>
+<b class="fc"><i>363</i>&nbsp;        sortBy.sort(results);</b>
+<b class="fc"><i>364</i>&nbsp;        return results;</b>
+<i>365</i>&nbsp;    }
+<i>366</i>&nbsp;
+<i>367</i>&nbsp;    @Override
+<i>368</i>&nbsp;    public List&lt;Map&lt;String, Object&gt;&gt; queryAsMaps(Criteria... expressions) {
+<b class="fc"><i>369</i>&nbsp;        List&lt;ITEM&gt; items = this.query(expressions);</b>
+<b class="fc"><i>370</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; results = new ArrayList&lt;&gt;(items.size());</b>
+<b class="fc"><i>371</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="fc"><i>372</i>&nbsp;            results.add(toMap(item));</b>
+<b class="fc"><i>373</i>&nbsp;        }</b>
+<b class="fc"><i>374</i>&nbsp;        return results;</b>
+<i>375</i>&nbsp;    }
+<i>376</i>&nbsp;
+<i>377</i>&nbsp;    @Override
+<i>378</i>&nbsp;    public List&lt;Map&lt;String, Object&gt;&gt; sortedQuery(final String sortBy, List&lt;Selector&gt; selectors, Criteria... expressions) {
+<i>379</i>&nbsp;
+<b class="fc"><i>380</i>&nbsp;        Sort asc = Sort.asc(sortBy);</b>
+<b class="fc"><i>381</i>&nbsp;        return sortedQuery(asc, selectors, expressions);</b>
+<i>382</i>&nbsp;    }
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;    @Override
+<i>385</i>&nbsp;    public List&lt;Map&lt;String, Object&gt;&gt; sortedQuery(Sort sortBy, List&lt;Selector&gt; selectors, Criteria... expressions) {
+<b class="fc"><i>386</i>&nbsp;        final List&lt;Map&lt;String, Object&gt;&gt; results = query(selectors, expressions);</b>
+<b class="fc"><i>387</i>&nbsp;        sortBy.sort(results);</b>
+<b class="fc"><i>388</i>&nbsp;        return results;</b>
+<i>389</i>&nbsp;    }
+<i>390</i>&nbsp;
+<i>391</i>&nbsp;    private void visit(KEY key, ITEM item, Visitor&lt;KEY, ITEM&gt; visitor, Object o, List&lt;String&gt; path, int levels) {
+<b class="fc"><i>392</i>&nbsp;        if (o == null) {</b>
+<b class="nc"><i>393</i>&nbsp;            return;</b>
+<i>394</i>&nbsp;        }
+<b class="fc"><i>395</i>&nbsp;        levels++;</b>
+<b class="fc"><i>396</i>&nbsp;        if (levels &gt; 20) {</b>
+<b class="nc"><i>397</i>&nbsp;            return;</b>
+<i>398</i>&nbsp;        }
+<b class="fc"><i>399</i>&nbsp;        visitor.visit(key, item, o, path);</b>
+<i>400</i>&nbsp;
+<i>401</i>&nbsp;
+<b class="fc"><i>402</i>&nbsp;        if (o.getClass().isPrimitive()) {</b>
+<b class="nc"><i>403</i>&nbsp;            return;</b>
+<i>404</i>&nbsp;        }
+<i>405</i>&nbsp;
+<i>406</i>&nbsp;
+<b class="fc"><i>407</i>&nbsp;        if (o.getClass().getName().startsWith(&quot;java&quot;)) {</b>
+<b class="fc"><i>408</i>&nbsp;            return;</b>
+<i>409</i>&nbsp;        }
+<i>410</i>&nbsp;
+<i>411</i>&nbsp;
+<b class="fc"><i>412</i>&nbsp;        if (isArray(o) || o instanceof Collection) {</b>
+<i>413</i>&nbsp;
+<b class="nc"><i>414</i>&nbsp;            int index = 0;</b>
+<b class="nc"><i>415</i>&nbsp;            Iterator iterator = Reflection.iterator(o);</b>
+<b class="nc"><i>416</i>&nbsp;            while (iterator.hasNext()) {</b>
+<b class="nc"><i>417</i>&nbsp;                path.add(String.format(&quot;[%s]&quot;, index));</b>
+<b class="nc"><i>418</i>&nbsp;                Object objectItem = iterator.next();</b>
+<b class="nc"><i>419</i>&nbsp;                visit(key, item, visitor, objectItem, path, levels);</b>
+<b class="nc"><i>420</i>&nbsp;                path.remove(path.size() - 1);</b>
+<b class="nc"><i>421</i>&nbsp;                index++;</b>
+<i>422</i>&nbsp;
+<b class="nc"><i>423</i>&nbsp;            }</b>
+<i>424</i>&nbsp;
+<i>425</i>&nbsp;        }
+<i>426</i>&nbsp;
+<b class="fc"><i>427</i>&nbsp;        Map&lt;String, FieldAccess&gt; accessorFields = Reflection.getAllAccessorFields(o.getClass());</b>
+<b class="fc"><i>428</i>&nbsp;        for (FieldAccess field : accessorFields.values()) {</b>
+<b class="fc"><i>429</i>&nbsp;            if (field.isStatic()) {</b>
+<b class="fc"><i>430</i>&nbsp;                continue;</b>
+<i>431</i>&nbsp;            }
+<b class="fc"><i>432</i>&nbsp;            path.add(field.getName());</b>
+<b class="fc"><i>433</i>&nbsp;            visit(key, item, visitor, field.getValue(o), path, levels);</b>
+<b class="fc"><i>434</i>&nbsp;            path.remove(path.size() - 1);</b>
+<i>435</i>&nbsp;
+<b class="fc"><i>436</i>&nbsp;        }</b>
+<i>437</i>&nbsp;
+<i>438</i>&nbsp;
+<b class="fc"><i>439</i>&nbsp;    }</b>
+<i>440</i>&nbsp;
+<i>441</i>&nbsp;    @Override
+<i>442</i>&nbsp;    public void query(Visitor&lt;KEY, ITEM&gt; visitor, Criteria... expressions) {
+<b class="fc"><i>443</i>&nbsp;        List&lt;ITEM&gt; items = this.query(expressions);</b>
+<b class="fc"><i>444</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="fc"><i>445</i>&nbsp;            KEY key = (KEY) this.primaryKeyGetter.apply(item);</b>
+<b class="fc"><i>446</i>&nbsp;            int levels = 0;</b>
+<b class="fc"><i>447</i>&nbsp;            visit(key, item, visitor, item, list(&quot;root&quot;), levels);</b>
+<b class="fc"><i>448</i>&nbsp;        }</b>
+<i>449</i>&nbsp;
+<b class="fc"><i>450</i>&nbsp;    }</b>
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;    @Override
+<i>453</i>&nbsp;    public void sortedQuery(Visitor&lt;KEY, ITEM&gt; visitor, String sortBy, Criteria... expressions) {
+<b class="nc"><i>454</i>&nbsp;        Sort asc = Sort.asc(sortBy);</b>
+<b class="nc"><i>455</i>&nbsp;        sortedQuery(visitor, asc, expressions);</b>
+<b class="nc"><i>456</i>&nbsp;    }</b>
+<i>457</i>&nbsp;
+<i>458</i>&nbsp;    @Override
+<i>459</i>&nbsp;    public void sortedQuery(Visitor&lt;KEY, ITEM&gt; visitor, Sort sortBy, Criteria... expressions) {
+<b class="nc"><i>460</i>&nbsp;        List&lt;ITEM&gt; items = this.sortedQuery(sortBy, expressions);</b>
+<b class="nc"><i>461</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="nc"><i>462</i>&nbsp;            KEY key = (KEY) this.primaryKeyGetter.apply(item);</b>
+<b class="nc"><i>463</i>&nbsp;            int levels = 0;</b>
+<b class="nc"><i>464</i>&nbsp;            visit(key, item, visitor, item, list(&quot;root&quot;), levels);</b>
+<b class="nc"><i>465</i>&nbsp;        }</b>
+<b class="nc"><i>466</i>&nbsp;    }</b>
+<i>467</i>&nbsp;
+<i>468</i>&nbsp;    @Override
+<i>469</i>&nbsp;    public List&lt;Map&lt;String, Object&gt;&gt; query(List&lt;Selector&gt; selectors, Criteria... expressions) {
+<i>470</i>&nbsp;
+<b class="fc"><i>471</i>&nbsp;        List&lt;ITEM&gt; results = this.query(expressions);</b>
+<i>472</i>&nbsp;
+<b class="fc"><i>473</i>&nbsp;        return Selector.performSelection(selectors, results, fields);</b>
+<i>474</i>&nbsp;    }
+<i>475</i>&nbsp;
+<i>476</i>&nbsp;
+<i>477</i>&nbsp;    public void invalidateIndex(String property, ITEM item) {
+<i>478</i>&nbsp;
+<i>479</i>&nbsp;
+<b class="fc"><i>480</i>&nbsp;        LookupIndex index = this.searchIndexMap.get(property);</b>
+<b class="fc"><i>481</i>&nbsp;        if (index != null) {</b>
+<b class="fc"><i>482</i>&nbsp;            index.delete(item);</b>
+<i>483</i>&nbsp;        }
+<i>484</i>&nbsp;
+<b class="fc"><i>485</i>&nbsp;        index = this.lookupIndexMap.get(property);</b>
+<b class="fc"><i>486</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>487</i>&nbsp;            index.delete(item);</b>
+<i>488</i>&nbsp;        }
+<b class="fc"><i>489</i>&nbsp;        filter.invalidate();</b>
+<i>490</i>&nbsp;
+<b class="fc"><i>491</i>&nbsp;    }</b>
+<i>492</i>&nbsp;
+<i>493</i>&nbsp;    public void validateIndex(String property, ITEM item) {
+<b class="fc"><i>494</i>&nbsp;        LookupIndex index = this.searchIndexMap.get(property);</b>
+<b class="fc"><i>495</i>&nbsp;        if (index != null) {</b>
+<b class="fc"><i>496</i>&nbsp;            index.add(item);</b>
+<i>497</i>&nbsp;        }
+<i>498</i>&nbsp;
+<b class="fc"><i>499</i>&nbsp;        index = this.lookupIndexMap.get(property);</b>
+<b class="fc"><i>500</i>&nbsp;        if (index != null) {</b>
+<b class="nc"><i>501</i>&nbsp;            index.add(item);</b>
+<i>502</i>&nbsp;        }
+<i>503</i>&nbsp;
+<b class="fc"><i>504</i>&nbsp;    }</b>
+<i>505</i>&nbsp;
+<i>506</i>&nbsp;
+<i>507</i>&nbsp;    @Override
+<i>508</i>&nbsp;    public void clear() {
+<b class="nc"><i>509</i>&nbsp;        for (LookupIndex index : indexes) {</b>
+<b class="nc"><i>510</i>&nbsp;            index.clear();</b>
+<b class="nc"><i>511</i>&nbsp;        }</b>
+<b class="nc"><i>512</i>&nbsp;    }</b>
+<i>513</i>&nbsp;
+<i>514</i>&nbsp;
+<i>515</i>&nbsp;    public void setFilter(Filter filter) {
+<b class="fc"><i>516</i>&nbsp;        this.filter = filter;</b>
+<b class="fc"><i>517</i>&nbsp;    }</b>
+<i>518</i>&nbsp;
+<i>519</i>&nbsp;
+<i>520</i>&nbsp;    public void addSearchIndex(String name, SearchIndex si) {
+<b class="fc"><i>521</i>&nbsp;        log.config(String.format(&quot;search index added name %s&quot;, name));</b>
+<b class="fc"><i>522</i>&nbsp;        searchIndexMap.put(name, si);</b>
+<b class="fc"><i>523</i>&nbsp;        indexes.add(si);</b>
+<b class="fc"><i>524</i>&nbsp;    }</b>
+<i>525</i>&nbsp;
+<i>526</i>&nbsp;    public void addLookupIndex(String name, LookupIndex si) {
+<b class="fc"><i>527</i>&nbsp;        log.config(String.format(&quot;lookup index added name %s&quot;, name));</b>
+<i>528</i>&nbsp;
+<b class="fc"><i>529</i>&nbsp;        lookupIndexMap.put(name, si);</b>
+<b class="fc"><i>530</i>&nbsp;        indexes.add(si);</b>
+<b class="fc"><i>531</i>&nbsp;    }</b>
+<i>532</i>&nbsp;
+<i>533</i>&nbsp;    public List&lt;ITEM&gt; all() {
+<b class="fc"><i>534</i>&nbsp;        return primaryIndex.all();</b>
+<i>535</i>&nbsp;    }
+<i>536</i>&nbsp;
+<i>537</i>&nbsp;
+<i>538</i>&nbsp;    public void setPrimaryKeyName(String primaryKey) {
+<b class="fc"><i>539</i>&nbsp;        this.primaryKeyName = primaryKey;</b>
+<b class="fc"><i>540</i>&nbsp;    }</b>
+<i>541</i>&nbsp;
+<i>542</i>&nbsp;    public Collection&lt;ITEM&gt; toCollection() {
+<b class="nc"><i>543</i>&nbsp;        return this.primaryIndex.toCollection();</b>
+<i>544</i>&nbsp;    }
+<i>545</i>&nbsp;
+<i>546</i>&nbsp;    public boolean isEmpty() {
+<b class="nc"><i>547</i>&nbsp;        return this.primaryIndex.toCollection().isEmpty();</b>
+<i>548</i>&nbsp;    }
+<i>549</i>&nbsp;
+<i>550</i>&nbsp;
+<i>551</i>&nbsp;    public Iterator&lt;ITEM&gt; iterator() {
+<b class="nc"><i>552</i>&nbsp;        return primaryIndex.toCollection().iterator();</b>
+<i>553</i>&nbsp;    }
+<i>554</i>&nbsp;
+<i>555</i>&nbsp;
+<i>556</i>&nbsp;    public Object[] toArray() {
+<b class="nc"><i>557</i>&nbsp;        return primaryIndex.toCollection().toArray();</b>
+<i>558</i>&nbsp;    }
+<i>559</i>&nbsp;
+<i>560</i>&nbsp;    public &lt;T&gt; T[] toArray(T[] a) {
+<b class="nc"><i>561</i>&nbsp;        return primaryIndex.toCollection().toArray(a);</b>
+<i>562</i>&nbsp;    }
+<i>563</i>&nbsp;
+<i>564</i>&nbsp;
+<i>565</i>&nbsp;    public void setPrimaryKeyGetter(Function getter) {
+<b class="fc"><i>566</i>&nbsp;        log.config(String.format(&quot;primary key getter set %s&quot;, getter));</b>
+<i>567</i>&nbsp;
+<b class="fc"><i>568</i>&nbsp;        this.primaryKeyGetter = getter;</b>
+<b class="fc"><i>569</i>&nbsp;    }</b>
+<i>570</i>&nbsp;
+<i>571</i>&nbsp;    @Override
+<i>572</i>&nbsp;    public void init() {
+<b class="fc"><i>573</i>&nbsp;        this.primaryIndex = (UniqueLookupIndex&lt;KEY, ITEM&gt;) this.lookupIndexMap.get(this.primaryKeyName);</b>
+<b class="fc"><i>574</i>&nbsp;        if (filter instanceof FilterComposer) {</b>
+<b class="fc"><i>575</i>&nbsp;            FilterComposer fc = (FilterComposer) filter;</b>
+<b class="fc"><i>576</i>&nbsp;            fc.setFields(fields);</b>
+<b class="fc"><i>577</i>&nbsp;            fc.setLookupIndexMap(this.lookupIndexMap);</b>
+<b class="fc"><i>578</i>&nbsp;            fc.setSearchIndexMap(this.searchIndexMap);</b>
+<b class="fc"><i>579</i>&nbsp;            fc.setSearchableCollection(this);</b>
+<b class="fc"><i>580</i>&nbsp;            fc.init();</b>
+<i>581</i>&nbsp;        }
+<b class="fc"><i>582</i>&nbsp;    }</b>
+<i>583</i>&nbsp;
+<i>584</i>&nbsp;    @Override
+<i>585</i>&nbsp;    public void setFields(Map&lt;String, FieldAccess&gt; fields) {
+<b class="fc"><i>586</i>&nbsp;        this.fields = fields;</b>
+<b class="fc"><i>587</i>&nbsp;    }</b>
+<i>588</i>&nbsp;
+<i>589</i>&nbsp;
+<i>590</i>&nbsp;    public int size() {
+<b class="nc"><i>591</i>&nbsp;        return primaryIndex.size();</b>
+<i>592</i>&nbsp;    }
+<i>593</i>&nbsp;
+<i>594</i>&nbsp;    public boolean addAll(Collection&lt;? extends ITEM&gt; items) {
+<b class="fc"><i>595</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="fc"><i>596</i>&nbsp;            this.add(item);</b>
+<b class="fc"><i>597</i>&nbsp;        }</b>
+<b class="fc"><i>598</i>&nbsp;        return true;</b>
+<i>599</i>&nbsp;    }
+<i>600</i>&nbsp;
+<i>601</i>&nbsp;    public boolean remove(Object o) {
+<b class="nc"><i>602</i>&nbsp;        KEY key = null;</b>
+<b class="nc"><i>603</i>&nbsp;        ITEM item = null;</b>
+<i>604</i>&nbsp;        try {
+<b class="nc"><i>605</i>&nbsp;            key = (KEY) o;</b>
+<b class="nc"><i>606</i>&nbsp;            removeByKey(key);</b>
+<b class="nc"><i>607</i>&nbsp;        } catch (ClassCastException ex) {</b>
+<b class="nc"><i>608</i>&nbsp;            item = (ITEM) o;</b>
+<b class="nc"><i>609</i>&nbsp;            delete(item);</b>
+<b class="nc"><i>610</i>&nbsp;        }</b>
+<b class="nc"><i>611</i>&nbsp;        return true;</b>
+<i>612</i>&nbsp;    }
+<i>613</i>&nbsp;
+<i>614</i>&nbsp;    public void removeByKey(KEY key) {
+<b class="nc"><i>615</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>616</i>&nbsp;        this.delete(item);</b>
+<b class="nc"><i>617</i>&nbsp;    }</b>
+<i>618</i>&nbsp;
+<i>619</i>&nbsp;
+<i>620</i>&nbsp;    public boolean containsAll(Collection&lt;?&gt; c) {
+<i>621</i>&nbsp;
+<b class="nc"><i>622</i>&nbsp;        for (Object object : c) {</b>
+<b class="nc"><i>623</i>&nbsp;            KEY key = null;</b>
+<b class="nc"><i>624</i>&nbsp;            ITEM item = null;</b>
+<i>625</i>&nbsp;            try {
+<b class="nc"><i>626</i>&nbsp;                key = (KEY) object;</b>
+<b class="nc"><i>627</i>&nbsp;                item = get(key);</b>
+<b class="nc"><i>628</i>&nbsp;            } catch (ClassCastException ex) {</b>
+<b class="nc"><i>629</i>&nbsp;                ITEM itemArg = (ITEM) object;</b>
+<b class="nc"><i>630</i>&nbsp;                key = this.getKey(itemArg);</b>
+<b class="nc"><i>631</i>&nbsp;                item = get(key);</b>
+<b class="nc"><i>632</i>&nbsp;            }</b>
+<b class="nc"><i>633</i>&nbsp;            if (item == null) {</b>
+<b class="nc"><i>634</i>&nbsp;                return true;</b>
+<i>635</i>&nbsp;            }
+<b class="nc"><i>636</i>&nbsp;        }</b>
+<b class="nc"><i>637</i>&nbsp;        return false;</b>
+<i>638</i>&nbsp;    }
+<i>639</i>&nbsp;
+<i>640</i>&nbsp;
+<i>641</i>&nbsp;    public boolean removeAll(Collection&lt;?&gt; items) {
+<b class="nc"><i>642</i>&nbsp;        for (Object o : items) {</b>
+<b class="nc"><i>643</i>&nbsp;            remove(o);</b>
+<b class="nc"><i>644</i>&nbsp;        }</b>
+<b class="nc"><i>645</i>&nbsp;        return true;</b>
+<i>646</i>&nbsp;    }
+<i>647</i>&nbsp;
+<i>648</i>&nbsp;
+<i>649</i>&nbsp;    public boolean retainAll(Collection&lt;?&gt; c) {
+<b class="nc"><i>650</i>&nbsp;        for (Object object : c) {</b>
+<b class="nc"><i>651</i>&nbsp;            KEY key = null;</b>
+<b class="nc"><i>652</i>&nbsp;            ITEM item = null;</b>
+<i>653</i>&nbsp;            try {
+<b class="nc"><i>654</i>&nbsp;                key = (KEY) object;</b>
+<b class="nc"><i>655</i>&nbsp;                item = get(key);</b>
+<b class="nc"><i>656</i>&nbsp;            } catch (ClassCastException ex) {</b>
+<b class="nc"><i>657</i>&nbsp;                item = (ITEM) object;</b>
+<b class="nc"><i>658</i>&nbsp;            }</b>
+<b class="nc"><i>659</i>&nbsp;            if (item == null) {</b>
+<b class="nc"><i>660</i>&nbsp;                return true;</b>
+<i>661</i>&nbsp;            }
+<b class="nc"><i>662</i>&nbsp;        }</b>
+<b class="nc"><i>663</i>&nbsp;        return false;</b>
+<i>664</i>&nbsp;    }
+<i>665</i>&nbsp;
+<i>666</i>&nbsp;
+<i>667</i>&nbsp;    public boolean contains(Object o) {
+<b class="nc"><i>668</i>&nbsp;        KEY key = null;</b>
+<b class="nc"><i>669</i>&nbsp;        ITEM item = null;</b>
+<i>670</i>&nbsp;        try {
+<b class="nc"><i>671</i>&nbsp;            key = (KEY) o;</b>
+<b class="nc"><i>672</i>&nbsp;            item = get(key);</b>
+<b class="nc"><i>673</i>&nbsp;        } catch (ClassCastException ex) {</b>
+<b class="nc"><i>674</i>&nbsp;            ITEM itemArg = (ITEM) o;</b>
+<b class="nc"><i>675</i>&nbsp;            key = getKey(itemArg);</b>
+<b class="nc"><i>676</i>&nbsp;            item = get(key);</b>
+<b class="nc"><i>677</i>&nbsp;        }</b>
+<b class="nc"><i>678</i>&nbsp;        if (item == null) {</b>
+<b class="nc"><i>679</i>&nbsp;            return true;</b>
+<i>680</i>&nbsp;        } else {
+<b class="nc"><i>681</i>&nbsp;            return false;</b>
+<i>682</i>&nbsp;        }
+<i>683</i>&nbsp;
+<i>684</i>&nbsp;    }
+<i>685</i>&nbsp;
+<i>686</i>&nbsp;
+<i>687</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

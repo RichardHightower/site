@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Typ</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.core</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Typ (org.boon.core)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Typ</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.6%
+  </span>
+  <span class="absValue">
+    (10/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80.3%
+  </span>
+  <span class="absValue">
+    (49/ 61)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.core;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import java.io.File;
+<i>5</i>&nbsp;import java.nio.file.Path;
+<i>6</i>&nbsp;import java.util.*;
+<i>7</i>&nbsp;
+<b class="nc"><i>8</i>&nbsp;public class Typ {</b>
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    /* Core */
+<b class="fc"><i>11</i>&nbsp;    public static final Class&lt;Object&gt; object = Object.class;</b>
+<b class="fc"><i>12</i>&nbsp;    public static final Class&lt;String&gt; string = String.class;</b>
+<b class="fc"><i>13</i>&nbsp;    public static final Class&lt;List&gt; list = List.class;</b>
+<b class="fc"><i>14</i>&nbsp;    public static final Class&lt;CharSequence&gt; chars = CharSequence.class;</b>
+<b class="fc"><i>15</i>&nbsp;    public static final Class&lt;Set&gt; set = Set.class;</b>
+<b class="fc"><i>16</i>&nbsp;    public static final Class&lt;Collection&gt; collection = Collection.class;</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;
+<b class="fc"><i>19</i>&nbsp;    public static final Class&lt;Comparable&gt;  comparable = Comparable.class;</b>
+<i>20</i>&nbsp;    /* Wrapper */
+<b class="fc"><i>21</i>&nbsp;    public static final Class&lt;Boolean&gt; bool          = Boolean.class;</b>
+<b class="fc"><i>22</i>&nbsp;    public static final Class&lt;Integer&gt; integer       = Integer.class;</b>
+<b class="fc"><i>23</i>&nbsp;    public static final Class&lt;Long&gt; longWrapper      = Long.class;</b>
+<b class="fc"><i>24</i>&nbsp;    public static final Class&lt;Double&gt; doubleWrapper  = Double.class;</b>
+<b class="fc"><i>25</i>&nbsp;    public static final Class&lt;Float&gt; floatWrapper    = Float.class;</b>
+<b class="fc"><i>26</i>&nbsp;    public static final Class&lt;Number&gt; number = Number.class;</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /* primitive */
+<b class="fc"><i>30</i>&nbsp;    public static final Class&lt;?&gt; flt    = float.class;</b>
+<b class="fc"><i>31</i>&nbsp;    public static final Class&lt;?&gt; lng    = long.class;</b>
+<b class="fc"><i>32</i>&nbsp;    public static final Class&lt;?&gt; dbl    = double.class;</b>
+<b class="fc"><i>33</i>&nbsp;    public static final Class&lt;?&gt; intgr  = int.class;</b>
+<b class="fc"><i>34</i>&nbsp;    public static final Class&lt;?&gt; bln    = boolean.class;</b>
+<b class="fc"><i>35</i>&nbsp;    public static final Class&lt;?&gt; shrt   = short.class;</b>
+<b class="fc"><i>36</i>&nbsp;    public static final Class&lt;?&gt; chr    = char.class;</b>
+<b class="fc"><i>37</i>&nbsp;    public static final Class&lt;?&gt; bt     = byte.class;</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /* Utility */
+<b class="fc"><i>41</i>&nbsp;    public static final Class&lt;Date&gt; date = Date.class;</b>
+<b class="fc"><i>42</i>&nbsp;    public static final Class&lt;Calendar&gt; calendar = Calendar.class;</b>
+<b class="fc"><i>43</i>&nbsp;    public static final Class&lt;File&gt; file = File.class;</b>
+<b class="fc"><i>44</i>&nbsp;    public static final Class&lt;Path&gt; path = Path.class;</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /* Arrays. */
+<b class="fc"><i>48</i>&nbsp;    public static final Class&lt;String[]&gt;  stringArray = String[].class;</b>
+<b class="fc"><i>49</i>&nbsp;    public static final Class&lt;int[]&gt;     intArray = int[].class;</b>
+<b class="fc"><i>50</i>&nbsp;    public static final Class&lt;byte[]&gt;    byteArray = byte[].class;</b>
+<b class="fc"><i>51</i>&nbsp;    public static final Class&lt;short[]&gt;   shortArray = short[].class;</b>
+<b class="fc"><i>52</i>&nbsp;    public static final Class&lt;char[]&gt;    charArray = char[].class;</b>
+<b class="fc"><i>53</i>&nbsp;    public static final Class&lt;long[]&gt;    longArray = long[].class;</b>
+<b class="fc"><i>54</i>&nbsp;    public static final Class&lt;float[]&gt;   floatArray = float[].class;</b>
+<b class="fc"><i>55</i>&nbsp;    public static final Class&lt;double[]&gt;  doubleArray = double[].class;</b>
+<b class="fc"><i>56</i>&nbsp;    public static final Class&lt;Object[]&gt;  objectArray = Object[].class;</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public static boolean doesMapHaveKeyTypeString(Object value) {
+<b class="nc"><i>59</i>&nbsp;        return getKeyType((Map&lt;?, ?&gt;) value) == string;</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    public static boolean isBasicType(Object value) {
+<b class="fc"><i>63</i>&nbsp;        return (value instanceof Number || value instanceof CharSequence</b>
+<i>64</i>&nbsp;                || value instanceof Date || value instanceof Calendar);
+<i>65</i>&nbsp;    }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public static boolean isBasicType(Class&lt;?&gt; theClass) {
+<b class="fc"><i>68</i>&nbsp;        return (number.isAssignableFrom(theClass)</b>
+<b class="fc"><i>69</i>&nbsp;                || chars.isAssignableFrom(theClass)</b>
+<b class="fc"><i>70</i>&nbsp;                || date.isAssignableFrom(theClass)</b>
+<b class="fc"><i>71</i>&nbsp;                || calendar.isAssignableFrom(theClass) || theClass</b>
+<b class="fc"><i>72</i>&nbsp;                .isPrimitive());</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public static boolean isMap(Class&lt;?&gt; thisType) {
+<b class="fc"><i>76</i>&nbsp;        return isSuperType(thisType, Map.class);</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    public static boolean isCharSequence(Class&lt;?&gt; thisType) {
+<b class="nc"><i>80</i>&nbsp;        return isSuperType(thisType, CharSequence.class);</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    public static boolean isCollection(Class&lt;?&gt; thisType) {
+<b class="fc"><i>84</i>&nbsp;        return isSuperType(thisType, Collection.class);</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    public static boolean isList(Class&lt;?&gt; thisType) {
+<b class="fc"><i>88</i>&nbsp;        return isSuperType(thisType, List.class);</b>
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    public static boolean isSet(Class&lt;?&gt; thisType) {
+<b class="nc"><i>92</i>&nbsp;        return isSuperType(thisType, Set.class);</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    public static boolean isSortedSet(Class&lt;?&gt; thisType) {
+<b class="nc"><i>96</i>&nbsp;        return isSuperType(thisType, SortedSet.class);</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    public static boolean isType(Class&lt;?&gt; thisType, Class&lt;?&gt; isThisType) {
+<b class="nc"><i>100</i>&nbsp;        return isSuperType(thisType, isThisType);</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    public static boolean isComparable(Object o) {
+<b class="nc"><i>104</i>&nbsp;        return o instanceof Comparable;</b>
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    public static boolean isComparable(Class&lt;?&gt; type) {
+<b class="fc"><i>108</i>&nbsp;        return implementsInterface(type, comparable);</b>
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    public static boolean isSuperClass(Class&lt;?&gt; type, Class&lt;?&gt; possibleSuperType) {
+<b class="fc"><i>112</i>&nbsp;        if (possibleSuperType.isInterface()) {</b>
+<b class="nc"><i>113</i>&nbsp;            return false;</b>
+<i>114</i>&nbsp;        } else {
+<b class="fc"><i>115</i>&nbsp;            return possibleSuperType.isAssignableFrom(type);</b>
+<i>116</i>&nbsp;        }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    public static boolean isSuperType(Class&lt;?&gt; type, Class&lt;?&gt; possibleSuperType) {
+<b class="fc"><i>121</i>&nbsp;        return possibleSuperType.isAssignableFrom(type);</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    public static boolean implementsInterface(Class&lt;?&gt; type, Class&lt;?&gt; interfaceType) {
+<b class="fc"><i>125</i>&nbsp;        if (!interfaceType.isInterface()) {</b>
+<b class="nc"><i>126</i>&nbsp;            return false;</b>
+<i>127</i>&nbsp;        } else {
+<b class="fc"><i>128</i>&nbsp;            return interfaceType.isAssignableFrom(type);</b>
+<i>129</i>&nbsp;        }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    public static Class&lt;?&gt; getKeyType(Map&lt;?, ?&gt; value) {
+<b class="nc"><i>134</i>&nbsp;        if (value.size() &gt; 0) {</b>
+<b class="nc"><i>135</i>&nbsp;            return value.keySet().iterator().next().getClass();</b>
+<i>136</i>&nbsp;        } else {
+<b class="nc"><i>137</i>&nbsp;            return null;</b>
+<i>138</i>&nbsp;        }
+<i>139</i>&nbsp;    }
+<i>140</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

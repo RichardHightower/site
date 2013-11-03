@@ -1,0 +1,719 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ResultSetImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ResultSetImpl (org.boon.datarepo.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ResultSetImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27.1%
+  </span>
+  <span class="absValue">
+    (13/ 48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (84/ 294)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.datarepo.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.core.reflection.Conversions;
+<i>4</i>&nbsp;import org.boon.datarepo.DataRepoException;
+<i>5</i>&nbsp;import org.boon.datarepo.PlanStep;
+<i>6</i>&nbsp;import org.boon.datarepo.ResultSet;
+<i>7</i>&nbsp;import org.boon.criteria.Criteria;
+<i>8</i>&nbsp;import org.boon.criteria.QueryFactory;
+<i>9</i>&nbsp;import org.boon.criteria.Selector;
+<i>10</i>&nbsp;import org.boon.criteria.Sort;
+<i>11</i>&nbsp;import org.boon.datarepo.spi.ResultSetInternal;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.lang.reflect.Array;
+<i>15</i>&nbsp;import java.util.*;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import org.boon.core.reflection.fields.FieldAccess;
+<i>19</i>&nbsp;import org.boon.core.reflection.Reflection;
+<i>20</i>&nbsp;import static org.boon.core.reflection.Reflection.toMap;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import static org.boon.Lists.list;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;public class ResultSetImpl&lt;T&gt; implements ResultSetInternal&lt;T&gt; {
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private List&lt;T&gt; results;
+<i>27</i>&nbsp;    private List&lt;List&lt;T&gt;&gt; allResults;
+<i>28</i>&nbsp;    private int totalSize;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    private List&lt;T&gt; lastList;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    private Map&lt;String, FieldAccess&gt; fields;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;
+<b class="fc"><i>35</i>&nbsp;    public ResultSetImpl(Map&lt;String, FieldAccess&gt; fields) {</b>
+<b class="fc"><i>36</i>&nbsp;        this.fields = fields;</b>
+<b class="fc"><i>37</i>&nbsp;        this.allResults = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;    public ResultSetImpl(List&lt;T&gt; results, Map&lt;String, FieldAccess&gt; fields) {</b>
+<b class="nc"><i>42</i>&nbsp;        this.fields = fields;</b>
+<b class="nc"><i>43</i>&nbsp;        this.allResults = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>44</i>&nbsp;        this.addResults(results);</b>
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<b class="nc"><i>47</i>&nbsp;    public ResultSetImpl(List&lt;T&gt; results) {</b>
+<b class="nc"><i>48</i>&nbsp;        if (results.size() &gt; 0) {</b>
+<b class="nc"><i>49</i>&nbsp;            this.fields = Reflection.getPropertyFieldAccessMap(results.get(0).getClass());</b>
+<i>50</i>&nbsp;        } else {
+<b class="nc"><i>51</i>&nbsp;            this.fields = Collections.EMPTY_MAP;</b>
+<i>52</i>&nbsp;        }
+<b class="nc"><i>53</i>&nbsp;        this.allResults = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>54</i>&nbsp;        this.addResults(results);</b>
+<b class="nc"><i>55</i>&nbsp;    }</b>
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    private void prepareResults() {
+<b class="fc"><i>58</i>&nbsp;        if (results == null &amp;&amp; allResults.size() == 1) {</b>
+<b class="fc"><i>59</i>&nbsp;            results = allResults.get(0);</b>
+<b class="fc"><i>60</i>&nbsp;        } else if (results == null) {</b>
+<i>61</i>&nbsp;
+<b class="fc"><i>62</i>&nbsp;            results = new ArrayList&lt;&gt;(totalSize);</b>
+<i>63</i>&nbsp;
+<b class="fc"><i>64</i>&nbsp;            for (List&lt;T&gt; list : allResults) {</b>
+<b class="fc"><i>65</i>&nbsp;                for (T item : list) {</b>
+<b class="fc"><i>66</i>&nbsp;                    results.add(item);</b>
+<b class="fc"><i>67</i>&nbsp;                }</b>
+<b class="fc"><i>68</i>&nbsp;            }</b>
+<i>69</i>&nbsp;        }
+<b class="fc"><i>70</i>&nbsp;        allResults.clear();</b>
+<b class="fc"><i>71</i>&nbsp;        totalSize = 0;</b>
+<b class="fc"><i>72</i>&nbsp;    }</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public void addResults(List&lt;T&gt; results) {
+<b class="fc"><i>76</i>&nbsp;        lastList = results;</b>
+<b class="fc"><i>77</i>&nbsp;        totalSize += results.size();</b>
+<b class="fc"><i>78</i>&nbsp;        allResults.add(results);</b>
+<b class="fc"><i>79</i>&nbsp;    }</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    @Override
+<i>82</i>&nbsp;    public ResultSet expectOne() {
+<b class="fc"><i>83</i>&nbsp;        prepareResults();</b>
+<b class="fc"><i>84</i>&nbsp;        if (results.size() == 0) {</b>
+<b class="nc"><i>85</i>&nbsp;            throw new DataRepoException(&quot;Expected one result, no results&quot;);</b>
+<b class="fc"><i>86</i>&nbsp;        } else if (results.size() &gt; 1) {</b>
+<b class="fc"><i>87</i>&nbsp;            throw new DataRepoException(&quot;Expected one result, but have many&quot;);</b>
+<i>88</i>&nbsp;        }
+<b class="fc"><i>89</i>&nbsp;        return this;</b>
+<i>90</i>&nbsp;    }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    @Override
+<i>93</i>&nbsp;    public &lt;EXPECT&gt; ResultSet&lt;EXPECT&gt; expectOne ( Class&lt;EXPECT&gt; clz ) {
+<b class="fc"><i>94</i>&nbsp;        return (ResultSet&lt;EXPECT&gt;) this.expectOne ();</b>
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    @Override
+<i>98</i>&nbsp;    public ResultSet expectMany() {
+<b class="nc"><i>99</i>&nbsp;        prepareResults();</b>
+<i>100</i>&nbsp;
+<b class="nc"><i>101</i>&nbsp;        if (results.size() &lt;= 1) {</b>
+<b class="nc"><i>102</i>&nbsp;            throw new DataRepoException(&quot;Expected many&quot;);</b>
+<i>103</i>&nbsp;        }
+<b class="nc"><i>104</i>&nbsp;        return this;</b>
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    @Override
+<i>108</i>&nbsp;    public ResultSet expectNone() {
+<b class="nc"><i>109</i>&nbsp;        prepareResults();</b>
+<i>110</i>&nbsp;
+<b class="nc"><i>111</i>&nbsp;        if (results.size() != 0) {</b>
+<b class="nc"><i>112</i>&nbsp;            throw new DataRepoException(&quot;Expected none&quot;);</b>
+<i>113</i>&nbsp;        }
+<b class="nc"><i>114</i>&nbsp;        return this;</b>
+<i>115</i>&nbsp;    }
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    @Override
+<i>118</i>&nbsp;    public ResultSet expectOneOrMany() {
+<b class="nc"><i>119</i>&nbsp;        prepareResults();</b>
+<i>120</i>&nbsp;
+<b class="nc"><i>121</i>&nbsp;        if (results.size() &gt;= 1) {</b>
+<b class="nc"><i>122</i>&nbsp;            throw new DataRepoException(&quot;Expected one or many&quot;);</b>
+<i>123</i>&nbsp;        }
+<b class="nc"><i>124</i>&nbsp;        return this;</b>
+<i>125</i>&nbsp;    }
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;    @Override
+<i>128</i>&nbsp;    public ResultSet removeDuplication() {
+<b class="fc"><i>129</i>&nbsp;        prepareResults();</b>
+<b class="fc"><i>130</i>&nbsp;        results = new ArrayList(asSet());</b>
+<b class="fc"><i>131</i>&nbsp;        return this;</b>
+<i>132</i>&nbsp;    }
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    @Override
+<i>135</i>&nbsp;    public ResultSet sort(Sort sort) {
+<b class="nc"><i>136</i>&nbsp;        prepareResults();</b>
+<b class="nc"><i>137</i>&nbsp;        sort.sort(results);</b>
+<b class="nc"><i>138</i>&nbsp;        return this;</b>
+<i>139</i>&nbsp;    }
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    @Override
+<i>142</i>&nbsp;    public Collection&lt;T&gt; filter(Criteria criteria) {
+<b class="nc"><i>143</i>&nbsp;        prepareResults();</b>
+<b class="nc"><i>144</i>&nbsp;        return QueryFactory.filter(results, criteria);</b>
+<i>145</i>&nbsp;    }
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;    @Override
+<i>148</i>&nbsp;    public void filterAndPrune(Criteria criteria) {
+<b class="fc"><i>149</i>&nbsp;        prepareResults();</b>
+<b class="fc"><i>150</i>&nbsp;        this.results = QueryFactory.filter(results, criteria);</b>
+<b class="fc"><i>151</i>&nbsp;    }</b>
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    @Override
+<i>155</i>&nbsp;    public ResultSet&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; select(Selector... selectors) {
+<b class="nc"><i>156</i>&nbsp;        prepareResults();</b>
+<b class="nc"><i>157</i>&nbsp;        return new ResultSetImpl(</b>
+<b class="nc"><i>158</i>&nbsp;                Selector.performSelection(</b>
+<b class="nc"><i>159</i>&nbsp;                        Arrays.asList(selectors), results, fields),</b>
+<i>160</i>&nbsp;                fields);
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    }
+<i>163</i>&nbsp;
+<i>164</i>&nbsp;    @Override
+<i>165</i>&nbsp;    public int[] selectInts(Selector selector) {
+<b class="nc"><i>166</i>&nbsp;        prepareResults();</b>
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;        int[] values = new int[results.size()];</b>
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>171</i>&nbsp;
+<b class="nc"><i>172</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>173</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>174</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>175</i>&nbsp;            values[index] = Conversions.toInt(map.get(keyName));</b>
+<i>176</i>&nbsp;        }
+<b class="nc"><i>177</i>&nbsp;        return values;</b>
+<i>178</i>&nbsp;    }
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;    @Override
+<i>181</i>&nbsp;    public float[] selectFloats(Selector selector) {
+<b class="nc"><i>182</i>&nbsp;        prepareResults();</b>
+<i>183</i>&nbsp;
+<b class="nc"><i>184</i>&nbsp;        float[] values = new float[results.size()];</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>187</i>&nbsp;
+<b class="nc"><i>188</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>189</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>190</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>191</i>&nbsp;            values[index] = Conversions.toFloat(map.get(keyName));</b>
+<i>192</i>&nbsp;        }
+<b class="nc"><i>193</i>&nbsp;        return values;</b>
+<i>194</i>&nbsp;    }
+<i>195</i>&nbsp;
+<i>196</i>&nbsp;    @Override
+<i>197</i>&nbsp;    public short[] selectShorts(Selector selector) {
+<b class="nc"><i>198</i>&nbsp;        prepareResults();</b>
+<i>199</i>&nbsp;
+<b class="nc"><i>200</i>&nbsp;        short[] values = new short[results.size()];</b>
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>203</i>&nbsp;
+<b class="nc"><i>204</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>205</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>206</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>207</i>&nbsp;            values[index] = Conversions.toShort(map.get(keyName));</b>
+<i>208</i>&nbsp;        }
+<b class="nc"><i>209</i>&nbsp;        return values;</b>
+<i>210</i>&nbsp;    }
+<i>211</i>&nbsp;
+<i>212</i>&nbsp;    @Override
+<i>213</i>&nbsp;    public double[] selectDoubles(Selector selector) {
+<b class="nc"><i>214</i>&nbsp;        prepareResults();</b>
+<i>215</i>&nbsp;
+<b class="nc"><i>216</i>&nbsp;        double[] values = new double[results.size()];</b>
+<i>217</i>&nbsp;
+<b class="nc"><i>218</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>219</i>&nbsp;
+<b class="nc"><i>220</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>221</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>222</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>223</i>&nbsp;            values[index] = Conversions.toDouble(map.get(keyName));</b>
+<i>224</i>&nbsp;        }
+<b class="nc"><i>225</i>&nbsp;        return values;</b>
+<i>226</i>&nbsp;    }
+<i>227</i>&nbsp;
+<i>228</i>&nbsp;    @Override
+<i>229</i>&nbsp;    public byte[] selectBytes(Selector selector) {
+<b class="nc"><i>230</i>&nbsp;        prepareResults();</b>
+<i>231</i>&nbsp;
+<b class="nc"><i>232</i>&nbsp;        byte[] values = new byte[results.size()];</b>
+<i>233</i>&nbsp;
+<b class="nc"><i>234</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>235</i>&nbsp;
+<b class="nc"><i>236</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>237</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>238</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>239</i>&nbsp;            values[index] = Conversions.toByte(map.get(keyName));</b>
+<i>240</i>&nbsp;        }
+<b class="nc"><i>241</i>&nbsp;        return values;</b>
+<i>242</i>&nbsp;    }
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;    @Override
+<i>245</i>&nbsp;    public char[] selectChars(Selector selector) {
+<b class="nc"><i>246</i>&nbsp;        prepareResults();</b>
+<i>247</i>&nbsp;
+<b class="nc"><i>248</i>&nbsp;        char[] values = new char[results.size()];</b>
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>251</i>&nbsp;
+<b class="nc"><i>252</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>253</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>254</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>255</i>&nbsp;            values[index] = Conversions.toChar(map.get(keyName));</b>
+<i>256</i>&nbsp;        }
+<b class="nc"><i>257</i>&nbsp;        return values;</b>
+<i>258</i>&nbsp;    }
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;    @Override
+<i>261</i>&nbsp;    public Object[] selectObjects(Selector selector) {
+<b class="nc"><i>262</i>&nbsp;        prepareResults();</b>
+<i>263</i>&nbsp;
+<b class="nc"><i>264</i>&nbsp;        Object[] values = new Object[results.size()];</b>
+<i>265</i>&nbsp;
+<b class="nc"><i>266</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>267</i>&nbsp;
+<b class="nc"><i>268</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>269</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>270</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>271</i>&nbsp;            values[index] = map.get(keyName);</b>
+<i>272</i>&nbsp;        }
+<b class="nc"><i>273</i>&nbsp;        return values;</b>
+<i>274</i>&nbsp;    }
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;    @Override
+<i>277</i>&nbsp;    public &lt;OBJ&gt; OBJ[] selectObjects(Class&lt;OBJ&gt; cls, Selector selector) {
+<b class="nc"><i>278</i>&nbsp;        prepareResults();</b>
+<i>279</i>&nbsp;
+<b class="nc"><i>280</i>&nbsp;        Object values = Array.newInstance(cls, results.size());</b>
+<i>281</i>&nbsp;
+<b class="nc"><i>282</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>283</i>&nbsp;
+<b class="nc"><i>284</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>285</i>&nbsp;        for (int index = 0; index &lt; results.size(); index++) {</b>
+<b class="nc"><i>286</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>287</i>&nbsp;            Reflection.idx(values, index, map.get(keyName));</b>
+<i>288</i>&nbsp;        }
+<b class="nc"><i>289</i>&nbsp;        return (OBJ[]) values;</b>
+<i>290</i>&nbsp;    }
+<i>291</i>&nbsp;
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    @Override
+<i>294</i>&nbsp;    public &lt;OBJ&gt; ResultSet&lt;OBJ&gt; selectObjectsAsResultSet(Class&lt;OBJ&gt; cls, Selector selector) {
+<b class="nc"><i>295</i>&nbsp;        prepareResults();</b>
+<i>296</i>&nbsp;
+<b class="nc"><i>297</i>&nbsp;        Object values = Array.newInstance(cls, results.size());</b>
+<i>298</i>&nbsp;
+<b class="nc"><i>299</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>300</i>&nbsp;
+<b class="nc"><i>301</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>302</i>&nbsp;        for (int index = 0; index &lt; results.size(); index++) {</b>
+<b class="nc"><i>303</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>304</i>&nbsp;            Reflection.idx(values, index, map.get(keyName));</b>
+<i>305</i>&nbsp;        }
+<b class="nc"><i>306</i>&nbsp;        OBJ[] array = (OBJ[]) values;</b>
+<b class="nc"><i>307</i>&nbsp;        List list = new ArrayList(Arrays.asList(array));</b>
+<b class="nc"><i>308</i>&nbsp;        return new ResultSetImpl(list);</b>
+<i>309</i>&nbsp;    }
+<i>310</i>&nbsp;
+<i>311</i>&nbsp;    @Override
+<i>312</i>&nbsp;    public Collection&lt;T&gt; asCollection() {
+<b class="nc"><i>313</i>&nbsp;        prepareResults();</b>
+<i>314</i>&nbsp;
+<b class="nc"><i>315</i>&nbsp;        return results;</b>
+<i>316</i>&nbsp;    }
+<i>317</i>&nbsp;
+<i>318</i>&nbsp;    @Override
+<i>319</i>&nbsp;    public String asJSONString() {
+<b class="nc"><i>320</i>&nbsp;        prepareResults();</b>
+<i>321</i>&nbsp;
+<b class="nc"><i>322</i>&nbsp;        throw new RuntimeException(&quot;NOT IMPLEMENTED&quot;);</b>
+<i>323</i>&nbsp;    }
+<i>324</i>&nbsp;
+<i>325</i>&nbsp;    @Override
+<i>326</i>&nbsp;    public List&lt;Map&lt;String, Object&gt;&gt; asListOfMaps() {
+<b class="nc"><i>327</i>&nbsp;        prepareResults();</b>
+<i>328</i>&nbsp;
+<i>329</i>&nbsp;
+<b class="nc"><i>330</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; items = new ArrayList&lt;&gt;(results.size());</b>
+<b class="nc"><i>331</i>&nbsp;        for (T item : results) {</b>
+<b class="nc"><i>332</i>&nbsp;            items.add(toMap(item));</b>
+<b class="nc"><i>333</i>&nbsp;        }</b>
+<b class="nc"><i>334</i>&nbsp;        return items;</b>
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;    }
+<i>337</i>&nbsp;
+<i>338</i>&nbsp;    @Override
+<i>339</i>&nbsp;    public List&lt;T&gt; asList() {
+<b class="fc"><i>340</i>&nbsp;        prepareResults();</b>
+<i>341</i>&nbsp;
+<b class="fc"><i>342</i>&nbsp;        return results;</b>
+<i>343</i>&nbsp;    }
+<i>344</i>&nbsp;
+<i>345</i>&nbsp;    @Override
+<i>346</i>&nbsp;    public Set&lt;T&gt; asSet() {
+<b class="fc"><i>347</i>&nbsp;        prepareResults();</b>
+<i>348</i>&nbsp;
+<b class="fc"><i>349</i>&nbsp;        return new HashSet(results);</b>
+<i>350</i>&nbsp;    }
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;    @Override
+<i>353</i>&nbsp;    public List&lt;PlanStep&gt; queryPlan() {
+<b class="nc"><i>354</i>&nbsp;        throw new RuntimeException(&quot;NOT IMPLEMENTED&quot;);</b>
+<i>355</i>&nbsp;    }
+<i>356</i>&nbsp;
+<i>357</i>&nbsp;    @Override
+<i>358</i>&nbsp;    public T firstItem() {
+<b class="fc"><i>359</i>&nbsp;        prepareResults();</b>
+<i>360</i>&nbsp;
+<b class="fc"><i>361</i>&nbsp;        return results.get(0);</b>
+<i>362</i>&nbsp;    }
+<i>363</i>&nbsp;
+<i>364</i>&nbsp;    @Override
+<i>365</i>&nbsp;    public Map&lt;String, Object&gt; firstMap() {
+<b class="nc"><i>366</i>&nbsp;        prepareResults();</b>
+<b class="nc"><i>367</i>&nbsp;        return toMap(this.firstItem());</b>
+<i>368</i>&nbsp;    }
+<i>369</i>&nbsp;
+<i>370</i>&nbsp;    @Override
+<i>371</i>&nbsp;    public String firstJSON() {
+<b class="nc"><i>372</i>&nbsp;        throw new RuntimeException(&quot;NOT IMPLEMENTED&quot;);</b>
+<i>373</i>&nbsp;    }
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;    @Override
+<i>376</i>&nbsp;    public int firstInt(Selector selector) {
+<b class="fc"><i>377</i>&nbsp;        prepareResults();</b>
+<i>378</i>&nbsp;
+<b class="fc"><i>379</i>&nbsp;        int[] values = new int[1];</b>
+<i>380</i>&nbsp;
+<b class="fc"><i>381</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>382</i>&nbsp;
+<b class="fc"><i>383</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="fc"><i>384</i>&nbsp;        for (int index = 0; index &lt; values.length &amp;&amp; index &lt; maps.size(); index++) {</b>
+<b class="fc"><i>385</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="fc"><i>386</i>&nbsp;            values[index] = Conversions.toInt(map.get(keyName));</b>
+<b class="fc"><i>387</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>388</i>&nbsp;                break;</b>
+<i>389</i>&nbsp;            }
+<i>390</i>&nbsp;        }
+<b class="fc"><i>391</i>&nbsp;        return values[0];</b>
+<i>392</i>&nbsp;
+<i>393</i>&nbsp;
+<i>394</i>&nbsp;    }
+<i>395</i>&nbsp;
+<i>396</i>&nbsp;    @Override
+<i>397</i>&nbsp;    public float firstFloat(Selector selector) {
+<b class="nc"><i>398</i>&nbsp;        prepareResults();</b>
+<i>399</i>&nbsp;
+<b class="nc"><i>400</i>&nbsp;        float[] values = new float[1];</b>
+<i>401</i>&nbsp;
+<b class="nc"><i>402</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>403</i>&nbsp;
+<b class="nc"><i>404</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>405</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>406</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>407</i>&nbsp;            values[index] = Conversions.toFloat(map.get(keyName));</b>
+<b class="nc"><i>408</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>409</i>&nbsp;                break;</b>
+<i>410</i>&nbsp;            }
+<i>411</i>&nbsp;        }
+<b class="nc"><i>412</i>&nbsp;        return values[1];</b>
+<i>413</i>&nbsp;    }
+<i>414</i>&nbsp;
+<i>415</i>&nbsp;    @Override
+<i>416</i>&nbsp;    public short firstShort(Selector selector) {
+<b class="nc"><i>417</i>&nbsp;        prepareResults();</b>
+<i>418</i>&nbsp;
+<b class="nc"><i>419</i>&nbsp;        short[] values = new short[1];</b>
+<i>420</i>&nbsp;
+<b class="nc"><i>421</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>422</i>&nbsp;
+<b class="nc"><i>423</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>424</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>425</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>426</i>&nbsp;            values[index] = Conversions.toShort(map.get(keyName));</b>
+<b class="nc"><i>427</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>428</i>&nbsp;                break;</b>
+<i>429</i>&nbsp;            }
+<i>430</i>&nbsp;        }
+<b class="nc"><i>431</i>&nbsp;        return values[1];</b>
+<i>432</i>&nbsp;    }
+<i>433</i>&nbsp;
+<i>434</i>&nbsp;    @Override
+<i>435</i>&nbsp;    public double firstDouble(Selector selector) {
+<b class="nc"><i>436</i>&nbsp;        prepareResults();</b>
+<i>437</i>&nbsp;
+<b class="nc"><i>438</i>&nbsp;        double[] values = new double[1];</b>
+<i>439</i>&nbsp;
+<b class="nc"><i>440</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>441</i>&nbsp;
+<b class="nc"><i>442</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>443</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>444</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>445</i>&nbsp;            values[index] = Conversions.toDouble(map.get(keyName));</b>
+<b class="nc"><i>446</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>447</i>&nbsp;                break;</b>
+<i>448</i>&nbsp;            }
+<i>449</i>&nbsp;        }
+<b class="nc"><i>450</i>&nbsp;        return values[1];</b>
+<i>451</i>&nbsp;    }
+<i>452</i>&nbsp;
+<i>453</i>&nbsp;    @Override
+<i>454</i>&nbsp;    public byte firstByte(Selector selector) {
+<b class="nc"><i>455</i>&nbsp;        prepareResults();</b>
+<i>456</i>&nbsp;
+<b class="nc"><i>457</i>&nbsp;        byte[] values = new byte[1];</b>
+<i>458</i>&nbsp;
+<b class="nc"><i>459</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>460</i>&nbsp;
+<b class="nc"><i>461</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>462</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>463</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>464</i>&nbsp;            values[index] = Conversions.toByte(map.get(keyName));</b>
+<b class="nc"><i>465</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>466</i>&nbsp;                break;</b>
+<i>467</i>&nbsp;            }
+<i>468</i>&nbsp;        }
+<b class="nc"><i>469</i>&nbsp;        return values[1];</b>
+<i>470</i>&nbsp;    }
+<i>471</i>&nbsp;
+<i>472</i>&nbsp;    @Override
+<i>473</i>&nbsp;    public char firstChar(Selector selector) {
+<b class="nc"><i>474</i>&nbsp;        prepareResults();</b>
+<i>475</i>&nbsp;
+<b class="nc"><i>476</i>&nbsp;        char[] values = new char[1];</b>
+<i>477</i>&nbsp;
+<b class="nc"><i>478</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>479</i>&nbsp;
+<b class="nc"><i>480</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>481</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>482</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>483</i>&nbsp;            values[index] = Conversions.toChar(map.get(keyName));</b>
+<b class="nc"><i>484</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>485</i>&nbsp;                break;</b>
+<i>486</i>&nbsp;            }
+<i>487</i>&nbsp;        }
+<b class="nc"><i>488</i>&nbsp;        return values[1];</b>
+<i>489</i>&nbsp;    }
+<i>490</i>&nbsp;
+<i>491</i>&nbsp;    @Override
+<i>492</i>&nbsp;    public Object firstObject(Selector selector) {
+<b class="nc"><i>493</i>&nbsp;        prepareResults();</b>
+<i>494</i>&nbsp;
+<b class="nc"><i>495</i>&nbsp;        Object[] values = new Object[1];</b>
+<i>496</i>&nbsp;
+<b class="nc"><i>497</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>498</i>&nbsp;
+<b class="nc"><i>499</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>500</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>501</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>502</i>&nbsp;            values[index] = map.get(keyName);</b>
+<b class="nc"><i>503</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>504</i>&nbsp;                break;</b>
+<i>505</i>&nbsp;            }
+<i>506</i>&nbsp;        }
+<b class="nc"><i>507</i>&nbsp;        return values[1];</b>
+<i>508</i>&nbsp;    }
+<i>509</i>&nbsp;
+<i>510</i>&nbsp;    @Override
+<i>511</i>&nbsp;    public &lt;OBJ&gt; OBJ firstObject(Class&lt;OBJ&gt; cls, Selector selector) {
+<b class="nc"><i>512</i>&nbsp;        prepareResults();</b>
+<i>513</i>&nbsp;
+<b class="nc"><i>514</i>&nbsp;        Object[] values = new Object[1];</b>
+<i>515</i>&nbsp;
+<b class="nc"><i>516</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; maps = Selector.performSelection(list(selector), results, fields);</b>
+<i>517</i>&nbsp;
+<b class="nc"><i>518</i>&nbsp;        String keyName = selector.getName();</b>
+<b class="nc"><i>519</i>&nbsp;        for (int index = 0; index &lt; values.length; index++) {</b>
+<b class="nc"><i>520</i>&nbsp;            Map&lt;String, Object&gt; map = maps.get(index);</b>
+<b class="nc"><i>521</i>&nbsp;            values[index] = map.get(keyName);</b>
+<b class="nc"><i>522</i>&nbsp;            if (index == 1) {</b>
+<b class="nc"><i>523</i>&nbsp;                break;</b>
+<i>524</i>&nbsp;            }
+<i>525</i>&nbsp;        }
+<b class="nc"><i>526</i>&nbsp;        return (OBJ) values[1];</b>
+<i>527</i>&nbsp;    }
+<i>528</i>&nbsp;
+<i>529</i>&nbsp;    @Override
+<i>530</i>&nbsp;    public List&lt;T&gt; paginate(int start, int size) {
+<b class="nc"><i>531</i>&nbsp;        prepareResults();</b>
+<i>532</i>&nbsp;
+<b class="nc"><i>533</i>&nbsp;        return results.subList(start, start + size);</b>
+<i>534</i>&nbsp;    }
+<i>535</i>&nbsp;
+<i>536</i>&nbsp;    @Override
+<i>537</i>&nbsp;    public List&lt;Map&lt;String, Object&gt;&gt; paginateMaps(int start, int size) {
+<b class="nc"><i>538</i>&nbsp;        prepareResults();</b>
+<i>539</i>&nbsp;
+<b class="nc"><i>540</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; mapResults = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>541</i>&nbsp;        List&lt;T&gt; list = this.paginate(start, size);</b>
+<i>542</i>&nbsp;
+<b class="nc"><i>543</i>&nbsp;        for (T item : list) {</b>
+<b class="nc"><i>544</i>&nbsp;            mapResults.add(toMap(item));</b>
+<b class="nc"><i>545</i>&nbsp;        }</b>
+<i>546</i>&nbsp;
+<b class="nc"><i>547</i>&nbsp;        return mapResults;</b>
+<i>548</i>&nbsp;    }
+<i>549</i>&nbsp;
+<i>550</i>&nbsp;    @Override
+<i>551</i>&nbsp;    public String paginateJSON(int start, int size) {
+<b class="nc"><i>552</i>&nbsp;        prepareResults();</b>
+<i>553</i>&nbsp;
+<b class="nc"><i>554</i>&nbsp;        throw new RuntimeException(&quot;NOT IMPLEMENTED&quot;);</b>
+<i>555</i>&nbsp;    }
+<i>556</i>&nbsp;
+<i>557</i>&nbsp;    @Override
+<i>558</i>&nbsp;    public int size() {
+<b class="nc"><i>559</i>&nbsp;        if (results != null) {</b>
+<b class="nc"><i>560</i>&nbsp;            return this.results.size();</b>
+<i>561</i>&nbsp;        } else {
+<b class="nc"><i>562</i>&nbsp;            return totalSize;</b>
+<i>563</i>&nbsp;        }
+<i>564</i>&nbsp;    }
+<i>565</i>&nbsp;
+<i>566</i>&nbsp;    @Override
+<i>567</i>&nbsp;    public Iterator&lt;T&gt; iterator() {
+<b class="nc"><i>568</i>&nbsp;        prepareResults();</b>
+<b class="nc"><i>569</i>&nbsp;        return this.results.iterator();</b>
+<i>570</i>&nbsp;    }
+<i>571</i>&nbsp;
+<i>572</i>&nbsp;    @Override
+<i>573</i>&nbsp;    public void andResults() {
+<b class="fc"><i>574</i>&nbsp;        if (allResults.size() == 0) {</b>
+<b class="fc"><i>575</i>&nbsp;            return;</b>
+<i>576</i>&nbsp;        }
+<i>577</i>&nbsp;
+<b class="fc"><i>578</i>&nbsp;        if (allResults.size() == 1) {</b>
+<b class="fc"><i>579</i>&nbsp;            prepareResults();</b>
+<b class="fc"><i>580</i>&nbsp;            return;</b>
+<i>581</i>&nbsp;        }
+<i>582</i>&nbsp;
+<b class="fc"><i>583</i>&nbsp;        boolean foundEmpty = false;</b>
+<i>584</i>&nbsp;
+<b class="fc"><i>585</i>&nbsp;        for (List&lt;T&gt; list : allResults) {</b>
+<b class="fc"><i>586</i>&nbsp;            if (list.size() == 0) {</b>
+<b class="fc"><i>587</i>&nbsp;                foundEmpty = true;</b>
+<b class="fc"><i>588</i>&nbsp;                break;</b>
+<i>589</i>&nbsp;            }
+<b class="fc"><i>590</i>&nbsp;        }</b>
+<i>591</i>&nbsp;
+<b class="fc"><i>592</i>&nbsp;        if (foundEmpty) {</b>
+<b class="fc"><i>593</i>&nbsp;            results = Collections.EMPTY_LIST;</b>
+<b class="fc"><i>594</i>&nbsp;            allResults.clear();</b>
+<b class="fc"><i>595</i>&nbsp;            totalSize = 0;</b>
+<b class="fc"><i>596</i>&nbsp;            return;</b>
+<i>597</i>&nbsp;        }
+<i>598</i>&nbsp;
+<i>599</i>&nbsp;
+<b class="fc"><i>600</i>&nbsp;        List&lt;T&gt; shortestList = null;</b>
+<b class="fc"><i>601</i>&nbsp;        int min = Integer.MAX_VALUE;</b>
+<b class="fc"><i>602</i>&nbsp;        for (List&lt;T&gt; list : allResults) {</b>
+<b class="fc"><i>603</i>&nbsp;            int size = list.size();</b>
+<b class="fc"><i>604</i>&nbsp;            if (size &lt; min) {</b>
+<b class="fc"><i>605</i>&nbsp;                min = size;</b>
+<b class="fc"><i>606</i>&nbsp;                shortestList = list;</b>
+<i>607</i>&nbsp;            }
+<b class="fc"><i>608</i>&nbsp;        }</b>
+<b class="fc"><i>609</i>&nbsp;        if (shortestList == null) {</b>
+<b class="nc"><i>610</i>&nbsp;            return;</b>
+<i>611</i>&nbsp;        }
+<i>612</i>&nbsp;
+<b class="fc"><i>613</i>&nbsp;        allResults.remove(shortestList);</b>
+<b class="fc"><i>614</i>&nbsp;        Set set = new HashSet(shortestList);</b>
+<b class="fc"><i>615</i>&nbsp;        for (List&lt;T&gt; list : allResults) {</b>
+<b class="fc"><i>616</i>&nbsp;            set.retainAll(list);</b>
+<b class="fc"><i>617</i>&nbsp;        }</b>
+<i>618</i>&nbsp;
+<b class="fc"><i>619</i>&nbsp;        results = new ArrayList(set);</b>
+<b class="fc"><i>620</i>&nbsp;        allResults.clear();</b>
+<b class="fc"><i>621</i>&nbsp;        totalSize = 0;</b>
+<i>622</i>&nbsp;
+<b class="fc"><i>623</i>&nbsp;    }</b>
+<i>624</i>&nbsp;
+<i>625</i>&nbsp;    @Override
+<i>626</i>&nbsp;    public int lastSize() {
+<b class="fc"><i>627</i>&nbsp;        if (lastList == null) {</b>
+<b class="fc"><i>628</i>&nbsp;            return 0;</b>
+<i>629</i>&nbsp;        } else {
+<b class="fc"><i>630</i>&nbsp;            return lastList.size();</b>
+<i>631</i>&nbsp;        }
+<i>632</i>&nbsp;
+<i>633</i>&nbsp;    }
+<i>634</i>&nbsp;
+<i>635</i>&nbsp;
+<i>636</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,502 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: FilterDefault</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: FilterDefault (org.boon.datarepo.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FilterDefault</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (19/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.9%
+  </span>
+  <span class="absValue">
+    (124/ 128)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FilterDefault$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96.9%
+  </span>
+  <span class="absValue">
+    (125/ 129)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.datarepo.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.Sets;
+<i>4</i>&nbsp;import org.boon.core.reflection.Conversions;
+<i>5</i>&nbsp;import org.boon.datarepo.Filter;
+<i>6</i>&nbsp;import org.boon.datarepo.LookupIndex;
+<i>7</i>&nbsp;import org.boon.datarepo.ResultSet;
+<i>8</i>&nbsp;import org.boon.datarepo.SearchableCollection;
+<i>9</i>&nbsp;import org.boon.criteria.*;
+<i>10</i>&nbsp;import org.boon.datarepo.spi.FilterComposer;
+<i>11</i>&nbsp;import org.boon.datarepo.spi.ResultSetInternal;
+<i>12</i>&nbsp;import org.boon.datarepo.spi.SearchIndex;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.util.Collections;
+<i>15</i>&nbsp;import java.util.List;
+<i>16</i>&nbsp;import java.util.Map;
+<i>17</i>&nbsp;import java.util.Set;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import static org.boon.criteria.CriteriaFactory.instanceOf;
+<i>20</i>&nbsp;import static org.boon.criteria.CriteriaFactory.not;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;import org.boon.core.reflection.fields.FieldAccess;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;/**
+<i>25</i>&nbsp; * This class should be renamed mother of all beasts.
+<i>26</i>&nbsp; * This class is the reason I have no hair.
+<i>27</i>&nbsp; * It implements the first cut of a decent criteria plan.
+<i>28</i>&nbsp; * @author Rick Hightower
+<i>29</i>&nbsp; */
+<b class="fc"><i>30</i>&nbsp;public class FilterDefault implements Filter, FilterComposer {</b>
+<i>31</i>&nbsp;
+<b class="fc"><i>32</i>&nbsp;    private Set&lt;Operator&gt; indexedOperators =</b>
+<b class="fc"><i>33</i>&nbsp;            Sets.set(Operator.BETWEEN, Operator.EQUAL, Operator.STARTS_WITH,</b>
+<i>34</i>&nbsp;                    Operator.GREATER_THAN, Operator.GREATER_THAN_EQUAL,
+<i>35</i>&nbsp;                    Operator.LESS_THAN, Operator.LESS_THAN_EQUAL);
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    private Map&lt;String, FieldAccess&gt; fields;
+<i>38</i>&nbsp;    private SearchableCollection searchableCollection;
+<i>39</i>&nbsp;    private Map&lt;String, SearchIndex&gt; searchIndexMap;
+<i>40</i>&nbsp;    private Map&lt;String, LookupIndex&gt; lookupIndexMap;
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * Seems innocent enough. Give me some criteria expressions,
+<i>45</i>&nbsp;     * and i will give you a nice results set.
+<i>46</i>&nbsp;     * @see ResultSet
+<i>47</i>&nbsp;     * @see org.boon.criteria.Criteria
+<i>48</i>&nbsp;     * @param expressions listStream of expressions
+<i>49</i>&nbsp;     * @return result set
+<i>50</i>&nbsp;     */
+<i>51</i>&nbsp;    @Override
+<i>52</i>&nbsp;    public ResultSet filter(Criteria... expressions) {
+<i>53</i>&nbsp;        try {
+<b class="fc"><i>54</i>&nbsp;            Criteria.fields(this.fields);</b>
+<b class="fc"><i>55</i>&nbsp;            return mainQueryPlan(expressions);</b>
+<i>56</i>&nbsp;        } finally {
+<b class="fc"><i>57</i>&nbsp;            Criteria.clearFields();</b>
+<i>58</i>&nbsp;        }
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     * This is the main criteria plan in case the name was not
+<i>64</i>&nbsp;     * obvious.
+<i>65</i>&nbsp;     *
+<i>66</i>&nbsp;     * @author Rick Hightower
+<i>67</i>&nbsp;     * @param expressions
+<i>68</i>&nbsp;     * @return
+<i>69</i>&nbsp;     */
+<i>70</i>&nbsp;    private ResultSet mainQueryPlan(Criteria[] expressions) {
+<i>71</i>&nbsp;
+<b class="fc"><i>72</i>&nbsp;        ResultSetInternal results = new ResultSetImpl(this.fields);</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        /* I am sure this looked easy to read when I wrote it.
+<i>75</i>&nbsp;         * If there is only one expression and first expression is a group then
+<i>76</i>&nbsp;         * the group is that first expression otherwise wrap
+<i>77</i>&nbsp;         * all of the expressions in an and clause. */
+<b class="fc"><i>78</i>&nbsp;        Group group = expressions.length ==</b>
+<i>79</i>&nbsp;                1 &amp;&amp; expressions[0] instanceof Group
+<b class="fc"><i>80</i>&nbsp;                ? (Group) expressions[0] : CriteriaFactory.and(expressions);</b>
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;        /**
+<i>83</i>&nbsp;         * Run the filter on the group.
+<i>84</i>&nbsp;         */
+<b class="fc"><i>85</i>&nbsp;        doFilterGroup(group, results);</b>
+<i>86</i>&nbsp;
+<b class="fc"><i>87</i>&nbsp;        return results;</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    private void orPlanWithIndex(Criterion criterion, ResultSetInternal results) {
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;
+<b class="fc"><i>94</i>&nbsp;        Operator operator = criterion.getOperator();</b>
+<b class="fc"><i>95</i>&nbsp;        if (operator == Operator.EQUAL &amp;&amp; lookupIndexMap.get(criterion.getName()) != null) {</b>
+<b class="fc"><i>96</i>&nbsp;            doFilterWithIndex(criterion, fields, results);</b>
+<b class="fc"><i>97</i>&nbsp;        } else if (this.isIndexed(criterion.getName()) &amp;&amp; Sets.in(operator, indexedOperators)) {</b>
+<b class="fc"><i>98</i>&nbsp;            doFilterWithIndex(criterion, fields, results);</b>
+<i>99</i>&nbsp;        } else {
+<b class="fc"><i>100</i>&nbsp;            List list = QueryFactory.filter(this.searchableCollection.all(), criterion);</b>
+<b class="fc"><i>101</i>&nbsp;            results.addResults(list);</b>
+<i>102</i>&nbsp;        }
+<i>103</i>&nbsp;
+<b class="fc"><i>104</i>&nbsp;    }</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    @Override
+<i>107</i>&nbsp;    public void invalidate() {
+<i>108</i>&nbsp;
+<b class="fc"><i>109</i>&nbsp;    }</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    /**
+<i>112</i>&nbsp;     * Run the filter on the group.
+<i>113</i>&nbsp;     * @param group here is the group
+<i>114</i>&nbsp;     * @param results here are the results
+<i>115</i>&nbsp;     */
+<i>116</i>&nbsp;    private void doFilterGroup(Group group, ResultSetInternal results) {
+<i>117</i>&nbsp;        /* The group was n or group so handle it that way. */
+<b class="fc"><i>118</i>&nbsp;        if ( group.getGrouping() == Grouping.OR ) {</b>
+<i>119</i>&nbsp;            /* nice short method name, or. */
+<b class="fc"><i>120</i>&nbsp;            or( group.getExpressions(), fields, results );</b>
+<i>121</i>&nbsp;        } else {
+<i>122</i>&nbsp;            /* create a result internal (why?), wrap the fields in the result set
+<i>123</i>&nbsp;            internal, and pass that to the and method.
+<i>124</i>&nbsp;             */
+<b class="fc"><i>125</i>&nbsp;            ResultSetInternal resultsForAnd = new ResultSetImpl(fields);</b>
+<b class="fc"><i>126</i>&nbsp;            and( group.getExpressions(), fields, resultsForAnd );</b>
+<b class="fc"><i>127</i>&nbsp;            results.addResults( resultsForAnd.asList() );</b>
+<i>128</i>&nbsp;        }
+<b class="fc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    private void or(Criteria[] expressions,
+<i>132</i>&nbsp;                    Map&lt;String, FieldAccess&gt; fields, ResultSetInternal results) {
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;
+<b class="fc"><i>135</i>&nbsp;        for (Criteria expression : expressions) {</b>
+<b class="fc"><i>136</i>&nbsp;            if (expression instanceof Criterion) {</b>
+<b class="fc"><i>137</i>&nbsp;                orPlanWithIndex((Criterion) expression, results);</b>
+<b class="fc"><i>138</i>&nbsp;            } else if (expression instanceof Group) {</b>
+<b class="fc"><i>139</i>&nbsp;                doFilterGroup((Group) expression, results);</b>
+<i>140</i>&nbsp;            }
+<i>141</i>&nbsp;        }
+<b class="fc"><i>142</i>&nbsp;    }</b>
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    private void and(Criteria[] expressions, Map&lt;String, FieldAccess&gt; fields, ResultSetInternal resultSet) {
+<i>146</i>&nbsp;
+<b class="fc"><i>147</i>&nbsp;        Set&lt;Criteria&gt; expressionSet = Sets.set(expressions);</b>
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;
+<b class="fc"><i>150</i>&nbsp;        boolean foundIndex = applyIndexedFiltersForAnd(expressions, fields, expressionSet, resultSet);</b>
+<b class="fc"><i>151</i>&nbsp;        applyLinearSearch(expressionSet, resultSet, foundIndex);</b>
+<b class="fc"><i>152</i>&nbsp;        applyGroups(expressionSet, resultSet);</b>
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;
+<b class="fc"><i>155</i>&nbsp;    }</b>
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    private boolean applyIndexedFiltersForAnd(Criteria[] expressions, Map&lt;String, FieldAccess&gt; fields, Set&lt;Criteria&gt; expressionSet, ResultSetInternal resultSet) {
+<b class="fc"><i>159</i>&nbsp;        Criterion criteria = null;</b>
+<b class="fc"><i>160</i>&nbsp;        boolean foundIndex = false;</b>
+<i>161</i>&nbsp;
+<b class="fc"><i>162</i>&nbsp;        if (expressions.length == 1 &amp;&amp; expressions[0] instanceof Criterion) {</b>
+<b class="fc"><i>163</i>&nbsp;            criteria = (Criterion) expressions[0];</b>
+<b class="fc"><i>164</i>&nbsp;            foundIndex = doFilterWithIndex(criteria, fields, resultSet);</b>
+<b class="fc"><i>165</i>&nbsp;            if (foundIndex) {</b>
+<b class="fc"><i>166</i>&nbsp;                expressionSet.remove(criteria);</b>
+<i>167</i>&nbsp;            }
+<b class="fc"><i>168</i>&nbsp;            return foundIndex;</b>
+<i>169</i>&nbsp;        }
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;
+<b class="fc"><i>172</i>&nbsp;        for (Criteria expression : expressions) {</b>
+<i>173</i>&nbsp;            /*
+<i>174</i>&nbsp;             * See if the criteria has an index
+<i>175</i>&nbsp;             */
+<b class="fc"><i>176</i>&nbsp;            if (expression instanceof Criterion) {</b>
+<b class="fc"><i>177</i>&nbsp;                criteria = (Criterion) expression;</b>
+<i>178</i>&nbsp;
+<b class="fc"><i>179</i>&nbsp;                foundIndex = doFilterWithIndex(criteria, fields, resultSet);</b>
+<b class="fc"><i>180</i>&nbsp;                if (foundIndex) {</b>
+<b class="fc"><i>181</i>&nbsp;                    expressionSet.remove(criteria);</b>
+<i>182</i>&nbsp;                }
+<i>183</i>&nbsp;                /* if it is less than 20, just linear search the rest. */
+<b class="fc"><i>184</i>&nbsp;                if (resultSet.lastSize() &lt; 20) {</b>
+<b class="fc"><i>185</i>&nbsp;                    resultSet.andResults(); //consolidate now</b>
+<b class="fc"><i>186</i>&nbsp;                    return foundIndex;</b>
+<b class="fc"><i>187</i>&nbsp;                } else if (resultSet.lastSize() &gt; 0) {</b>
+<i>188</i>&nbsp;                    //No op
+<i>189</i>&nbsp;                }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;            }
+<i>192</i>&nbsp;        }
+<b class="nc"><i>193</i>&nbsp;        if (foundIndex) {</b>
+<b class="nc"><i>194</i>&nbsp;            resultSet.andResults();</b>
+<i>195</i>&nbsp;        }
+<b class="nc"><i>196</i>&nbsp;        return foundIndex;</b>
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;//    private List applyGroupsWithIndexesForAnd(List items, Set&lt;Query&gt; expressionSet) {
+<i>201</i>&nbsp;//
+<i>202</i>&nbsp;//        List&lt;HashSet&gt; listOfSets = new ArrayList();
+<i>203</i>&nbsp;//        listOfSets.add(new HashSet(items));
+<i>204</i>&nbsp;//
+<i>205</i>&nbsp;//        List&lt;Query&gt; expressionsWeEvaluated = new ArrayList&lt;&gt;();
+<i>206</i>&nbsp;//
+<i>207</i>&nbsp;//        outer:
+<i>208</i>&nbsp;//        for (Query expression : expressionSet) {
+<i>209</i>&nbsp;//
+<i>210</i>&nbsp;//            if (expression instanceof Group) {
+<i>211</i>&nbsp;//                Group group = (Group) expression;
+<i>212</i>&nbsp;//                for (Query innerExpression : group.getExpressions()) {
+<i>213</i>&nbsp;//                    //Don&#39;t allow non-index Criterion to avoid too many scans
+<i>214</i>&nbsp;//                    if (innerExpression instanceof Criterion) {
+<i>215</i>&nbsp;//                        Criterion c = (Criterion) innerExpression;
+<i>216</i>&nbsp;//                        if (!this.isIndexed(c.getName())) {
+<i>217</i>&nbsp;//                            continue outer;
+<i>218</i>&nbsp;//                        }
+<i>219</i>&nbsp;//                    }
+<i>220</i>&nbsp;//                    //Don&#39;t allow any ors to avoid long scans, at this point
+<i>221</i>&nbsp;//                    //This is simple for now, it does not recusively look for indexes, future one should.
+<i>222</i>&nbsp;//                    else if (innerExpression instanceof Group) {
+<i>223</i>&nbsp;//                        continue;
+<i>224</i>&nbsp;//                    }
+<i>225</i>&nbsp;//                }
+<i>226</i>&nbsp;//
+<i>227</i>&nbsp;//
+<i>228</i>&nbsp;//                /*
+<i>229</i>&nbsp;//                At this point, this group should be indexed only
+<i>230</i>&nbsp;//                 */
+<i>231</i>&nbsp;//                List listStream = doFilterGroup((Group) expression);
+<i>232</i>&nbsp;//                if (listStream.size() &gt; 0) {
+<i>233</i>&nbsp;//                    listOfSets.add(new HashSet(listStream));
+<i>234</i>&nbsp;//                    expressionsWeEvaluated.add(expression);
+<i>235</i>&nbsp;//                }
+<i>236</i>&nbsp;//            }
+<i>237</i>&nbsp;//        }
+<i>238</i>&nbsp;//        List results = reduceToResults(listOfSets);
+<i>239</i>&nbsp;//        expressionSet.removeAll(expressionsWeEvaluated);
+<i>240</i>&nbsp;//
+<i>241</i>&nbsp;//        return results;
+<i>242</i>&nbsp;//    }
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;    private void applyGroups(Set&lt;Criteria&gt; expressionSet, ResultSetInternal resultSet) {
+<i>246</i>&nbsp;
+<b class="fc"><i>247</i>&nbsp;        if (expressionSet.size() == 0) {</b>
+<b class="fc"><i>248</i>&nbsp;            return;</b>
+<i>249</i>&nbsp;        }
+<i>250</i>&nbsp;
+<i>251</i>&nbsp;
+<b class="fc"><i>252</i>&nbsp;        for (Criteria expression : expressionSet) {</b>
+<i>253</i>&nbsp;
+<b class="fc"><i>254</i>&nbsp;            if (expression instanceof Group) {</b>
+<b class="fc"><i>255</i>&nbsp;                doFilterGroup((Group) expression, resultSet);</b>
+<i>256</i>&nbsp;            }
+<b class="fc"><i>257</i>&nbsp;        }</b>
+<b class="fc"><i>258</i>&nbsp;    }</b>
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;    private void applyLinearSearch(Set&lt;Criteria&gt; expressionSet, ResultSetInternal resultSet, boolean foundIndex) {
+<i>262</i>&nbsp;
+<b class="fc"><i>263</i>&nbsp;        if (expressionSet.size() == 0) {</b>
+<b class="fc"><i>264</i>&nbsp;            return;</b>
+<i>265</i>&nbsp;        }
+<i>266</i>&nbsp;
+<b class="fc"><i>267</i>&nbsp;        Criteria[] expressions = Conversions.array(Criteria.class, QueryFactory.filter(expressionSet, not(instanceOf(Group.class))));</b>
+<i>268</i>&nbsp;
+<b class="fc"><i>269</i>&nbsp;        if (foundIndex) {</b>
+<b class="fc"><i>270</i>&nbsp;            resultSet.filterAndPrune(CriteriaFactory.and(expressions));</b>
+<i>271</i>&nbsp;        } else {
+<b class="fc"><i>272</i>&nbsp;            resultSet.addResults(</b>
+<b class="fc"><i>273</i>&nbsp;                    QueryFactory.filter(searchableCollection.all(),</b>
+<b class="fc"><i>274</i>&nbsp;                            CriteriaFactory.and(expressions))</b>
+<i>275</i>&nbsp;            );
+<i>276</i>&nbsp;        }
+<b class="fc"><i>277</i>&nbsp;        for (Criteria expression : expressions) {</b>
+<b class="fc"><i>278</i>&nbsp;            expressionSet.remove(expression);</b>
+<i>279</i>&nbsp;        }
+<i>280</i>&nbsp;
+<b class="fc"><i>281</i>&nbsp;    }</b>
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;    private boolean isIndexed(String name) {
+<b class="fc"><i>285</i>&nbsp;        return searchIndexMap.containsKey(name);</b>
+<i>286</i>&nbsp;    }
+<i>287</i>&nbsp;
+<i>288</i>&nbsp;    private boolean doFilterWithIndex(Criterion criterion, Map&lt;String, FieldAccess&gt; fields, ResultSetInternal resultSet) {
+<b class="fc"><i>289</i>&nbsp;        String name = criterion.getName();</b>
+<b class="fc"><i>290</i>&nbsp;        Object value = criterion.getValue();</b>
+<b class="fc"><i>291</i>&nbsp;        Operator operator = criterion.getOperator();</b>
+<b class="fc"><i>292</i>&nbsp;        SearchIndex searchIndex = searchIndexMap.get(name);</b>
+<b class="fc"><i>293</i>&nbsp;        LookupIndex lookupIndex = lookupIndexMap.get(name);</b>
+<b class="fc"><i>294</i>&nbsp;        List resultList = null;</b>
+<b class="fc"><i>295</i>&nbsp;        boolean foundIndex = false;</b>
+<i>296</i>&nbsp;
+<b class="fc"><i>297</i>&nbsp;        if (lookupIndex != null &amp;&amp; operator == Operator.EQUAL) {</b>
+<b class="fc"><i>298</i>&nbsp;            foundIndex = true;</b>
+<b class="fc"><i>299</i>&nbsp;            resultList = lookupIndex.getAll(value);</b>
+<b class="fc"><i>300</i>&nbsp;            if (resultList != null) {</b>
+<b class="fc"><i>301</i>&nbsp;                resultSet.addResults(resultList);</b>
+<b class="fc"><i>302</i>&nbsp;                return foundIndex;</b>
+<i>303</i>&nbsp;            } else {
+<b class="fc"><i>304</i>&nbsp;                resultSet.addResults(Collections.EMPTY_LIST);</b>
+<b class="fc"><i>305</i>&nbsp;                return foundIndex;</b>
+<i>306</i>&nbsp;            }
+<i>307</i>&nbsp;        }
+<i>308</i>&nbsp;
+<b class="fc"><i>309</i>&nbsp;        if (searchIndex == null) {</b>
+<b class="fc"><i>310</i>&nbsp;            return false;</b>
+<i>311</i>&nbsp;        }
+<i>312</i>&nbsp;
+<b class="fc"><i>313</i>&nbsp;        foundIndex = true;</b>
+<i>314</i>&nbsp;
+<b class="fc"><i>315</i>&nbsp;        if (!criterion.isInitialized()) {</b>
+<b class="fc"><i>316</i>&nbsp;            criterion.initByFields ( this.fields );</b>
+<i>317</i>&nbsp;        }
+<i>318</i>&nbsp;
+<b class="fc"><i>319</i>&nbsp;        switch (operator) {</b>
+<i>320</i>&nbsp;            case EQUAL:
+<b class="fc"><i>321</i>&nbsp;                resultList = processResultsFromIndex(searchIndex, searchIndex.findEquals(value));</b>
+<b class="fc"><i>322</i>&nbsp;                break;</b>
+<i>323</i>&nbsp;            case STARTS_WITH:
+<b class="fc"><i>324</i>&nbsp;                resultList = searchIndex.findStartsWith(value);</b>
+<b class="fc"><i>325</i>&nbsp;                break;</b>
+<i>326</i>&nbsp;
+<i>327</i>&nbsp;            case GREATER_THAN:
+<b class="fc"><i>328</i>&nbsp;                resultList = searchIndex.findGreaterThan(value);</b>
+<b class="fc"><i>329</i>&nbsp;                break;</b>
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;            case GREATER_THAN_EQUAL:
+<b class="fc"><i>332</i>&nbsp;                resultList = searchIndex.findGreaterThanEqual(value);</b>
+<b class="fc"><i>333</i>&nbsp;                break;</b>
+<i>334</i>&nbsp;
+<i>335</i>&nbsp;            case LESS_THAN:
+<b class="fc"><i>336</i>&nbsp;                resultList = searchIndex.findLessThan(value);</b>
+<b class="fc"><i>337</i>&nbsp;                break;</b>
+<i>338</i>&nbsp;
+<i>339</i>&nbsp;            case LESS_THAN_EQUAL:
+<b class="fc"><i>340</i>&nbsp;                resultList = searchIndex.findLessThanEqual(value);</b>
+<b class="fc"><i>341</i>&nbsp;                break;</b>
+<i>342</i>&nbsp;
+<i>343</i>&nbsp;            case BETWEEN:
+<b class="fc"><i>344</i>&nbsp;                resultList = searchIndex.findBetween(criterion.getValue(), criterion.getValues()[1]);</b>
+<i>345</i>&nbsp;                break;
+<i>346</i>&nbsp;        }
+<i>347</i>&nbsp;
+<b class="fc"><i>348</i>&nbsp;        criterion.clean ();</b>
+<i>349</i>&nbsp;
+<b class="fc"><i>350</i>&nbsp;        if (resultList != null) {</b>
+<b class="fc"><i>351</i>&nbsp;            resultSet.addResults(resultList);</b>
+<b class="fc"><i>352</i>&nbsp;            return foundIndex;</b>
+<i>353</i>&nbsp;        } else {
+<b class="fc"><i>354</i>&nbsp;            return foundIndex;</b>
+<i>355</i>&nbsp;        }
+<i>356</i>&nbsp;
+<i>357</i>&nbsp;    }
+<i>358</i>&nbsp;
+<i>359</i>&nbsp;    private List processResultsFromIndex(SearchIndex searchIndex, List results) {
+<b class="fc"><i>360</i>&nbsp;        if (searchIndex.isPrimaryKeyOnly()) {</b>
+<i>361</i>&nbsp;            //TODO iterate through listStream and lookup items from keys, and put those in the actual results
+<b class="nc"><i>362</i>&nbsp;            return null;</b>
+<i>363</i>&nbsp;        } else {
+<b class="fc"><i>364</i>&nbsp;            return results;</b>
+<i>365</i>&nbsp;        }
+<i>366</i>&nbsp;    }
+<i>367</i>&nbsp;
+<i>368</i>&nbsp;
+<i>369</i>&nbsp;    @Override
+<i>370</i>&nbsp;    public void setSearchableCollection(SearchableCollection searchableCollection) {
+<b class="fc"><i>371</i>&nbsp;        this.searchableCollection = searchableCollection;</b>
+<b class="fc"><i>372</i>&nbsp;    }</b>
+<i>373</i>&nbsp;
+<i>374</i>&nbsp;    @Override
+<i>375</i>&nbsp;    public void setFields(Map&lt;String, FieldAccess&gt; fields) {
+<b class="fc"><i>376</i>&nbsp;        this.fields = fields;</b>
+<b class="fc"><i>377</i>&nbsp;    }</b>
+<i>378</i>&nbsp;
+<i>379</i>&nbsp;    @Override
+<i>380</i>&nbsp;    public void setSearchIndexMap(Map&lt;String, SearchIndex&gt; searchIndexMap) {
+<b class="fc"><i>381</i>&nbsp;        this.searchIndexMap = searchIndexMap;</b>
+<b class="fc"><i>382</i>&nbsp;    }</b>
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;    @Override
+<i>385</i>&nbsp;    public void setLookupIndexMap(Map&lt;String, LookupIndex&gt; lookupIndexMap) {
+<b class="fc"><i>386</i>&nbsp;        this.lookupIndexMap = lookupIndexMap;</b>
+<b class="fc"><i>387</i>&nbsp;    }</b>
+<i>388</i>&nbsp;
+<i>389</i>&nbsp;    @Override
+<i>390</i>&nbsp;    public void init() {
+<i>391</i>&nbsp;
+<b class="fc"><i>392</i>&nbsp;    }</b>
+<i>393</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

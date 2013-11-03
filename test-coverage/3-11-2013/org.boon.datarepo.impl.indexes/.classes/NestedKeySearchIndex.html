@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NestedKeySearchIndex</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo.impl.indexes</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NestedKeySearchIndex (org.boon.datarepo.impl.indexes)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NestedKeySearchIndex</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.datarepo.impl.indexes;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.core.reflection.Reflection;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.List;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import static org.boon.core.reflection.Conversions.toList;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/**
+<i>11</i>&nbsp; * This allows nested key look-ups.
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public class NestedKeySearchIndex extends BaseIndexWrapper {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    public NestedKeySearchIndex(String... path) {
+<b class="fc"><i>16</i>&nbsp;        super(path);</b>
+<i>17</i>&nbsp;
+<b class="fc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    @Override
+<i>21</i>&nbsp;    public boolean add(Object o) {
+<i>22</i>&nbsp;
+<b class="fc"><i>23</i>&nbsp;        List keys = getKeys(o);</b>
+<b class="fc"><i>24</i>&nbsp;        index.addManyKeys(o, keys);</b>
+<b class="fc"><i>25</i>&nbsp;        return true;</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    @Override
+<i>29</i>&nbsp;    protected List getKeys(Object o) {
+<b class="fc"><i>30</i>&nbsp;        Object list = Reflection.getPropByPath(o, this.path);</b>
+<b class="fc"><i>31</i>&nbsp;        return toList(list);</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Override
+<i>35</i>&nbsp;    public boolean delete(Object o) {
+<b class="fc"><i>36</i>&nbsp;        List keys = getKeys(o);</b>
+<b class="fc"><i>37</i>&nbsp;        index.removeManyKeys(o, keys);</b>
+<i>38</i>&nbsp;
+<b class="fc"><i>39</i>&nbsp;        return true;</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CharBuf</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.primitive</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CharBuf (org.boon.primitive)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CharBuf</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (10/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.7%
+  </span>
+  <span class="absValue">
+    (33/ 36)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CharBuf$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (12/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.5%
+  </span>
+  <span class="absValue">
+    (37/ 40)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.primitive;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;public class CharBuf {
+<b class="fc"><i>6</i>&nbsp;    protected int capacity = 16;</b>
+<b class="fc"><i>7</i>&nbsp;    protected int location = 0;</b>
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    protected char [] buffer;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    public static CharBuf createExact( final int capacity) {
+<b class="fc"><i>13</i>&nbsp;          return new CharBuf(capacity) {</b>
+<i>14</i>&nbsp;              public CharBuf add(char[] chars) {
+<b class="fc"><i>15</i>&nbsp;                      Chr._idx( buffer, location, chars );</b>
+<b class="fc"><i>16</i>&nbsp;                      location += chars.length;</b>
+<b class="fc"><i>17</i>&nbsp;                      return this;</b>
+<i>18</i>&nbsp;             }
+<i>19</i>&nbsp;         };
+<i>20</i>&nbsp;    }
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    public static CharBuf create( int capacity) {
+<b class="fc"><i>23</i>&nbsp;        return new CharBuf(capacity);</b>
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;
+<b class="fc"><i>26</i>&nbsp;    protected CharBuf(int capacity)  {</b>
+<b class="fc"><i>27</i>&nbsp;         this.capacity = capacity;</b>
+<b class="fc"><i>28</i>&nbsp;         init();</b>
+<b class="fc"><i>29</i>&nbsp;    }</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<b class="fc"><i>32</i>&nbsp;    protected CharBuf()  {</b>
+<b class="fc"><i>33</i>&nbsp;        init();</b>
+<b class="fc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    public void init() {
+<b class="fc"><i>37</i>&nbsp;        buffer = new char[capacity];</b>
+<b class="fc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    public CharBuf add(String str) {
+<b class="fc"><i>41</i>&nbsp;        add( str.toCharArray() );</b>
+<b class="fc"><i>42</i>&nbsp;        return this;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public CharBuf add(int i) {
+<b class="nc"><i>47</i>&nbsp;        add( &quot;&quot; + i );</b>
+<b class="nc"><i>48</i>&nbsp;        return this;</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public CharBuf addLine(String str) {
+<b class="fc"><i>52</i>&nbsp;        add( str.toCharArray() );</b>
+<b class="fc"><i>53</i>&nbsp;        add(&#39;\n&#39;);</b>
+<b class="fc"><i>54</i>&nbsp;        return this;</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public CharBuf add(char[] chars) {
+<b class="fc"><i>59</i>&nbsp;        if (chars.length + location &lt; capacity) {</b>
+<b class="fc"><i>60</i>&nbsp;            Chr._idx( buffer, location, chars );</b>
+<i>61</i>&nbsp;        } else {
+<b class="fc"><i>62</i>&nbsp;            buffer = Chr.grow( buffer, buffer.length * 2 + chars.length);</b>
+<b class="fc"><i>63</i>&nbsp;            Chr._idx( buffer, location, chars );</b>
+<b class="fc"><i>64</i>&nbsp;            capacity = buffer.length;</b>
+<i>65</i>&nbsp;        }
+<b class="fc"><i>66</i>&nbsp;        location += chars.length;</b>
+<b class="fc"><i>67</i>&nbsp;        return this;</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public void add(char ch) {
+<b class="fc"><i>72</i>&nbsp;        if (1 + location &lt; capacity) {</b>
+<b class="fc"><i>73</i>&nbsp;            Chr.idx( buffer, location, ch );</b>
+<i>74</i>&nbsp;        } else {
+<b class="fc"><i>75</i>&nbsp;            buffer = Chr.grow(buffer);</b>
+<b class="fc"><i>76</i>&nbsp;            Chr.idx( buffer, location, ch );</b>
+<b class="fc"><i>77</i>&nbsp;            capacity = buffer.length;</b>
+<i>78</i>&nbsp;        }
+<b class="fc"><i>79</i>&nbsp;        location += 1;</b>
+<b class="fc"><i>80</i>&nbsp;    }</b>
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    public String toString() {
+<b class="fc"><i>83</i>&nbsp;        return new String(buffer, 0, location);</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    public int len() {
+<b class="nc"><i>87</i>&nbsp;        return location;</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

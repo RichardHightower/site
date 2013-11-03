@@ -1,0 +1,255 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PropertyNameUtils</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.predicates</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PropertyNameUtils (org.boon.predicates)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PropertyNameUtils</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/ 7)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PropertyNameUtils$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">PropertyNameUtils$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">PropertyNameUtils$3</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">PropertyNameUtils$4</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">PropertyNameUtils$5</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">PropertyNameUtils$6</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (8/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    68.4%
+  </span>
+  <span class="absValue">
+    (13/ 19)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.predicates;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.Str;
+<i>4</i>&nbsp;
+<b class="nc"><i>5</i>&nbsp;public class PropertyNameUtils {</b>
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;
+<b class="fc"><i>8</i>&nbsp;    public static Function&lt;String, String&gt; underBarCase = new Function&lt;String, String&gt;() {</b>
+<i>9</i>&nbsp;        @Override
+<i>10</i>&nbsp;        public String apply(String in) {
+<b class="nc"><i>11</i>&nbsp;            return Str.underBarCase(in);</b>
+<i>12</i>&nbsp;        }
+<i>13</i>&nbsp;    };
+<b class="fc"><i>14</i>&nbsp;    public static Function&lt;String, String&gt; camelCase = new Function&lt;String, String&gt;() {</b>
+<i>15</i>&nbsp;        @Override
+<i>16</i>&nbsp;        public String apply(String in) {
+<b class="nc"><i>17</i>&nbsp;            return Str.camelCase(in);</b>
+<i>18</i>&nbsp;        }
+<i>19</i>&nbsp;    };
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;    public static Function&lt;String, String&gt; camelCaseUpper = new Function&lt;String, String&gt;() {</b>
+<i>23</i>&nbsp;        @Override
+<i>24</i>&nbsp;        public String apply(String in) {
+<b class="nc"><i>25</i>&nbsp;            return Str.camelCaseUpper(in);</b>
+<i>26</i>&nbsp;        }
+<i>27</i>&nbsp;    };
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;
+<b class="fc"><i>30</i>&nbsp;    public static Function&lt;String, String&gt; camelCaseLower = new Function&lt;String, String&gt;() {</b>
+<i>31</i>&nbsp;        @Override
+<i>32</i>&nbsp;        public String apply(String in) {
+<b class="nc"><i>33</i>&nbsp;            return Str.camelCaseLower(in);</b>
+<i>34</i>&nbsp;        }
+<i>35</i>&nbsp;    };
+<i>36</i>&nbsp;
+<b class="fc"><i>37</i>&nbsp;    public static Function&lt;String, String&gt; upperCase = new Function&lt;String, String&gt;() {</b>
+<i>38</i>&nbsp;        @Override
+<i>39</i>&nbsp;        public String apply(String in) {
+<b class="fc"><i>40</i>&nbsp;            return in.toUpperCase();</b>
+<i>41</i>&nbsp;        }
+<i>42</i>&nbsp;    };
+<i>43</i>&nbsp;
+<b class="fc"><i>44</i>&nbsp;    public static Function&lt;String, String&gt; lowerCase = new Function&lt;String, String&gt;() {</b>
+<i>45</i>&nbsp;        @Override
+<i>46</i>&nbsp;        public String apply(String in) {
+<b class="nc"><i>47</i>&nbsp;            return in.toLowerCase();</b>
+<i>48</i>&nbsp;        }
+<i>49</i>&nbsp;    };
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

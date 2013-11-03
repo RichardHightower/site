@@ -1,0 +1,328 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: LookupIndexDefault</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo.impl.indexes</a> ]
+</div>
+
+<h1>Coverage Summary for Class: LookupIndexDefault (org.boon.datarepo.impl.indexes)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LookupIndexDefault</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.6%
+  </span>
+  <span class="absValue">
+    (14/ 22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62.6%
+  </span>
+  <span class="absValue">
+    (57/ 91)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.datarepo.impl.indexes;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.datarepo.LookupIndex;
+<i>4</i>&nbsp;import org.boon.datarepo.spi.SPIFactory;
+<i>5</i>&nbsp;import org.boon.predicates.Function;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.*;
+<i>8</i>&nbsp;import java.util.logging.Level;
+<i>9</i>&nbsp;import java.util.logging.Logger;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;/**
+<i>13</i>&nbsp; * A really simple lookup index that uses a standard java.util.HashMap.
+<i>14</i>&nbsp; *
+<i>15</i>&nbsp; * @param &lt;KEY&gt;  key to lookup
+<i>16</i>&nbsp; * @param &lt;ITEM&gt; value
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;public class LookupIndexDefault&lt;KEY, ITEM&gt; implements LookupIndex&lt;KEY, ITEM&gt; {
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    protected Function&lt;ITEM, KEY&gt; keyGetter;
+<i>22</i>&nbsp;    protected Function&lt;ITEM, KEY&gt; primaryKeyGetter;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    protected Map&lt;KEY, MultiValue&gt; map;
+<b class="fc"><i>25</i>&nbsp;    private Logger log = Logger.getLogger(LookupIndexDefault.class.getName());</b>
+<i>26</i>&nbsp;    protected boolean storeKeyInIndexOnly;
+<i>27</i>&nbsp;    private Function&lt;Object, KEY&gt; keyTransformer;
+<i>28</i>&nbsp;
+<b class="fc"><i>29</i>&nbsp;    protected int keyBucketSize = 3;</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<b class="fc"><i>32</i>&nbsp;    public LookupIndexDefault(Class&lt;?&gt; keyType) {</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;
+<b class="fc"><i>35</i>&nbsp;        if (log.isLoggable(Level.FINE)) {</b>
+<b class="nc"><i>36</i>&nbsp;            log.fine(String.format(&quot;key type %s &quot;, keyType.getName()));</b>
+<i>37</i>&nbsp;        }
+<i>38</i>&nbsp;
+<b class="fc"><i>39</i>&nbsp;        if (keyType == null) {</b>
+<b class="nc"><i>40</i>&nbsp;            return;</b>
+<i>41</i>&nbsp;        }
+<b class="fc"><i>42</i>&nbsp;        map = SPIFactory.getMapCreatorFactory().get().createMap(keyType);</b>
+<i>43</i>&nbsp;
+<b class="fc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    protected void addManyKeys(ITEM item, List&lt;KEY&gt; keys) {
+<b class="fc"><i>48</i>&nbsp;        for (KEY key : keys) {</b>
+<b class="fc"><i>49</i>&nbsp;            if (key != null) {</b>
+<b class="fc"><i>50</i>&nbsp;                this.put(item, key);</b>
+<i>51</i>&nbsp;            }
+<b class="fc"><i>52</i>&nbsp;        }</b>
+<b class="fc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    @Override
+<i>56</i>&nbsp;    public boolean add(ITEM item) {
+<i>57</i>&nbsp;
+<b class="fc"><i>58</i>&nbsp;        if (log.isLoggable(Level.FINE)) {</b>
+<b class="nc"><i>59</i>&nbsp;            log.fine(String.format(&quot;add item = %s&quot;, item));</b>
+<i>60</i>&nbsp;        }
+<i>61</i>&nbsp;
+<b class="fc"><i>62</i>&nbsp;        KEY key = keyGetter.apply(item);</b>
+<b class="fc"><i>63</i>&nbsp;        if (key == null) {</b>
+<b class="fc"><i>64</i>&nbsp;            return false;</b>
+<i>65</i>&nbsp;        }
+<i>66</i>&nbsp;
+<b class="fc"><i>67</i>&nbsp;        put(item, key);</b>
+<b class="fc"><i>68</i>&nbsp;        return true;</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    private void put(ITEM item, KEY key) {
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;
+<b class="fc"><i>75</i>&nbsp;        if (log.isLoggable(Level.FINE)) {</b>
+<b class="nc"><i>76</i>&nbsp;            log.fine(String.format(&quot;put item = %s with key = %s &quot;, item, key));</b>
+<i>77</i>&nbsp;        }
+<i>78</i>&nbsp;
+<b class="fc"><i>79</i>&nbsp;        key = getKey(key);</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;
+<b class="fc"><i>82</i>&nbsp;        MultiValue mv = null;</b>
+<b class="fc"><i>83</i>&nbsp;        mv = map.get(key);</b>
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;
+<b class="fc"><i>86</i>&nbsp;        if (storeKeyInIndexOnly) {</b>
+<b class="nc"><i>87</i>&nbsp;            Object primaryKey = primaryKeyGetter.apply(item);</b>
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;            mv = mvCreateOrAddToMV(mv, primaryKey);</b>
+<b class="nc"><i>90</i>&nbsp;        } else {</b>
+<b class="fc"><i>91</i>&nbsp;            mv = mvCreateOrAddToMV(mv, item);</b>
+<i>92</i>&nbsp;        }
+<i>93</i>&nbsp;
+<b class="fc"><i>94</i>&nbsp;        map.put(key, mv);</b>
+<b class="fc"><i>95</i>&nbsp;    }</b>
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    private MultiValue mvCreateOrAddToMV(MultiValue mv, Object obj) {
+<b class="fc"><i>98</i>&nbsp;        return MultiValue.add(mv, obj, keyBucketSize);</b>
+<i>99</i>&nbsp;    }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    protected final void removeManyKeys(ITEM item, List&lt;KEY&gt; keys) {
+<b class="fc"><i>103</i>&nbsp;        for (KEY key : keys) {</b>
+<b class="fc"><i>104</i>&nbsp;            if (key != null) {</b>
+<b class="fc"><i>105</i>&nbsp;                removeKey(item, key);</b>
+<i>106</i>&nbsp;            }
+<b class="fc"><i>107</i>&nbsp;        }</b>
+<b class="fc"><i>108</i>&nbsp;    }</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    @Override
+<i>111</i>&nbsp;    public boolean delete(ITEM item) {
+<b class="fc"><i>112</i>&nbsp;        KEY key = keyGetter.apply(item);</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;
+<b class="fc"><i>115</i>&nbsp;        return removeKey(item, key);</b>
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    private boolean removeKey(ITEM item, KEY key) {
+<b class="fc"><i>120</i>&nbsp;        key = getKey(key);</b>
+<i>121</i>&nbsp;
+<b class="fc"><i>122</i>&nbsp;        MultiValue mv = map.get(key);</b>
+<i>123</i>&nbsp;
+<b class="fc"><i>124</i>&nbsp;        if (mv == null) {</b>
+<b class="nc"><i>125</i>&nbsp;            return false;</b>
+<i>126</i>&nbsp;        }
+<i>127</i>&nbsp;
+<b class="fc"><i>128</i>&nbsp;        mv = MultiValue.remove(mv, item);</b>
+<i>129</i>&nbsp;
+<b class="fc"><i>130</i>&nbsp;        if (mv == null) {</b>
+<b class="fc"><i>131</i>&nbsp;            map.remove(key);</b>
+<i>132</i>&nbsp;        }
+<b class="fc"><i>133</i>&nbsp;        return true;</b>
+<i>134</i>&nbsp;    }
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    public void setKeyGetter(Function&lt;ITEM, KEY&gt; keyGetter) {
+<b class="fc"><i>138</i>&nbsp;        Objects.requireNonNull(keyGetter, &quot;keyGetter cannot be null&quot;);</b>
+<b class="fc"><i>139</i>&nbsp;        this.keyGetter = keyGetter;</b>
+<b class="fc"><i>140</i>&nbsp;    }</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    public void setPrimaryKeyGetter(Function&lt;ITEM, KEY&gt; keyGetter) {
+<b class="nc"><i>143</i>&nbsp;        Objects.requireNonNull(keyGetter, &quot;keyGetter cannot be null&quot;);</b>
+<b class="nc"><i>144</i>&nbsp;        storeKeyInIndexOnly = true;</b>
+<b class="nc"><i>145</i>&nbsp;        this.primaryKeyGetter = keyGetter;</b>
+<b class="nc"><i>146</i>&nbsp;    }</b>
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;    @Override
+<i>149</i>&nbsp;    public List&lt;ITEM&gt; all() {
+<i>150</i>&nbsp;
+<b class="nc"><i>151</i>&nbsp;        if (log.isLoggable(Level.FINE)) {</b>
+<b class="nc"><i>152</i>&nbsp;            log.fine(&quot;all called&quot;);</b>
+<i>153</i>&nbsp;        }
+<i>154</i>&nbsp;
+<b class="nc"><i>155</i>&nbsp;        List results = new ArrayList&lt;&gt;(map.size());</b>
+<b class="nc"><i>156</i>&nbsp;        for (MultiValue values : map.values()) {</b>
+<b class="nc"><i>157</i>&nbsp;            values.addTo(results);</b>
+<b class="nc"><i>158</i>&nbsp;        }</b>
+<b class="nc"><i>159</i>&nbsp;        return results;</b>
+<i>160</i>&nbsp;    }
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    @Override
+<i>163</i>&nbsp;    public int size() {
+<b class="nc"><i>164</i>&nbsp;        return this.map.size();</b>
+<i>165</i>&nbsp;    }
+<i>166</i>&nbsp;
+<i>167</i>&nbsp;    @Override
+<i>168</i>&nbsp;    public Collection&lt;ITEM&gt; toCollection() {
+<b class="nc"><i>169</i>&nbsp;        return (Collection&lt;ITEM&gt;) this.map.values();</b>
+<i>170</i>&nbsp;    }
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;    @Override
+<i>174</i>&nbsp;    public ITEM get(KEY key) {
+<i>175</i>&nbsp;
+<b class="nc"><i>176</i>&nbsp;        key = getKey(key);</b>
+<i>177</i>&nbsp;
+<b class="nc"><i>178</i>&nbsp;        MultiValue mv = map.get(key);</b>
+<b class="nc"><i>179</i>&nbsp;        if (mv == null) {</b>
+<b class="nc"><i>180</i>&nbsp;            return null;</b>
+<i>181</i>&nbsp;        } else {
+<b class="nc"><i>182</i>&nbsp;            return (ITEM) mv.getValue();</b>
+<i>183</i>&nbsp;        }
+<i>184</i>&nbsp;    }
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;    protected KEY getKey(KEY key) {
+<b class="fc"><i>187</i>&nbsp;        if (keyTransformer != null) {</b>
+<b class="fc"><i>188</i>&nbsp;            key = this.keyTransformer.apply(key);</b>
+<i>189</i>&nbsp;        }
+<b class="fc"><i>190</i>&nbsp;        return key;</b>
+<i>191</i>&nbsp;    }
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;    public List&lt;ITEM&gt; getAll(KEY key) {
+<b class="fc"><i>195</i>&nbsp;        key = getKey(key);</b>
+<i>196</i>&nbsp;
+<b class="fc"><i>197</i>&nbsp;        MultiValue mv = map.get(key);</b>
+<b class="fc"><i>198</i>&nbsp;        if (mv == null) {</b>
+<b class="fc"><i>199</i>&nbsp;            return null;</b>
+<i>200</i>&nbsp;        } else {
+<b class="fc"><i>201</i>&nbsp;            return mv.getValues();</b>
+<i>202</i>&nbsp;        }
+<i>203</i>&nbsp;    }
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;    @Override
+<i>206</i>&nbsp;    public boolean deleteByKey(KEY key) {
+<b class="nc"><i>207</i>&nbsp;        key = getKey(key);</b>
+<i>208</i>&nbsp;
+<b class="nc"><i>209</i>&nbsp;        this.map.remove(key);</b>
+<b class="nc"><i>210</i>&nbsp;        return true;</b>
+<i>211</i>&nbsp;    }
+<i>212</i>&nbsp;
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    //TODO implement so we can store only primary keys in a index to make indexes smaller if
+<i>215</i>&nbsp;    //we ever decide to cache actual items
+<i>216</i>&nbsp;    @Override
+<i>217</i>&nbsp;    public boolean isPrimaryKeyOnly() {
+<b class="fc"><i>218</i>&nbsp;        return storeKeyInIndexOnly;</b>
+<i>219</i>&nbsp;    }
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;    @Override
+<i>222</i>&nbsp;    public void setInputKeyTransformer(Function&lt;Object, KEY&gt; func) {
+<b class="fc"><i>223</i>&nbsp;        this.keyTransformer = func;</b>
+<b class="fc"><i>224</i>&nbsp;    }</b>
+<i>225</i>&nbsp;
+<i>226</i>&nbsp;    @Override
+<i>227</i>&nbsp;    public void setBucketSize(int size) {
+<b class="fc"><i>228</i>&nbsp;        this.keyBucketSize = size;</b>
+<b class="fc"><i>229</i>&nbsp;    }</b>
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;    @Override
+<i>232</i>&nbsp;    public void init() {
+<b class="nc"><i>233</i>&nbsp;    }</b>
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;
+<i>236</i>&nbsp;    @Override
+<i>237</i>&nbsp;    public void clear() {
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;        if (log.isLoggable(Level.FINE)) {</b>
+<b class="nc"><i>240</i>&nbsp;            log.fine(&quot;clear called&quot;);</b>
+<i>241</i>&nbsp;        }
+<b class="nc"><i>242</i>&nbsp;        this.map.clear();</b>
+<b class="nc"><i>243</i>&nbsp;    }</b>
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

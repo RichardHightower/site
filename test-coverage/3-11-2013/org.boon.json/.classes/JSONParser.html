@@ -1,0 +1,724 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: JSONParser</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.json</a> ]
+</div>
+
+<h1>Coverage Summary for Class: JSONParser (org.boon.json)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JSONParser</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76%
+  </span>
+  <span class="absValue">
+    (19/ 25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    77.6%
+  </span>
+  <span class="absValue">
+    (211/ 272)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.json;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.primitive.CharBuf;
+<i>4</i>&nbsp;import org.boon.primitive.Chr;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;import java.util.LinkedHashMap;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;import java.util.Map;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import static org.boon.json.ParserState.*;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * Converts an input JSON String into Java objects works with Reader or String
+<i>15</i>&nbsp; * as input. Produces an Object which can be any of the basic JSON types mapped
+<i>16</i>&nbsp; * to Java.
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;public class JSONParser {
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    private char[] charArray;
+<i>21</i>&nbsp;    private int __index;
+<i>22</i>&nbsp;    private int line;
+<i>23</i>&nbsp;    private int lastLineStart;
+<i>24</i>&nbsp;    private char __currentChar;
+<i>25</i>&nbsp;    private char __lastChar;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    private Map&lt;String, Object&gt; lastObject;
+<i>28</i>&nbsp;    private List&lt;Object&gt; lastList;
+<b class="fc"><i>29</i>&nbsp;    private ParserState state = START;</b>
+<b class="fc"><i>30</i>&nbsp;    private ParserState lastState = START;</b>
+<i>31</i>&nbsp;
+<b class="fc"><i>32</i>&nbsp;    private JSONParser() {</b>
+<i>33</i>&nbsp;
+<b class="fc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    public static Object parse(String cs) {
+<b class="fc"><i>37</i>&nbsp;        JSONParser p = new JSONParser();</b>
+<b class="fc"><i>38</i>&nbsp;        return p.decode(cs);</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    public static Map&lt;String, Object&gt; parseMap(String cs) {
+<b class="nc"><i>44</i>&nbsp;        JSONParser p = new JSONParser();</b>
+<b class="nc"><i>45</i>&nbsp;        return (Map&lt;String, Object&gt;) p.decode(cs);</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; parseList(Class&lt;T&gt; type, String cs) {
+<b class="nc"><i>49</i>&nbsp;        JSONParser p = new JSONParser();</b>
+<b class="nc"><i>50</i>&nbsp;        return (List&lt;T&gt;) p.decode(cs);</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    public static Number parseNumber(char[] cs) {
+<b class="nc"><i>55</i>&nbsp;        JSONParser p = new JSONParser();</b>
+<b class="nc"><i>56</i>&nbsp;        return (Number) p.decode(cs);</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    @SuppressWarnings(&quot;unchecked&quot;)
+<i>61</i>&nbsp;    private Object decode(char[] cs) {
+<b class="nc"><i>62</i>&nbsp;        charArray = cs;</b>
+<b class="nc"><i>63</i>&nbsp;        Object root = null;</b>
+<b class="nc"><i>64</i>&nbsp;        root = decodeValue();</b>
+<b class="nc"><i>65</i>&nbsp;        return root;</b>
+<i>66</i>&nbsp;    }
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    private Object decode(String cs) {
+<b class="fc"><i>70</i>&nbsp;        charArray = cs.toCharArray();</b>
+<b class="fc"><i>71</i>&nbsp;        Object root = null;</b>
+<b class="fc"><i>72</i>&nbsp;        root = decodeValue();</b>
+<b class="fc"><i>73</i>&nbsp;        return root;</b>
+<i>74</i>&nbsp;    }
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    private final boolean hasMore() {
+<b class="fc"><i>78</i>&nbsp;        return __index + 1 &lt; charArray.length;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    private final char nextChar() {
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;        try {
+<b class="fc"><i>84</i>&nbsp;            if (hasMore()) {</b>
+<b class="fc"><i>85</i>&nbsp;                __lastChar = __currentChar;</b>
+<b class="fc"><i>86</i>&nbsp;                __index++;</b>
+<b class="fc"><i>87</i>&nbsp;                return __currentChar = charArray[__index];</b>
+<i>88</i>&nbsp;            }
+<b class="fc"><i>89</i>&nbsp;            return __currentChar;</b>
+<i>90</i>&nbsp;
+<b class="nc"><i>91</i>&nbsp;        } catch (Exception ex) {</b>
+<b class="nc"><i>92</i>&nbsp;            throw new RuntimeException(exceptionDetails(&quot;failure in next &quot; +</b>
+<b class="nc"><i>93</i>&nbsp;                    ex.getLocalizedMessage()), ex);</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;        }
+<i>96</i>&nbsp;    }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    private String exceptionDetails(String message) {
+<b class="fc"><i>100</i>&nbsp;        CharBuf buf = CharBuf.create(255);</b>
+<i>101</i>&nbsp;
+<b class="fc"><i>102</i>&nbsp;        buf.addLine(message);</b>
+<i>103</i>&nbsp;
+<b class="fc"><i>104</i>&nbsp;        buf.add(state.toString()).addLine(&quot; is CURRENT STATE&quot;);</b>
+<b class="fc"><i>105</i>&nbsp;        buf.add(lastState.toString()).addLine(&quot; is LAST STATE&quot;);</b>
+<i>106</i>&nbsp;
+<b class="fc"><i>107</i>&nbsp;        buf.addLine(&quot;&quot;);</b>
+<b class="fc"><i>108</i>&nbsp;        buf.addLine(&quot;The last character read was &quot; + charDescription(__lastChar));</b>
+<b class="fc"><i>109</i>&nbsp;        buf.addLine(&quot;The current character read is &quot; + charDescription(__currentChar));</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;
+<b class="fc"><i>112</i>&nbsp;        if (lastObject != null) {</b>
+<b class="nc"><i>113</i>&nbsp;            buf.addLine(&quot;The last object read was&quot;);</b>
+<b class="nc"><i>114</i>&nbsp;            buf.addLine(&quot;------------------------&quot;);</b>
+<b class="nc"><i>115</i>&nbsp;            buf.addLine(lastObject.toString());</b>
+<b class="nc"><i>116</i>&nbsp;            buf.addLine(&quot;------------------------&quot;);</b>
+<i>117</i>&nbsp;        }
+<i>118</i>&nbsp;
+<b class="fc"><i>119</i>&nbsp;        if (lastList != null) {</b>
+<b class="fc"><i>120</i>&nbsp;            buf.addLine(&quot;The last array read was&quot;);</b>
+<b class="fc"><i>121</i>&nbsp;            buf.addLine(&quot;------------------------&quot;);</b>
+<b class="fc"><i>122</i>&nbsp;            buf.addLine(lastList.toString());</b>
+<b class="fc"><i>123</i>&nbsp;            buf.addLine(&quot;------------------------&quot;);</b>
+<i>124</i>&nbsp;        }
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;
+<b class="fc"><i>127</i>&nbsp;        buf.addLine(message);</b>
+<b class="fc"><i>128</i>&nbsp;        buf.addLine(&quot;line number &quot; + line);</b>
+<b class="fc"><i>129</i>&nbsp;        buf.addLine(&quot;index number &quot; + __index);</b>
+<i>130</i>&nbsp;
+<b class="fc"><i>131</i>&nbsp;        int lineLocationCount = __index - lastLineStart;</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;        try {
+<b class="fc"><i>134</i>&nbsp;            buf.addLine(new String(charArray, lastLineStart, __index));</b>
+<b class="nc"><i>135</i>&nbsp;        } catch (Exception ex) {</b>
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;            try {
+<b class="nc"><i>138</i>&nbsp;                int index = (__index - 20 &lt; 0) ? 0 : __index - 20;</b>
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;                buf.addLine(new String(charArray, index, __index));</b>
+<b class="nc"><i>141</i>&nbsp;            } catch (Exception ex2) {</b>
+<b class="nc"><i>142</i>&nbsp;                buf.addLine(new String(charArray, 0, charArray.length));</b>
+<b class="nc"><i>143</i>&nbsp;            }</b>
+<b class="fc"><i>144</i>&nbsp;        }</b>
+<b class="fc"><i>145</i>&nbsp;        for (int i = 0; i &lt; lineLocationCount; i++) {</b>
+<b class="fc"><i>146</i>&nbsp;            if (lineLocationCount - 1 == i) {</b>
+<b class="fc"><i>147</i>&nbsp;                buf.add(&#39;^&#39;);</b>
+<i>148</i>&nbsp;            } else {
+<b class="nc"><i>149</i>&nbsp;                buf.add(&#39;.&#39;);</b>
+<i>150</i>&nbsp;            }
+<i>151</i>&nbsp;        }
+<b class="fc"><i>152</i>&nbsp;        return buf.toString();</b>
+<i>153</i>&nbsp;    }
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;    private void skipWhiteSpace() {
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;        label:
+<b class="fc"><i>160</i>&nbsp;        for (;__index &lt; this.charArray.length; __index++) {</b>
+<b class="fc"><i>161</i>&nbsp;            __currentChar = charArray[__index];</b>
+<b class="fc"><i>162</i>&nbsp;            switch (__currentChar) {</b>
+<i>163</i>&nbsp;                case &#39;\n&#39; :
+<b class="fc"><i>164</i>&nbsp;                    line++;</b>
+<b class="fc"><i>165</i>&nbsp;                    lastLineStart = __index+1;</b>
+<b class="fc"><i>166</i>&nbsp;                    continue label;</b>
+<i>167</i>&nbsp;                case &#39;\r&#39; :
+<b class="fc"><i>168</i>&nbsp;                    line++;</b>
+<b class="fc"><i>169</i>&nbsp;                    lastLineStart = __index+1;</b>
+<b class="fc"><i>170</i>&nbsp;                    continue label;</b>
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;                case &#39; &#39;:
+<i>173</i>&nbsp;                case &#39;\t&#39;:
+<i>174</i>&nbsp;                case &#39;\b&#39;:
+<i>175</i>&nbsp;                case &#39;\f&#39;:
+<b class="fc"><i>176</i>&nbsp;                    continue label;</b>
+<i>177</i>&nbsp;                default:
+<b class="fc"><i>178</i>&nbsp;                    break label;</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;            }
+<i>181</i>&nbsp;        }
+<i>182</i>&nbsp;
+<b class="fc"><i>183</i>&nbsp;    }</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;    private Object decodeJsonObject() {
+<i>186</i>&nbsp;
+<b class="fc"><i>187</i>&nbsp;        if (__currentChar == &#39;{&#39; &amp;&amp; this.hasMore())</b>
+<b class="fc"><i>188</i>&nbsp;            this.nextChar();</b>
+<i>189</i>&nbsp;
+<b class="fc"><i>190</i>&nbsp;        Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;();</b>
+<i>191</i>&nbsp;
+<b class="fc"><i>192</i>&nbsp;        this.lastObject = map;</b>
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;        do {
+<i>195</i>&nbsp;
+<b class="fc"><i>196</i>&nbsp;            skipWhiteSpace();</b>
+<i>197</i>&nbsp;
+<i>198</i>&nbsp;
+<b class="fc"><i>199</i>&nbsp;            if (__currentChar == &#39;&quot;&#39;) {</b>
+<b class="fc"><i>200</i>&nbsp;                String key = decodeKeyName();</b>
+<b class="fc"><i>201</i>&nbsp;                skipWhiteSpace();</b>
+<i>202</i>&nbsp;
+<b class="fc"><i>203</i>&nbsp;                if (__currentChar != &#39;:&#39;) {</b>
+<i>204</i>&nbsp;
+<b class="nc"><i>205</i>&nbsp;                    complain(&quot;expecting current character to be &quot; + charDescription(__currentChar) + &quot;\n&quot;);</b>
+<i>206</i>&nbsp;                }
+<b class="fc"><i>207</i>&nbsp;                this.nextChar(); // skip past &#39;:&#39;</b>
+<b class="fc"><i>208</i>&nbsp;                skipWhiteSpace();</b>
+<i>209</i>&nbsp;
+<b class="fc"><i>210</i>&nbsp;                setState(START_OBJECT_ITEM);</b>
+<b class="fc"><i>211</i>&nbsp;                Object value = decodeValue();</b>
+<i>212</i>&nbsp;
+<b class="fc"><i>213</i>&nbsp;                skipWhiteSpace();</b>
+<i>214</i>&nbsp;
+<b class="fc"><i>215</i>&nbsp;                map.put(key, value);</b>
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;
+<b class="fc"><i>218</i>&nbsp;                setState(END_OBJECT_ITEM);</b>
+<i>219</i>&nbsp;
+<b class="fc"><i>220</i>&nbsp;                if (!(__currentChar == &#39;}&#39; || __currentChar == &#39;,&#39;)) {</b>
+<b class="nc"><i>221</i>&nbsp;                    complain(&quot;expecting &#39;}&#39; or &#39;,&#39; but got current char &quot; + charDescription(__currentChar));</b>
+<i>222</i>&nbsp;                }
+<i>223</i>&nbsp;            }
+<b class="fc"><i>224</i>&nbsp;            if (__currentChar == &#39;}&#39;) {</b>
+<b class="fc"><i>225</i>&nbsp;                this.nextChar();</b>
+<b class="fc"><i>226</i>&nbsp;                break;</b>
+<b class="fc"><i>227</i>&nbsp;            } else if (__currentChar == &#39;,&#39;) {</b>
+<b class="fc"><i>228</i>&nbsp;                this.nextChar();</b>
+<b class="fc"><i>229</i>&nbsp;                continue;</b>
+<i>230</i>&nbsp;            } else {
+<b class="nc"><i>231</i>&nbsp;                complain(</b>
+<b class="nc"><i>232</i>&nbsp;                        &quot;expecting &#39;}&#39; or &#39;,&#39; but got current char &quot; + charDescription(__currentChar));</b>
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;            }
+<b class="fc"><i>235</i>&nbsp;        } while (this.hasMore());</b>
+<b class="fc"><i>236</i>&nbsp;        return map;</b>
+<i>237</i>&nbsp;    }
+<i>238</i>&nbsp;
+<i>239</i>&nbsp;    private void complain(String complaint) {
+<b class="nc"><i>240</i>&nbsp;        throw new JSONException(exceptionDetails(complaint));</b>
+<i>241</i>&nbsp;    }
+<i>242</i>&nbsp;
+<i>243</i>&nbsp;
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;    private Object decodeValue() {
+<b class="fc"><i>247</i>&nbsp;        Object value = null;</b>
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;        done:
+<b class="fc"><i>250</i>&nbsp;        for (;__index &lt; this.charArray.length; __index++) {</b>
+<b class="fc"><i>251</i>&nbsp;            __currentChar = charArray[__index];</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;
+<b class="fc"><i>254</i>&nbsp;            switch (__currentChar) {</b>
+<i>255</i>&nbsp;                case &#39;\n&#39; :
+<b class="nc"><i>256</i>&nbsp;                    line++;</b>
+<b class="nc"><i>257</i>&nbsp;                    lastLineStart = __index+1;</b>
+<b class="nc"><i>258</i>&nbsp;                    break;</b>
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;                case &#39;\r&#39; :
+<i>261</i>&nbsp;                case &#39; &#39;:
+<i>262</i>&nbsp;                case &#39;\t&#39;:
+<i>263</i>&nbsp;                case &#39;\b&#39;:
+<i>264</i>&nbsp;                case &#39;\f&#39;:
+<b class="fc"><i>265</i>&nbsp;                    break;</b>
+<i>266</i>&nbsp;
+<i>267</i>&nbsp;                case &#39;&quot;&#39;:
+<b class="fc"><i>268</i>&nbsp;                    setState(START_STRING);</b>
+<b class="fc"><i>269</i>&nbsp;                    value = decodeString();</b>
+<b class="fc"><i>270</i>&nbsp;                    setState(END_STRING);</b>
+<b class="fc"><i>271</i>&nbsp;                    break done;</b>
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;
+<i>274</i>&nbsp;                case &#39;t&#39;:
+<b class="fc"><i>275</i>&nbsp;                    setState(START_BOOLEAN);</b>
+<b class="fc"><i>276</i>&nbsp;                    value = decodeTrue();</b>
+<b class="fc"><i>277</i>&nbsp;                    setState(END_BOOLEAN);</b>
+<b class="fc"><i>278</i>&nbsp;                    break done;</b>
+<i>279</i>&nbsp;
+<i>280</i>&nbsp;                case &#39;f&#39;:
+<b class="nc"><i>281</i>&nbsp;                    setState(START_BOOLEAN);</b>
+<b class="nc"><i>282</i>&nbsp;                    value = decodeFalse();</b>
+<b class="nc"><i>283</i>&nbsp;                    setState(END_BOOLEAN);</b>
+<b class="nc"><i>284</i>&nbsp;                    break done;</b>
+<i>285</i>&nbsp;
+<i>286</i>&nbsp;                case &#39;n&#39;:
+<b class="fc"><i>287</i>&nbsp;                    setState(START_NULL);</b>
+<b class="fc"><i>288</i>&nbsp;                    value = decodeNull();</b>
+<b class="fc"><i>289</i>&nbsp;                    setState(END_NULL);</b>
+<b class="fc"><i>290</i>&nbsp;                    break done;</b>
+<i>291</i>&nbsp;
+<i>292</i>&nbsp;                case &#39;[&#39;:
+<b class="fc"><i>293</i>&nbsp;                    setState(START_LIST);</b>
+<b class="fc"><i>294</i>&nbsp;                    value = decodeJsonArray();</b>
+<b class="fc"><i>295</i>&nbsp;                    setState(END_LIST);</b>
+<b class="fc"><i>296</i>&nbsp;                    break done;</b>
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;                case &#39;{&#39; :
+<b class="fc"><i>299</i>&nbsp;                    setState(START_OBJECT);</b>
+<b class="fc"><i>300</i>&nbsp;                    value = decodeJsonObject();</b>
+<b class="fc"><i>301</i>&nbsp;                    setState(END_OBJECT);</b>
+<b class="fc"><i>302</i>&nbsp;                    break done;</b>
+<i>303</i>&nbsp;
+<i>304</i>&nbsp;                case &#39;1&#39;:
+<i>305</i>&nbsp;                case &#39;2&#39;:
+<i>306</i>&nbsp;                case &#39;3&#39;:
+<i>307</i>&nbsp;                case &#39;4&#39;:
+<i>308</i>&nbsp;                case &#39;5&#39;:
+<i>309</i>&nbsp;                case &#39;6&#39;:
+<i>310</i>&nbsp;                case &#39;7&#39;:
+<i>311</i>&nbsp;                case &#39;8&#39;:
+<i>312</i>&nbsp;                case &#39;9&#39;:
+<i>313</i>&nbsp;                case &#39;0&#39;:
+<i>314</i>&nbsp;                case &#39;-&#39;:
+<b class="fc"><i>315</i>&nbsp;                    setState(START_NUMBER);</b>
+<b class="fc"><i>316</i>&nbsp;                    value = decodeNumber();</b>
+<b class="fc"><i>317</i>&nbsp;                    setState(END_NUMBER);</b>
+<b class="fc"><i>318</i>&nbsp;                    break done;</b>
+<i>319</i>&nbsp;
+<i>320</i>&nbsp;                default:
+<b class="fc"><i>321</i>&nbsp;                    throw new JSONException(exceptionDetails(&quot;Unable to determine the &quot; +</b>
+<i>322</i>&nbsp;                            &quot;current character, it is not a string, number, array, or object&quot;));
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;            }
+<i>325</i>&nbsp;        }
+<i>326</i>&nbsp;
+<b class="fc"><i>327</i>&nbsp;        return value;</b>
+<i>328</i>&nbsp;    }
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;    private void setState(ParserState state) {
+<b class="fc"><i>332</i>&nbsp;        this.lastState = this.state;</b>
+<b class="fc"><i>333</i>&nbsp;        this.state = state;</b>
+<b class="fc"><i>334</i>&nbsp;    }</b>
+<i>335</i>&nbsp;
+<i>336</i>&nbsp;    private Object decodeNumber() {
+<i>337</i>&nbsp;
+<b class="fc"><i>338</i>&nbsp;        int startIndex = __index;</b>
+<i>339</i>&nbsp;
+<b class="fc"><i>340</i>&nbsp;        boolean doubleFloat = false;</b>
+<i>341</i>&nbsp;
+<i>342</i>&nbsp;        int index;
+<b class="fc"><i>343</i>&nbsp;        int count =0;</b>
+<b class="fc"><i>344</i>&nbsp;        int countDecimalPoint=0;</b>
+<b class="fc"><i>345</i>&nbsp;        int eCount=0;</b>
+<b class="fc"><i>346</i>&nbsp;        int plusCount=0;</b>
+<i>347</i>&nbsp;
+<i>348</i>&nbsp;        loop:
+<b class="fc"><i>349</i>&nbsp;        for ( index = __index; index &lt; charArray.length; index++, count++ ) {</b>
+<b class="fc"><i>350</i>&nbsp;           __currentChar = charArray [index];</b>
+<b class="fc"><i>351</i>&nbsp;            char c = __currentChar;</b>
+<i>352</i>&nbsp;
+<b class="fc"><i>353</i>&nbsp;            switch(__currentChar) {</b>
+<i>354</i>&nbsp;                case &#39; &#39;:
+<i>355</i>&nbsp;                case &#39;\t&#39;:
+<i>356</i>&nbsp;                case &#39;\n&#39;:
+<i>357</i>&nbsp;                case &#39;\r&#39;:
+<b class="fc"><i>358</i>&nbsp;                    __index = index+1;</b>
+<b class="fc"><i>359</i>&nbsp;                    break loop;</b>
+<i>360</i>&nbsp;
+<i>361</i>&nbsp;                case &#39;,&#39;:
+<b class="fc"><i>362</i>&nbsp;                    if ( lastState == START_LIST_ITEM || lastState == START_OBJECT_ITEM ) {</b>
+<b class="fc"><i>363</i>&nbsp;                        break loop;</b>
+<i>364</i>&nbsp;                    } else {
+<b class="nc"><i>365</i>&nbsp;                        throw new JSONException(&quot;Unexpected comma token&quot;);</b>
+<i>366</i>&nbsp;                    }
+<i>367</i>&nbsp;
+<i>368</i>&nbsp;                case &#39;]&#39;:
+<b class="fc"><i>369</i>&nbsp;                    if ( lastState == START_LIST_ITEM ) {</b>
+<b class="fc"><i>370</i>&nbsp;                        break loop;</b>
+<i>371</i>&nbsp;                    } else {
+<b class="nc"><i>372</i>&nbsp;                        throw new JSONException(&quot;Unexpected close bracket token&quot;);</b>
+<i>373</i>&nbsp;                    }
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;                case &#39;}&#39;:
+<b class="fc"><i>376</i>&nbsp;                    if ( lastState == START_OBJECT_ITEM ) {</b>
+<b class="fc"><i>377</i>&nbsp;                        break loop;</b>
+<i>378</i>&nbsp;                    } else {
+<b class="nc"><i>379</i>&nbsp;                        throw new JSONException(&quot;Unexpected close curly brace token&quot;);</b>
+<i>380</i>&nbsp;                    }
+<i>381</i>&nbsp;
+<i>382</i>&nbsp;                case &#39;1&#39;:
+<i>383</i>&nbsp;                case &#39;2&#39;:
+<i>384</i>&nbsp;                case &#39;3&#39;:
+<i>385</i>&nbsp;                case &#39;4&#39;:
+<i>386</i>&nbsp;                case &#39;5&#39;:
+<i>387</i>&nbsp;                case &#39;6&#39;:
+<i>388</i>&nbsp;                case &#39;7&#39;:
+<i>389</i>&nbsp;                case &#39;8&#39;:
+<i>390</i>&nbsp;                case &#39;9&#39;:
+<i>391</i>&nbsp;                case &#39;0&#39;:
+<i>392</i>&nbsp;                case &#39;-&#39;:
+<b class="fc"><i>393</i>&nbsp;                    continue loop;</b>
+<i>394</i>&nbsp;
+<i>395</i>&nbsp;                case &#39;.&#39;:
+<b class="fc"><i>396</i>&nbsp;                    doubleFloat = true;</b>
+<b class="fc"><i>397</i>&nbsp;                    countDecimalPoint++;</b>
+<b class="fc"><i>398</i>&nbsp;                    if (countDecimalPoint&gt;1) {</b>
+<b class="nc"><i>399</i>&nbsp;                        throw new JSONException(&quot;number has more than one decimal point&quot;);</b>
+<i>400</i>&nbsp;                    }
+<i>401</i>&nbsp;                    continue loop;
+<i>402</i>&nbsp;
+<i>403</i>&nbsp;                case &#39;e&#39;:
+<i>404</i>&nbsp;                case &#39;E&#39;:
+<b class="fc"><i>405</i>&nbsp;                    doubleFloat = true;</b>
+<b class="fc"><i>406</i>&nbsp;                    eCount++;</b>
+<b class="fc"><i>407</i>&nbsp;                    if (eCount&gt;1) {</b>
+<b class="nc"><i>408</i>&nbsp;                        throw new JSONException(&quot;number has more than one exp definition&quot;);</b>
+<i>409</i>&nbsp;                    }
+<i>410</i>&nbsp;                    continue loop;
+<i>411</i>&nbsp;
+<i>412</i>&nbsp;                case &#39;+&#39;:
+<b class="fc"><i>413</i>&nbsp;                    doubleFloat = true;</b>
+<b class="fc"><i>414</i>&nbsp;                    plusCount++;</b>
+<b class="fc"><i>415</i>&nbsp;                    if (plusCount&gt;1) {</b>
+<b class="nc"><i>416</i>&nbsp;                        throw new JSONException(&quot;number has more than one plus sign&quot;);</b>
+<i>417</i>&nbsp;                    }
+<b class="fc"><i>418</i>&nbsp;                    if (eCount==0) {</b>
+<b class="nc"><i>419</i>&nbsp;                        throw new JSONException(&quot;plus sign must come after exp&quot;);</b>
+<i>420</i>&nbsp;
+<i>421</i>&nbsp;                    }
+<i>422</i>&nbsp;                    continue loop;
+<i>423</i>&nbsp;
+<i>424</i>&nbsp;            }
+<i>425</i>&nbsp;
+<b class="nc"><i>426</i>&nbsp;            complain(&quot;expecting number char but got current char &quot; + charDescription(c));</b>
+<i>427</i>&nbsp;        }
+<i>428</i>&nbsp;
+<b class="fc"><i>429</i>&nbsp;        __index = index;</b>
+<i>430</i>&nbsp;
+<b class="fc"><i>431</i>&nbsp;        String svalue = new String(this.charArray, startIndex, count);</b>
+<i>432</i>&nbsp;
+<i>433</i>&nbsp;
+<i>434</i>&nbsp;
+<i>435</i>&nbsp;
+<b class="fc"><i>436</i>&nbsp;        Object value = null;</b>
+<i>437</i>&nbsp;        try {
+<b class="fc"><i>438</i>&nbsp;            if (doubleFloat) {</b>
+<b class="fc"><i>439</i>&nbsp;                value = Double.parseDouble(svalue);</b>
+<i>440</i>&nbsp;            } else {
+<b class="fc"><i>441</i>&nbsp;                value = Integer.parseInt(svalue);</b>
+<i>442</i>&nbsp;            }
+<b class="fc"><i>443</i>&nbsp;        } catch (Exception ex) {</b>
+<i>444</i>&nbsp;            try {
+<b class="fc"><i>445</i>&nbsp;                value = Long.parseLong(svalue);</b>
+<b class="nc"><i>446</i>&nbsp;            } catch (Exception ex2) {</b>
+<b class="nc"><i>447</i>&nbsp;                complain(&quot;expecting to decode a number but got value of &quot; + svalue);</b>
+<b class="fc"><i>448</i>&nbsp;            }</b>
+<i>449</i>&nbsp;
+<b class="fc"><i>450</i>&nbsp;        }</b>
+<i>451</i>&nbsp;
+<b class="fc"><i>452</i>&nbsp;        skipWhiteSpace();</b>
+<i>453</i>&nbsp;
+<b class="fc"><i>454</i>&nbsp;        return value;</b>
+<i>455</i>&nbsp;
+<i>456</i>&nbsp;    }
+<i>457</i>&nbsp;
+<i>458</i>&nbsp;
+<i>459</i>&nbsp;
+<b class="fc"><i>460</i>&nbsp;    private static char [] NULL = Chr.chars(&quot;null&quot;);</b>
+<i>461</i>&nbsp;    private Object decodeNull() {
+<i>462</i>&nbsp;
+<b class="fc"><i>463</i>&nbsp;        if (__index + NULL.length &lt;= charArray.length) {</b>
+<b class="fc"><i>464</i>&nbsp;            if (charArray  [__index]==&#39;n&#39; &amp;&amp;</b>
+<i>465</i>&nbsp;                    charArray[++__index]==&#39;u&#39; &amp;&amp;
+<i>466</i>&nbsp;                    charArray[++__index]==&#39;l&#39; &amp;&amp;
+<i>467</i>&nbsp;                    charArray[++__index]==&#39;l&#39;)  {
+<b class="fc"><i>468</i>&nbsp;                return null;</b>
+<i>469</i>&nbsp;            }
+<i>470</i>&nbsp;        }
+<b class="nc"><i>471</i>&nbsp;        throw new JSONException(&quot;null not parse properly&quot;);</b>
+<i>472</i>&nbsp;    }
+<i>473</i>&nbsp;
+<b class="fc"><i>474</i>&nbsp;    private static char [] TRUE = Chr.chars(&quot;true&quot;);</b>
+<i>475</i>&nbsp;    private boolean decodeTrue() {
+<i>476</i>&nbsp;
+<b class="fc"><i>477</i>&nbsp;        if (__index + TRUE.length &lt;= charArray.length) {</b>
+<b class="fc"><i>478</i>&nbsp;            if (charArray  [__index]==&#39;t&#39; &amp;&amp;</b>
+<i>479</i>&nbsp;                    charArray[++__index]==&#39;r&#39; &amp;&amp;
+<i>480</i>&nbsp;                    charArray[++__index]==&#39;u&#39; &amp;&amp;
+<i>481</i>&nbsp;                    charArray[++__index]==&#39;e&#39;)  {
+<i>482</i>&nbsp;
+<b class="fc"><i>483</i>&nbsp;                nextChar();</b>
+<b class="fc"><i>484</i>&nbsp;                return true;</b>
+<i>485</i>&nbsp;
+<i>486</i>&nbsp;            }
+<i>487</i>&nbsp;        }
+<i>488</i>&nbsp;
+<b class="fc"><i>489</i>&nbsp;        throw new JSONException(&quot;true not parse properly&quot;);</b>
+<i>490</i>&nbsp;    }
+<i>491</i>&nbsp;
+<i>492</i>&nbsp;
+<i>493</i>&nbsp;
+<b class="fc"><i>494</i>&nbsp;    private static char [] FALSE = Chr.chars(&quot;false&quot;);</b>
+<i>495</i>&nbsp;    private boolean decodeFalse() {
+<i>496</i>&nbsp;
+<b class="nc"><i>497</i>&nbsp;        if (__index + FALSE.length &lt;= charArray.length) {</b>
+<b class="nc"><i>498</i>&nbsp;            if (charArray  [__index]==&#39;f&#39; &amp;&amp;</b>
+<i>499</i>&nbsp;                    charArray[++__index]==&#39;a&#39; &amp;&amp;
+<i>500</i>&nbsp;                    charArray[++__index]==&#39;l&#39; &amp;&amp;
+<i>501</i>&nbsp;                    charArray[++__index]==&#39;s&#39; &amp;&amp;
+<i>502</i>&nbsp;                    charArray[++__index]==&#39;e&#39;){
+<b class="nc"><i>503</i>&nbsp;                return true;</b>
+<i>504</i>&nbsp;            }
+<i>505</i>&nbsp;        }
+<b class="nc"><i>506</i>&nbsp;        throw new JSONException(&quot;true not parse properly&quot;);</b>
+<i>507</i>&nbsp;    }
+<i>508</i>&nbsp;
+<i>509</i>&nbsp;    private String decodeString() {
+<b class="fc"><i>510</i>&nbsp;        String value = null;</b>
+<i>511</i>&nbsp;
+<b class="fc"><i>512</i>&nbsp;        final int startIndex = __index;</b>
+<b class="fc"><i>513</i>&nbsp;        if (__index &lt; charArray.length &amp;&amp; __currentChar == &#39;&quot;&#39;)  {</b>
+<b class="fc"><i>514</i>&nbsp;            __index++;</b>
+<i>515</i>&nbsp;        }
+<i>516</i>&nbsp;
+<i>517</i>&nbsp;
+<i>518</i>&nbsp;        done:
+<b class="fc"><i>519</i>&nbsp;        for (;__index &lt; this.charArray.length; __index++) {</b>
+<b class="fc"><i>520</i>&nbsp;            __currentChar = charArray[__index];</b>
+<b class="fc"><i>521</i>&nbsp;            switch (__currentChar) {</b>
+<i>522</i>&nbsp;
+<i>523</i>&nbsp;                case &#39;&quot;&#39;:
+<b class="fc"><i>524</i>&nbsp;                    break done;</b>
+<i>525</i>&nbsp;
+<i>526</i>&nbsp;                case &#39;\t&#39;:
+<i>527</i>&nbsp;                case &#39;\n&#39;:
+<i>528</i>&nbsp;                case &#39;\r&#39;:
+<i>529</i>&nbsp;                case &#39;\f&#39;:
+<i>530</i>&nbsp;                case &#39;\b&#39;:
+<b class="nc"><i>531</i>&nbsp;                    throw new JSONException( &quot;illegal control character found &quot; +__currentChar );</b>
+<i>532</i>&nbsp;
+<i>533</i>&nbsp;
+<i>534</i>&nbsp;                case &#39;\\&#39;:
+<b class="fc"><i>535</i>&nbsp;                    if (__index &lt; charArray.length) {</b>
+<b class="fc"><i>536</i>&nbsp;                        __index++;</b>
+<i>537</i>&nbsp;                    }
+<i>538</i>&nbsp;                    continue;
+<i>539</i>&nbsp;
+<i>540</i>&nbsp;            }
+<i>541</i>&nbsp;        }
+<i>542</i>&nbsp;
+<b class="fc"><i>543</i>&nbsp;        value = encodeString(startIndex, __index);</b>
+<i>544</i>&nbsp;
+<b class="fc"><i>545</i>&nbsp;        if (__index &lt; charArray.length) {</b>
+<b class="fc"><i>546</i>&nbsp;            __index++;</b>
+<i>547</i>&nbsp;        }
+<i>548</i>&nbsp;
+<b class="fc"><i>549</i>&nbsp;        return value;</b>
+<i>550</i>&nbsp;    }
+<i>551</i>&nbsp;
+<i>552</i>&nbsp;    private String encodeString(int start, int to) {
+<b class="fc"><i>553</i>&nbsp;        return JSONStringParser.decode(charArray, start, to);</b>
+<i>554</i>&nbsp;    }
+<i>555</i>&nbsp;
+<i>556</i>&nbsp;    private String decodeKeyName() {
+<b class="fc"><i>557</i>&nbsp;        return decodeString();</b>
+<i>558</i>&nbsp;
+<i>559</i>&nbsp;    }
+<i>560</i>&nbsp;
+<i>561</i>&nbsp;    private List decodeJsonArray() {
+<b class="fc"><i>562</i>&nbsp;        if (__currentChar == &#39;[&#39;) {</b>
+<b class="fc"><i>563</i>&nbsp;            this.nextChar();</b>
+<i>564</i>&nbsp;        }
+<i>565</i>&nbsp;
+<b class="fc"><i>566</i>&nbsp;        skipWhiteSpace();</b>
+<i>567</i>&nbsp;
+<b class="fc"><i>568</i>&nbsp;        List&lt;Object&gt; list = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>569</i>&nbsp;        this.lastList = list;</b>
+<i>570</i>&nbsp;
+<i>571</i>&nbsp;        /* the list might be empty  */
+<b class="fc"><i>572</i>&nbsp;        if (__currentChar == &#39;]&#39;) {</b>
+<b class="fc"><i>573</i>&nbsp;            this.nextChar();</b>
+<b class="fc"><i>574</i>&nbsp;            return list;</b>
+<i>575</i>&nbsp;        }
+<i>576</i>&nbsp;
+<i>577</i>&nbsp;
+<b class="fc"><i>578</i>&nbsp;        int arrayIndex = 0;</b>
+<i>579</i>&nbsp;
+<i>580</i>&nbsp;        do {
+<b class="fc"><i>581</i>&nbsp;            skipWhiteSpace();</b>
+<i>582</i>&nbsp;
+<b class="fc"><i>583</i>&nbsp;            setState(START_LIST_ITEM);</b>
+<b class="fc"><i>584</i>&nbsp;            Object arrayItem = decodeValue();</b>
+<i>585</i>&nbsp;
+<b class="fc"><i>586</i>&nbsp;            if (arrayItem == null &amp;&amp; state == END_NULL) {</b>
+<b class="nc"><i>587</i>&nbsp;                list.add(null); //JSON null detected</b>
+<b class="fc"><i>588</i>&nbsp;            } else if (arrayItem == null) {</b>
+<b class="nc"><i>589</i>&nbsp;                throw new JSONException(&quot;array item was null&quot;);</b>
+<i>590</i>&nbsp;            } else {
+<b class="fc"><i>591</i>&nbsp;                list.add(arrayItem);</b>
+<i>592</i>&nbsp;            }
+<i>593</i>&nbsp;
+<b class="fc"><i>594</i>&nbsp;            arrayIndex++;</b>
+<i>595</i>&nbsp;
+<b class="fc"><i>596</i>&nbsp;            setState(END_LIST_ITEM);</b>
+<i>597</i>&nbsp;
+<b class="fc"><i>598</i>&nbsp;            skipWhiteSpace();</b>
+<i>599</i>&nbsp;
+<b class="fc"><i>600</i>&nbsp;            char c = __currentChar;</b>
+<i>601</i>&nbsp;
+<b class="fc"><i>602</i>&nbsp;            if (c == &#39;,&#39;) {</b>
+<b class="fc"><i>603</i>&nbsp;                this.nextChar();</b>
+<b class="fc"><i>604</i>&nbsp;                continue;</b>
+<b class="fc"><i>605</i>&nbsp;            } else if (c == &#39;]&#39;) {</b>
+<b class="fc"><i>606</i>&nbsp;                this.nextChar();</b>
+<b class="fc"><i>607</i>&nbsp;                break;</b>
+<i>608</i>&nbsp;            } else {
+<b class="nc"><i>609</i>&nbsp;                String charString = charDescription(c);</b>
+<i>610</i>&nbsp;
+<b class="nc"><i>611</i>&nbsp;                complain(</b>
+<b class="nc"><i>612</i>&nbsp;                        String.format(&quot;expecting a &#39;,&#39; or a &#39;]&#39;, &quot; +</b>
+<i>613</i>&nbsp;                                &quot; but got \nthe current character of  %s &quot; +
+<b class="nc"><i>614</i>&nbsp;                                &quot; on array index of %s \n&quot;, charString, arrayIndex)</b>
+<i>615</i>&nbsp;                );
+<i>616</i>&nbsp;
+<i>617</i>&nbsp;            }
+<b class="fc"><i>618</i>&nbsp;        } while (this.hasMore());</b>
+<b class="fc"><i>619</i>&nbsp;        return list;</b>
+<i>620</i>&nbsp;    }
+<i>621</i>&nbsp;
+<i>622</i>&nbsp;    private String charDescription(char c) {
+<i>623</i>&nbsp;        String charString;
+<b class="fc"><i>624</i>&nbsp;        if (c == &#39; &#39;) {</b>
+<b class="nc"><i>625</i>&nbsp;            charString = &quot;[SPACE]&quot;;</b>
+<b class="fc"><i>626</i>&nbsp;        } else if (c == &#39;\t&#39;) {</b>
+<b class="nc"><i>627</i>&nbsp;            charString = &quot;[TAB]&quot;;</b>
+<i>628</i>&nbsp;
+<b class="fc"><i>629</i>&nbsp;        } else if (c == &#39;\n&#39;) {</b>
+<b class="nc"><i>630</i>&nbsp;            charString = &quot;[NEWLINE]&quot;;</b>
+<i>631</i>&nbsp;
+<i>632</i>&nbsp;        } else {
+<b class="fc"><i>633</i>&nbsp;            charString = &quot;&#39;&quot; + c + &quot;&#39;&quot;;</b>
+<i>634</i>&nbsp;        }
+<i>635</i>&nbsp;
+<b class="fc"><i>636</i>&nbsp;        charString = charString + &quot; with an int value of &quot; + ((int) c);</b>
+<b class="fc"><i>637</i>&nbsp;        return charString;</b>
+<i>638</i>&nbsp;    }
+<i>639</i>&nbsp;
+<i>640</i>&nbsp;
+<i>641</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

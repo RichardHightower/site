@@ -1,0 +1,619 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Collections</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Collections (org.boon.datarepo)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Collections</td>
+<td class="coverageStat">
+  <span class="percent">
+    36.8%
+  </span>
+  <span class="absValue">
+    (7/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62.8%
+  </span>
+  <span class="absValue">
+    (54/ 86)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Collections$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Collections$QList</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    41.7%
+  </span>
+  <span class="absValue">
+    (5/ 12)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Collections$QSet</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 11)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    31.4%
+  </span>
+  <span class="absValue">
+    (11/ 35)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.8%
+  </span>
+  <span class="absValue">
+    (63/ 113)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;/**
+<i>2</i>&nbsp; * Copyright 2013 Rick Hightower
+<i>3</i>&nbsp; *
+<i>4</i>&nbsp; * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+<i>5</i>&nbsp; * you may not use this file except in compliance with the License.
+<i>6</i>&nbsp; * You may obtain a copy of the License at
+<i>7</i>&nbsp; *
+<i>8</i>&nbsp; *    http://www.apache.org/licenses/LICENSE-2.0
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * Unless required by applicable law or agreed to in writing, software
+<i>11</i>&nbsp; * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+<i>12</i>&nbsp; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+<i>13</i>&nbsp; * See the License for the specific language governing permissions and
+<i>14</i>&nbsp; * limitations under the License.
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;package org.boon.datarepo;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;import org.boon.core.Typ;
+<i>19</i>&nbsp;import org.boon.datarepo.impl.decorators.FilterWithSimpleCache;
+<i>20</i>&nbsp;import org.boon.criteria.Criteria;
+<i>21</i>&nbsp;import org.boon.datarepo.spi.SPIFactory;
+<i>22</i>&nbsp;import org.boon.datarepo.spi.SearchIndex;
+<i>23</i>&nbsp;import org.boon.datarepo.spi.SearchableCollectionComposer;
+<i>24</i>&nbsp;import org.boon.predicates.Function;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;import org.boon.core.reflection.fields.FieldAccess;
+<i>29</i>&nbsp;import org.boon.core.reflection.Reflection;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;import java.util.*;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;/**
+<i>35</i>&nbsp; * Wraps regular collections in data repo searchable collections.
+<i>36</i>&nbsp; *
+<i>37</i>&nbsp; */
+<b class="nc"><i>38</i>&nbsp;public class Collections {</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * $q turns a listStream into a querying listStream.
+<i>43</i>&nbsp;     * @param list  the listStream you want to convert
+<i>44</i>&nbsp;     * @param classes classes you want to be able to criteria.
+<i>45</i>&nbsp;     * @param &lt;T&gt; The type this criteria listStream will return
+<i>46</i>&nbsp;     * @return generic listStream decorated with criteria features.
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; $q(final List&lt;T&gt; list, Class&lt;?&gt;... classes) {
+<b class="fc"><i>49</i>&nbsp;        return listQuery(list, true, true, classes);</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * $c turns a listStream back into a regular listStream.
+<i>54</i>&nbsp;     * This is the reverse of $q.
+<i>55</i>&nbsp;     *
+<i>56</i>&nbsp;     * @see Collections#plainList(java.util.List)
+<i>57</i>&nbsp;     * @param list the listStream
+<i>58</i>&nbsp;     * @param &lt;T&gt; the type of the listStream.
+<i>59</i>&nbsp;     * @return the new decorated listStream.
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; $c(final List&lt;T&gt; list) {
+<b class="nc"><i>62</i>&nbsp;        return plainList(list);</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    /**
+<i>66</i>&nbsp;     * $c turns a listStream back into a regular listStream.
+<i>67</i>&nbsp;     * This is the reverse of $q.
+<i>68</i>&nbsp;     *
+<i>69</i>&nbsp;     * @see Collections#$c(java.util.List)
+<i>70</i>&nbsp;     * @param list the listStream
+<i>71</i>&nbsp;     * @param &lt;T&gt; the type of the listStream.
+<i>72</i>&nbsp;     * @return the new decorated listStream.
+<i>73</i>&nbsp;     */
+<i>74</i>&nbsp;    private static &lt;T&gt; List&lt;T&gt; plainList(List&lt;T&gt; list) {
+<b class="nc"><i>75</i>&nbsp;        if (list instanceof QList) {</b>
+<b class="nc"><i>76</i>&nbsp;            return ((QList) list).list;</b>
+<i>77</i>&nbsp;        } else {
+<b class="nc"><i>78</i>&nbsp;            return list;</b>
+<i>79</i>&nbsp;        }
+<i>80</i>&nbsp;    }
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * listQuery turns a listStream into a querying listStream.
+<i>85</i>&nbsp;     * @see Collections#$q(java.util.List, Class[])
+<i>86</i>&nbsp;     * @param list  the listStream you want to convert
+<i>87</i>&nbsp;     * @param &lt;T&gt; The type this criteria listStream will return
+<i>88</i>&nbsp;     * @return generic listStream decorated with criteria features.
+<i>89</i>&nbsp;     */
+<i>90</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; listQuery(final List&lt;T&gt; list) {
+<b class="nc"><i>91</i>&nbsp;        return listQuery(list, true, true);</b>
+<i>92</i>&nbsp;    }
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    /**
+<i>95</i>&nbsp;     * listQuery turns a listStream into a querying listStream.
+<i>96</i>&nbsp;     * @param list  the listStream you want to convert
+<i>97</i>&nbsp;     * @param classes classes you want to be able to criteria.
+<i>98</i>&nbsp;     * @param &lt;T&gt; The type this criteria listStream will return
+<i>99</i>&nbsp;     * @param useField use the field instead of the property
+<i>100</i>&nbsp;     * @param useUnSafe use unsafe
+<i>101</i>&nbsp;     * @param classes  listStream of classes that we can criteria against, these can be component classes
+<i>102</i>&nbsp;     * @return generic listStream decorated with criteria features.
+<i>103</i>&nbsp;     */
+<i>104</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; listQuery(final List&lt;T&gt; list, boolean useField, boolean useUnSafe, Class&lt;?&gt;... classes) {
+<b class="fc"><i>105</i>&nbsp;        if (list == null || list.size() == 0) {</b>
+<b class="nc"><i>106</i>&nbsp;            return list;</b>
+<i>107</i>&nbsp;        }
+<i>108</i>&nbsp;
+<b class="fc"><i>109</i>&nbsp;        SearchableCollectionComposer query = null;</b>
+<i>110</i>&nbsp;
+<b class="fc"><i>111</i>&nbsp;        if (classes == null || classes.length == 0) {</b>
+<b class="fc"><i>112</i>&nbsp;            Class&lt;?&gt; clazz = list.get(0).getClass();</b>
+<i>113</i>&nbsp;
+<b class="fc"><i>114</i>&nbsp;            query = getSearchableCollectionComposer(list, useField, useUnSafe, clazz);</b>
+<i>115</i>&nbsp;
+<b class="fc"><i>116</i>&nbsp;        } else {</b>
+<b class="fc"><i>117</i>&nbsp;            query = getSearchableCollectionComposer(list, useField, useUnSafe, classes);</b>
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;        }
+<i>120</i>&nbsp;
+<b class="fc"><i>121</i>&nbsp;        return new QList&lt;T&gt;(list, (SearchableCollection) query);</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    /**
+<i>125</i>&nbsp;     * Decorates a set with additional criteria capabilities.
+<i>126</i>&nbsp;     *
+<i>127</i>&nbsp;     * @param set   set to decorate
+<i>128</i>&nbsp;     * @param &lt;T&gt;   generic type
+<i>129</i>&nbsp;     * @return      new decorated listStream
+<i>130</i>&nbsp;     */
+<i>131</i>&nbsp;    public static &lt;T&gt; Set&lt;T&gt; $q(final Set&lt;T&gt; set) {
+<b class="nc"><i>132</i>&nbsp;        return setQuery(set, true, true);</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    /**
+<i>136</i>&nbsp;     * Un-decorates a set with additional criteria capabilities.
+<i>137</i>&nbsp;     *
+<i>138</i>&nbsp;     * @param set   set to un-decorate
+<i>139</i>&nbsp;     * @param &lt;T&gt;   generic type
+<i>140</i>&nbsp;     * @return      new decorated listStream
+<i>141</i>&nbsp;     */
+<i>142</i>&nbsp;    public static &lt;T&gt; Set&lt;T&gt; $c(final Set&lt;T&gt; set) {
+<b class="nc"><i>143</i>&nbsp;        return plainSet(set);</b>
+<i>144</i>&nbsp;    }
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;    /**
+<i>148</i>&nbsp;     * Un-decorates a set with additional criteria capabilities.
+<i>149</i>&nbsp;     *
+<i>150</i>&nbsp;     * @param set   set to un-decorate
+<i>151</i>&nbsp;     * @param &lt;T&gt;   generic type
+<i>152</i>&nbsp;     * @return      new decorated listStream
+<i>153</i>&nbsp;     */
+<i>154</i>&nbsp;    private static &lt;T&gt; Set&lt;T&gt; plainSet(Set&lt;T&gt; set) {
+<b class="nc"><i>155</i>&nbsp;        if (set instanceof QSet) {</b>
+<b class="nc"><i>156</i>&nbsp;            return ((QSet) set).set;</b>
+<i>157</i>&nbsp;        } else {
+<b class="nc"><i>158</i>&nbsp;            return set;</b>
+<i>159</i>&nbsp;        }
+<i>160</i>&nbsp;    }
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    /**
+<i>163</i>&nbsp;     * Decorates a set with additional criteria capabilities.
+<i>164</i>&nbsp;     *
+<i>165</i>&nbsp;     * @param set   set to un-decorate
+<i>166</i>&nbsp;     * @param &lt;T&gt;   generic type
+<i>167</i>&nbsp;     * @return      new decorated listStream
+<i>168</i>&nbsp;     */
+<i>169</i>&nbsp;    public static &lt;T&gt; Set&lt;T&gt; setQuery(final Set&lt;T&gt; set) {
+<b class="nc"><i>170</i>&nbsp;        return setQuery(set, true, true);</b>
+<i>171</i>&nbsp;    }
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;    /**
+<i>174</i>&nbsp;     * Decorates a set with all sorts of chocolaty richness
+<i>175</i>&nbsp;     * @param set
+<i>176</i>&nbsp;     * @param useField
+<i>177</i>&nbsp;     * @param useUnSafe
+<i>178</i>&nbsp;     * @param &lt;T&gt;
+<i>179</i>&nbsp;     * @return
+<i>180</i>&nbsp;     */
+<i>181</i>&nbsp;    public static &lt;T&gt; Set&lt;T&gt; setQuery(final Set&lt;T&gt; set, boolean useField, boolean useUnSafe) {
+<b class="nc"><i>182</i>&nbsp;        if (set == null || set.size() == 0) {</b>
+<b class="nc"><i>183</i>&nbsp;            return set;</b>
+<i>184</i>&nbsp;        }
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;        Class&lt;?&gt; clazz = set.iterator().next().getClass();</b>
+<i>187</i>&nbsp;
+<b class="nc"><i>188</i>&nbsp;        SearchableCollectionComposer query = getSearchableCollectionComposer(set, useField, useUnSafe, clazz);</b>
+<i>189</i>&nbsp;
+<b class="nc"><i>190</i>&nbsp;        return new QSet&lt;T&gt;(set, (SearchableCollection) query);</b>
+<i>191</i>&nbsp;    }
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;    /**
+<i>194</i>&nbsp;     * This is the internal method that does it all. :)
+<i>195</i>&nbsp;     * @param set
+<i>196</i>&nbsp;     * @param useField
+<i>197</i>&nbsp;     * @param useUnSafe
+<i>198</i>&nbsp;     * @param classes
+<i>199</i>&nbsp;     * @param &lt;T&gt;
+<i>200</i>&nbsp;     * @return
+<i>201</i>&nbsp;     */
+<i>202</i>&nbsp;    private static &lt;T&gt; SearchableCollectionComposer getSearchableCollectionComposer(Collection set, boolean useField, boolean useUnSafe, Class&lt;?&gt;... classes) {
+<b class="fc"><i>203</i>&nbsp;        SearchableCollectionComposer query = SPIFactory.getSearchableCollectionFactory().get();</b>
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;
+<b class="fc"><i>206</i>&nbsp;        Map&lt;String, FieldAccess&gt; fields = new LinkedHashMap&lt;&gt; ();</b>
+<i>207</i>&nbsp;
+<b class="fc"><i>208</i>&nbsp;        for (Class&lt;?&gt; cls : classes) {</b>
+<i>209</i>&nbsp;
+<b class="fc"><i>210</i>&nbsp;            Map&lt;String, FieldAccess&gt; fieldsSubType</b>
+<b class="fc"><i>211</i>&nbsp;                    = Reflection.getPropertyFieldAccessMap(cls, useField, useUnSafe);</b>
+<i>212</i>&nbsp;
+<b class="fc"><i>213</i>&nbsp;            for (String sKey : fieldsSubType.keySet()) {</b>
+<b class="fc"><i>214</i>&nbsp;                if (!fields.containsKey(sKey)) {</b>
+<b class="fc"><i>215</i>&nbsp;                    fields.put(sKey, fieldsSubType.get(sKey));</b>
+<i>216</i>&nbsp;                }
+<b class="fc"><i>217</i>&nbsp;            }</b>
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;        }
+<i>221</i>&nbsp;
+<b class="fc"><i>222</i>&nbsp;        String primaryKey = findPrimaryKey(fields);</b>
+<b class="fc"><i>223</i>&nbsp;        FieldAccess field = fields.get(primaryKey);</b>
+<b class="fc"><i>224</i>&nbsp;        Function keyGetter = createKeyGetter(field);</b>
+<i>225</i>&nbsp;
+<b class="fc"><i>226</i>&nbsp;        query.setFields(fields);</b>
+<b class="fc"><i>227</i>&nbsp;        query.setPrimaryKeyGetter(keyGetter);</b>
+<b class="fc"><i>228</i>&nbsp;        query.setPrimaryKeyName(primaryKey);</b>
+<b class="fc"><i>229</i>&nbsp;        Filter filter = SPIFactory.getFilterFactory().get();</b>
+<b class="fc"><i>230</i>&nbsp;        query.setFilter(filter);</b>
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;
+<b class="fc"><i>233</i>&nbsp;        LookupIndex index = SPIFactory.getUniqueLookupIndexFactory().apply(fields.get(primaryKey).getType());</b>
+<b class="fc"><i>234</i>&nbsp;        index.setKeyGetter(keyGetter);</b>
+<b class="fc"><i>235</i>&nbsp;        ((SearchableCollection) query).addLookupIndex(primaryKey, index);</b>
+<i>236</i>&nbsp;
+<i>237</i>&nbsp;
+<b class="fc"><i>238</i>&nbsp;        for (FieldAccess f : fields.values()) {</b>
+<b class="fc"><i>239</i>&nbsp;            if (f.getName().equals(primaryKey)) {</b>
+<b class="fc"><i>240</i>&nbsp;                continue;</b>
+<i>241</i>&nbsp;            }
+<b class="fc"><i>242</i>&nbsp;            if (Typ.isBasicType(f.getType())) {</b>
+<b class="fc"><i>243</i>&nbsp;                configIndexes((SearchableCollection) query, f.getName(), fields);</b>
+<i>244</i>&nbsp;            }
+<b class="fc"><i>245</i>&nbsp;        }</b>
+<i>246</i>&nbsp;
+<b class="fc"><i>247</i>&nbsp;        query.init();</b>
+<i>248</i>&nbsp;
+<b class="fc"><i>249</i>&nbsp;        query.setFilter(new FilterWithSimpleCache(filter));</b>
+<i>250</i>&nbsp;
+<b class="fc"><i>251</i>&nbsp;        ((SearchableCollection) query).addAll(set);</b>
+<b class="fc"><i>252</i>&nbsp;        return query;</b>
+<i>253</i>&nbsp;    }
+<i>254</i>&nbsp;
+<i>255</i>&nbsp;
+<i>256</i>&nbsp;    /**
+<i>257</i>&nbsp;     * Allow you to criteria a criteria-able listStream.
+<i>258</i>&nbsp;     * @param list  the listStream you want to criteria
+<i>259</i>&nbsp;     * @param expressions array of expressions
+<i>260</i>&nbsp;     * @param &lt;T&gt; the type of the listStream
+<i>261</i>&nbsp;     * @return the criteria results or an empty listStream if the listStream was not a criteria-able listStream.
+<i>262</i>&nbsp;     */
+<i>263</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; query(final List&lt;T&gt; list, Criteria... expressions) {
+<b class="nc"><i>264</i>&nbsp;        if (list instanceof QList) {</b>
+<b class="nc"><i>265</i>&nbsp;            QList qlist = (QList) list;</b>
+<b class="nc"><i>266</i>&nbsp;            return qlist.searchCollection().query(expressions);</b>
+<i>267</i>&nbsp;        }  else {
+<b class="nc"><i>268</i>&nbsp;            throw new DataRepoException(&quot;Not a criteria-able listStream.&quot;);</b>
+<i>269</i>&nbsp;        }
+<i>270</i>&nbsp;    }
+<i>271</i>&nbsp;
+<i>272</i>&nbsp;    /**
+<i>273</i>&nbsp;     * Allow you to criteria a criteria-able listStream.
+<i>274</i>&nbsp;     * @param list  the listStream you want to criteria
+<i>275</i>&nbsp;     * @param expressions array of expressions
+<i>276</i>&nbsp;     * @param &lt;T&gt; the type of the listStream
+<i>277</i>&nbsp;     * @return the criteria results or an empty listStream if the listStream was not a criteria-able listStream.
+<i>278</i>&nbsp;     */
+<i>279</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; sortedQuery(final List&lt;T&gt; list, String sortBy, Criteria... expressions) {
+<b class="fc"><i>280</i>&nbsp;        if (list instanceof QList) {</b>
+<b class="fc"><i>281</i>&nbsp;            QList qlist = (QList) list;</b>
+<b class="fc"><i>282</i>&nbsp;            return qlist.searchCollection().sortedQuery(sortBy, expressions);</b>
+<i>283</i>&nbsp;        }  else {
+<b class="nc"><i>284</i>&nbsp;            throw new DataRepoException(&quot;Not a criteria-able listStream.&quot;);</b>
+<i>285</i>&nbsp;        }
+<i>286</i>&nbsp;    }
+<i>287</i>&nbsp;
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;    /**
+<i>290</i>&nbsp;     * Allow you to criteria a criteria-able listStream.
+<i>291</i>&nbsp;     * @param set  the set you want to criteria
+<i>292</i>&nbsp;     * @param expressions array of expressions
+<i>293</i>&nbsp;     * @param &lt;T&gt; the type of the listStream
+<i>294</i>&nbsp;     * @return the criteria results or an empty listStream if the listStream was not a criteria-able listStream.
+<i>295</i>&nbsp;     */
+<i>296</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; query(final Set&lt;T&gt; set, Criteria... expressions) {
+<b class="nc"><i>297</i>&nbsp;        if (set instanceof QSet) {</b>
+<b class="nc"><i>298</i>&nbsp;            QSet qset = (QSet) set;</b>
+<b class="nc"><i>299</i>&nbsp;            return qset.searchCollection().query(expressions);</b>
+<i>300</i>&nbsp;        }
+<b class="nc"><i>301</i>&nbsp;        return null;</b>
+<i>302</i>&nbsp;    }
+<i>303</i>&nbsp;
+<i>304</i>&nbsp;    /**
+<i>305</i>&nbsp;     * Allow you to criteria a criteria-able listStream.
+<i>306</i>&nbsp;     * @param set  the set you want to criteria
+<i>307</i>&nbsp;     * @param expressions array of expressions
+<i>308</i>&nbsp;     * @param &lt;T&gt; the type of the listStream
+<i>309</i>&nbsp;     * @return the criteria results or an empty listStream if the listStream was not a criteria-able listStream.
+<i>310</i>&nbsp;     */
+<i>311</i>&nbsp;    public static &lt;T&gt; List&lt;T&gt; sortedQuery(final Set&lt;T&gt; set, String sortBy, Criteria... expressions) {
+<b class="nc"><i>312</i>&nbsp;        if (set instanceof QSet) {</b>
+<b class="nc"><i>313</i>&nbsp;            QSet qset = (QSet) set;</b>
+<b class="nc"><i>314</i>&nbsp;            return qset.searchCollection().sortedQuery(sortBy, expressions);</b>
+<i>315</i>&nbsp;        }
+<b class="nc"><i>316</i>&nbsp;        return null;</b>
+<i>317</i>&nbsp;    }
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;    /**
+<i>320</i>&nbsp;     * placeholder for a generic way to discover a primary key.
+<i>321</i>&nbsp;     * Right now the primarykey must be called id.
+<i>322</i>&nbsp;     *
+<i>323</i>&nbsp;     * @param fields fields we are going to search for the primary key
+<i>324</i>&nbsp;     * @return
+<i>325</i>&nbsp;     */
+<i>326</i>&nbsp;    private static String findPrimaryKey(Map&lt;String, FieldAccess&gt; fields) {
+<b class="fc"><i>327</i>&nbsp;        return &quot;id&quot;;</b>
+<i>328</i>&nbsp;    }
+<i>329</i>&nbsp;
+<i>330</i>&nbsp;
+<i>331</i>&nbsp;    /**
+<i>332</i>&nbsp;     * Create key getter.
+<i>333</i>&nbsp;     * @param field
+<i>334</i>&nbsp;     * @return
+<i>335</i>&nbsp;     */
+<i>336</i>&nbsp;    private static Function createKeyGetter(final FieldAccess field) {
+<i>337</i>&nbsp;
+<b class="fc"><i>338</i>&nbsp;        Objects.requireNonNull( field, &quot;field cannot be null&quot; );</b>
+<b class="fc"><i>339</i>&nbsp;        return new Function() {</b>
+<i>340</i>&nbsp;            @Override
+<i>341</i>&nbsp;            public Object apply(Object o) {
+<i>342</i>&nbsp;
+<b class="fc"><i>343</i>&nbsp;                if (Reflection.hasField(o.getClass(), field.getName())) {</b>
+<b class="fc"><i>344</i>&nbsp;                    return field.getValue(o);</b>
+<i>345</i>&nbsp;                } else {
+<b class="fc"><i>346</i>&nbsp;                    return null;</b>
+<i>347</i>&nbsp;                }
+<i>348</i>&nbsp;            }
+<i>349</i>&nbsp;        };
+<i>350</i>&nbsp;    }
+<i>351</i>&nbsp;
+<i>352</i>&nbsp;
+<i>353</i>&nbsp;    /**
+<i>354</i>&nbsp;     * Helper class that holds an inner set and a searchable collection.
+<i>355</i>&nbsp;     * TODO we need a navigable version of this.
+<i>356</i>&nbsp;     * @param &lt;T&gt;
+<i>357</i>&nbsp;     */
+<i>358</i>&nbsp;    static class QSet&lt;T&gt; extends AbstractSet&lt;T&gt; implements CollectionDecorator {
+<i>359</i>&nbsp;        final Set&lt;T&gt; set;
+<i>360</i>&nbsp;        final SearchableCollection searchCollection;
+<i>361</i>&nbsp;
+<b class="nc"><i>362</i>&nbsp;        QSet(Set&lt;T&gt; set, SearchableCollection searchCollection) {</b>
+<b class="nc"><i>363</i>&nbsp;            this.set = set;</b>
+<b class="nc"><i>364</i>&nbsp;            this.searchCollection = searchCollection;</b>
+<i>365</i>&nbsp;        }
+<i>366</i>&nbsp;
+<i>367</i>&nbsp;        @Override
+<i>368</i>&nbsp;        public boolean add(T item) {
+<b class="nc"><i>369</i>&nbsp;            searchCollection.add(item);</b>
+<b class="nc"><i>370</i>&nbsp;            return set.add(item);</b>
+<i>371</i>&nbsp;        }
+<i>372</i>&nbsp;
+<i>373</i>&nbsp;        @Override
+<i>374</i>&nbsp;        public boolean remove(Object item) {
+<b class="nc"><i>375</i>&nbsp;            searchCollection.delete((T) item);</b>
+<b class="nc"><i>376</i>&nbsp;            return set.remove(item);</b>
+<i>377</i>&nbsp;        }
+<i>378</i>&nbsp;
+<i>379</i>&nbsp;
+<i>380</i>&nbsp;        @Override
+<i>381</i>&nbsp;        public Iterator&lt;T&gt; iterator() {
+<b class="nc"><i>382</i>&nbsp;            return set.iterator();</b>
+<i>383</i>&nbsp;        }
+<i>384</i>&nbsp;
+<i>385</i>&nbsp;        @Override
+<i>386</i>&nbsp;        public int size() {
+<b class="nc"><i>387</i>&nbsp;            return set.size();</b>
+<i>388</i>&nbsp;        }
+<i>389</i>&nbsp;
+<i>390</i>&nbsp;        @Override
+<i>391</i>&nbsp;        public SearchableCollection searchCollection() {
+<b class="nc"><i>392</i>&nbsp;            return searchCollection;</b>
+<i>393</i>&nbsp;        }
+<i>394</i>&nbsp;
+<i>395</i>&nbsp;        @Override
+<i>396</i>&nbsp;        public Collection collection() {
+<b class="nc"><i>397</i>&nbsp;            return set;</b>
+<i>398</i>&nbsp;        }
+<i>399</i>&nbsp;    }
+<i>400</i>&nbsp;
+<i>401</i>&nbsp;    /**
+<i>402</i>&nbsp;     * @param &lt;T&gt;
+<i>403</i>&nbsp;     */
+<b class="nc"><i>404</i>&nbsp;    static class QList&lt;T&gt; extends AbstractList&lt;T&gt; implements CollectionDecorator {</b>
+<i>405</i>&nbsp;        List&lt;T&gt; list;
+<i>406</i>&nbsp;        SearchableCollection query;
+<i>407</i>&nbsp;
+<b class="fc"><i>408</i>&nbsp;        QList(List&lt;T&gt; list, SearchableCollection query) {</b>
+<b class="fc"><i>409</i>&nbsp;            this.list = list;</b>
+<b class="fc"><i>410</i>&nbsp;            this.query = query;</b>
+<b class="fc"><i>411</i>&nbsp;        }</b>
+<i>412</i>&nbsp;
+<i>413</i>&nbsp;        @Override
+<i>414</i>&nbsp;        public boolean add(T item) {
+<b class="nc"><i>415</i>&nbsp;            query.add(item);</b>
+<b class="nc"><i>416</i>&nbsp;            return list.add(item);</b>
+<i>417</i>&nbsp;        }
+<i>418</i>&nbsp;
+<i>419</i>&nbsp;        @Override
+<i>420</i>&nbsp;        public boolean remove(Object item) {
+<b class="nc"><i>421</i>&nbsp;            query.delete((T) item);</b>
+<b class="nc"><i>422</i>&nbsp;            return list.remove(item);</b>
+<i>423</i>&nbsp;        }
+<i>424</i>&nbsp;
+<i>425</i>&nbsp;
+<i>426</i>&nbsp;        @Override
+<i>427</i>&nbsp;        public T get(int index) {
+<b class="nc"><i>428</i>&nbsp;            return list.get(index);</b>
+<i>429</i>&nbsp;        }
+<i>430</i>&nbsp;
+<i>431</i>&nbsp;
+<i>432</i>&nbsp;        @Override
+<i>433</i>&nbsp;        public int size() {
+<b class="nc"><i>434</i>&nbsp;            return list.size();</b>
+<i>435</i>&nbsp;        }
+<i>436</i>&nbsp;
+<i>437</i>&nbsp;
+<i>438</i>&nbsp;        @Override
+<i>439</i>&nbsp;        public SearchableCollection searchCollection() {
+<b class="fc"><i>440</i>&nbsp;            return query;</b>
+<i>441</i>&nbsp;        }
+<i>442</i>&nbsp;
+<i>443</i>&nbsp;        @Override
+<i>444</i>&nbsp;        public Collection collection() {
+<b class="nc"><i>445</i>&nbsp;            return this.list;</b>
+<i>446</i>&nbsp;        }
+<i>447</i>&nbsp;    }
+<i>448</i>&nbsp;
+<i>449</i>&nbsp;
+<i>450</i>&nbsp;    /**
+<i>451</i>&nbsp;     * Configures the indexes.
+<i>452</i>&nbsp;     * @param query the search criteria
+<i>453</i>&nbsp;     * @param prop  the prop
+<i>454</i>&nbsp;     * @param fields  the reflected fields
+<i>455</i>&nbsp;     */
+<i>456</i>&nbsp;    private static void configIndexes(SearchableCollection query, String prop,
+<i>457</i>&nbsp;                                      Map&lt;String, FieldAccess&gt; fields) {
+<i>458</i>&nbsp;
+<b class="fc"><i>459</i>&nbsp;        SearchIndex searchIndex = SPIFactory.getSearchIndexFactory().apply(fields.get(prop).getType());</b>
+<b class="fc"><i>460</i>&nbsp;        searchIndex.init();</b>
+<b class="fc"><i>461</i>&nbsp;        Function kg = createKeyGetter(fields.get(prop));</b>
+<b class="fc"><i>462</i>&nbsp;        searchIndex.setKeyGetter(kg);</b>
+<b class="fc"><i>463</i>&nbsp;        query.addSearchIndex(prop, searchIndex);</b>
+<i>464</i>&nbsp;
+<b class="fc"><i>465</i>&nbsp;        LookupIndex index = SPIFactory.getLookupIndexFactory().apply(fields.get(prop).getType());</b>
+<b class="fc"><i>466</i>&nbsp;        index.setKeyGetter(kg);</b>
+<b class="fc"><i>467</i>&nbsp;        query.addLookupIndex(prop, index);</b>
+<i>468</i>&nbsp;
+<b class="fc"><i>469</i>&nbsp;    }</b>
+<i>470</i>&nbsp;
+<i>471</i>&nbsp;
+<i>472</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,461 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ReflectField</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.core.reflection.fields</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ReflectField (org.boon.core.reflection.fields)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ReflectField</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47.5%
+  </span>
+  <span class="absValue">
+    (19/ 40)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    31.5%
+  </span>
+  <span class="absValue">
+    (46/ 146)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.core.reflection.fields;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import org.boon.Exceptions;
+<i>5</i>&nbsp;import org.boon.Str;
+<i>6</i>&nbsp;import org.boon.core.Typ;
+<i>7</i>&nbsp;import org.boon.core.reflection.Conversions;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.lang.reflect.Field;
+<i>10</i>&nbsp;import java.lang.reflect.Modifier;
+<i>11</i>&nbsp;import java.lang.reflect.ParameterizedType;
+<i>12</i>&nbsp;import java.util.Objects;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import static org.boon.core.reflection.Conversions.*;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;public class ReflectField implements FieldAccess {
+<i>17</i>&nbsp;    protected final Field field;
+<i>18</i>&nbsp;    protected final boolean isFinal;
+<i>19</i>&nbsp;    protected final boolean isStatic;
+<i>20</i>&nbsp;    protected final boolean isVolatile;
+<i>21</i>&nbsp;    protected final boolean qualified;
+<i>22</i>&nbsp;    protected final boolean readOnly;
+<i>23</i>&nbsp;    private final Class&lt;?&gt; type;
+<i>24</i>&nbsp;    private final String name;
+<i>25</i>&nbsp;
+<b class="fc"><i>26</i>&nbsp;    public ReflectField(Field f) {</b>
+<b class="fc"><i>27</i>&nbsp;        field = f;</b>
+<b class="fc"><i>28</i>&nbsp;        isFinal = Modifier.isFinal(field.getModifiers());</b>
+<b class="fc"><i>29</i>&nbsp;        isStatic = Modifier.isStatic(field.getModifiers());</b>
+<b class="fc"><i>30</i>&nbsp;        isVolatile = Modifier.isVolatile(field.getModifiers());</b>
+<b class="fc"><i>31</i>&nbsp;        qualified = isFinal || isVolatile;</b>
+<b class="fc"><i>32</i>&nbsp;        readOnly = isFinal || isStatic;</b>
+<b class="fc"><i>33</i>&nbsp;        type = f.getType();</b>
+<b class="fc"><i>34</i>&nbsp;        name = f.getName();</b>
+<b class="fc"><i>35</i>&nbsp;    }</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public Object getValue(Object obj) {
+<i>39</i>&nbsp;        try {
+<b class="fc"><i>40</i>&nbsp;            Objects.requireNonNull(field);</b>
+<b class="fc"><i>41</i>&nbsp;            Objects.requireNonNull(obj);</b>
+<i>42</i>&nbsp;
+<b class="fc"><i>43</i>&nbsp;            return field.get(obj);</b>
+<b class="nc"><i>44</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>45</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>46</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>47</i>&nbsp;            return null;</b>
+<i>48</i>&nbsp;        }
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    private void analyzeError(Exception e, Object obj) {
+<b class="nc"><i>52</i>&nbsp;        Exceptions.handle(Str.lines(</b>
+<b class="nc"><i>53</i>&nbsp;                e.getClass().getName(),</b>
+<b class="nc"><i>54</i>&nbsp;                String.format(&quot;cause %s&quot;, e.getCause()),</b>
+<b class="nc"><i>55</i>&nbsp;                String.format(&quot;Field info name %s, type %s, class that declared field %s&quot;, this.getName(), this.getType(), this.getField().getDeclaringClass()),</b>
+<b class="nc"><i>56</i>&nbsp;                String.format(&quot;Type of object passed %s&quot;, obj.getClass().getName())</b>
+<i>57</i>&nbsp;        ), e);
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;    }</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    public ParameterizedType getParameterizedType() {
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;
+<b class="nc"><i>64</i>&nbsp;        ParameterizedType type = null;</b>
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        if (field != null) {</b>
+<b class="nc"><i>67</i>&nbsp;            Object obj = field.getGenericType();</b>
+<i>68</i>&nbsp;
+<b class="nc"><i>69</i>&nbsp;            if (obj instanceof ParameterizedType)  {</b>
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;                type =  (ParameterizedType) obj;</b>
+<i>72</i>&nbsp;            }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        }
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        return type;</b>
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    public Class&lt;?&gt; getComponentClass() {
+<b class="nc"><i>83</i>&nbsp;        final ParameterizedType parameterizedType = this.getParameterizedType();</b>
+<b class="nc"><i>84</i>&nbsp;        if (parameterizedType == null) {</b>
+<b class="nc"><i>85</i>&nbsp;            return null;</b>
+<i>86</i>&nbsp;        } else {
+<b class="nc"><i>87</i>&nbsp;            return (Class&lt;?&gt;)(parameterizedType.getActualTypeArguments()[0]);</b>
+<i>88</i>&nbsp;        }
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    public boolean getBoolean(Object obj) {
+<i>93</i>&nbsp;        try {
+<b class="nc"><i>94</i>&nbsp;            return field.getBoolean(obj);</b>
+<b class="nc"><i>95</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>96</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>97</i>&nbsp;            return false;</b>
+<i>98</i>&nbsp;        }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    @Override
+<i>103</i>&nbsp;    public int getInt(Object obj) {
+<i>104</i>&nbsp;        try {
+<b class="fc"><i>105</i>&nbsp;            return field.getInt(obj);</b>
+<b class="nc"><i>106</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>107</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>108</i>&nbsp;            return 0;</b>
+<i>109</i>&nbsp;        }
+<i>110</i>&nbsp;    }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    @Override
+<i>113</i>&nbsp;    public short getShort(Object obj) {
+<i>114</i>&nbsp;        try {
+<b class="fc"><i>115</i>&nbsp;            return field.getShort(obj);</b>
+<b class="nc"><i>116</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>117</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>118</i>&nbsp;            return 0;</b>
+<i>119</i>&nbsp;        }
+<i>120</i>&nbsp;    }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;    @Override
+<i>123</i>&nbsp;    public char getChar(Object obj) {
+<i>124</i>&nbsp;        try {
+<b class="fc"><i>125</i>&nbsp;            return field.getChar(obj);</b>
+<b class="nc"><i>126</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>127</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>128</i>&nbsp;            return 0;</b>
+<i>129</i>&nbsp;        }
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    @Override
+<i>133</i>&nbsp;    public long getLong(Object obj) {
+<i>134</i>&nbsp;        try {
+<b class="fc"><i>135</i>&nbsp;            return field.getLong(obj);</b>
+<b class="nc"><i>136</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>137</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>138</i>&nbsp;            return 0;</b>
+<i>139</i>&nbsp;        }
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    @Override
+<i>143</i>&nbsp;    public double getDouble(Object obj) {
+<i>144</i>&nbsp;        try {
+<b class="fc"><i>145</i>&nbsp;            return field.getDouble(obj);</b>
+<b class="nc"><i>146</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>147</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>148</i>&nbsp;            return 0;</b>
+<i>149</i>&nbsp;        }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;    }
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    @Override
+<i>154</i>&nbsp;    public float getFloat(Object obj) {
+<i>155</i>&nbsp;        try {
+<b class="fc"><i>156</i>&nbsp;            return field.getFloat(obj);</b>
+<b class="nc"><i>157</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>158</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>159</i>&nbsp;            return 0;</b>
+<i>160</i>&nbsp;        }
+<i>161</i>&nbsp;    }
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;    @Override
+<i>164</i>&nbsp;    public byte getByte(Object obj) {
+<i>165</i>&nbsp;        try {
+<b class="fc"><i>166</i>&nbsp;            return field.getByte(obj);</b>
+<b class="nc"><i>167</i>&nbsp;        } catch (Exception e) {</b>
+<b class="nc"><i>168</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>169</i>&nbsp;            return 0;</b>
+<i>170</i>&nbsp;        }
+<i>171</i>&nbsp;    }
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;    @Override
+<i>174</i>&nbsp;    public Object getObject(Object obj) {
+<b class="nc"><i>175</i>&nbsp;        return getValue(obj);</b>
+<i>176</i>&nbsp;    }
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    public boolean getStaticBoolean() {
+<b class="nc"><i>179</i>&nbsp;        return getBoolean(null);</b>
+<i>180</i>&nbsp;    }
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    public int getStaticInt() {
+<b class="nc"><i>183</i>&nbsp;        return getInt(null);</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;    }
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    public short getStaticShort() {
+<b class="nc"><i>188</i>&nbsp;        return getShort(null);</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;
+<i>192</i>&nbsp;    public long getStaticLong() {
+<b class="nc"><i>193</i>&nbsp;        return getLong(null);</b>
+<i>194</i>&nbsp;    }
+<i>195</i>&nbsp;
+<i>196</i>&nbsp;
+<i>197</i>&nbsp;    public double getStaticDouble() {
+<b class="nc"><i>198</i>&nbsp;        return getDouble(null);</b>
+<i>199</i>&nbsp;    }
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;    public float getStaticFloat() {
+<b class="nc"><i>202</i>&nbsp;        return getFloat(null);</b>
+<i>203</i>&nbsp;    }
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;    public byte getStaticByte() {
+<b class="nc"><i>206</i>&nbsp;        return getByte(null);</b>
+<i>207</i>&nbsp;    }
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;    public Object getObject() {
+<b class="nc"><i>210</i>&nbsp;        return getObject(null);</b>
+<i>211</i>&nbsp;    }
+<i>212</i>&nbsp;
+<i>213</i>&nbsp;    @Override
+<i>214</i>&nbsp;    public Field getField() {
+<b class="nc"><i>215</i>&nbsp;        return field;</b>
+<i>216</i>&nbsp;    }
+<i>217</i>&nbsp;
+<i>218</i>&nbsp;
+<i>219</i>&nbsp;    @Override
+<i>220</i>&nbsp;    public boolean isFinal() {
+<b class="nc"><i>221</i>&nbsp;        return isFinal;</b>
+<i>222</i>&nbsp;    }
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;    @Override
+<i>226</i>&nbsp;    public boolean isStatic() {
+<b class="nc"><i>227</i>&nbsp;        return isStatic;</b>
+<i>228</i>&nbsp;    }
+<i>229</i>&nbsp;
+<i>230</i>&nbsp;    @Override
+<i>231</i>&nbsp;    public boolean isVolatile() {
+<b class="nc"><i>232</i>&nbsp;        return isVolatile;</b>
+<i>233</i>&nbsp;    }
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;
+<i>236</i>&nbsp;    @Override
+<i>237</i>&nbsp;    public boolean isQualified() {
+<b class="nc"><i>238</i>&nbsp;        return qualified;</b>
+<i>239</i>&nbsp;    }
+<i>240</i>&nbsp;
+<i>241</i>&nbsp;    @Override
+<i>242</i>&nbsp;    public boolean isReadOnly() {
+<b class="nc"><i>243</i>&nbsp;        return readOnly;</b>
+<i>244</i>&nbsp;    }
+<i>245</i>&nbsp;
+<i>246</i>&nbsp;
+<i>247</i>&nbsp;    @Override
+<i>248</i>&nbsp;    public Class&lt;?&gt; getType() {
+<b class="fc"><i>249</i>&nbsp;        return type;</b>
+<i>250</i>&nbsp;    }
+<i>251</i>&nbsp;
+<i>252</i>&nbsp;    @Override
+<i>253</i>&nbsp;    public String getName() {
+<b class="fc"><i>254</i>&nbsp;        return name;</b>
+<i>255</i>&nbsp;    }
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    @Override
+<i>258</i>&nbsp;    public void setValue(Object obj, Object value) {
+<b class="nc"><i>259</i>&nbsp;        if (obj.getClass() == this.type) {</b>
+<b class="nc"><i>260</i>&nbsp;            this.setObject(obj, value);</b>
+<b class="nc"><i>261</i>&nbsp;            return;</b>
+<i>262</i>&nbsp;        }
+<i>263</i>&nbsp;
+<b class="nc"><i>264</i>&nbsp;        if (type == Typ.intgr) {</b>
+<b class="nc"><i>265</i>&nbsp;            setInt(obj, toInt(value));</b>
+<b class="nc"><i>266</i>&nbsp;        } else if (type == Typ.lng) {</b>
+<b class="nc"><i>267</i>&nbsp;            setLong(obj, toLong(value));</b>
+<b class="nc"><i>268</i>&nbsp;        } else if (type == Typ.bt) {</b>
+<b class="nc"><i>269</i>&nbsp;            setByte(obj, toByte(value));</b>
+<i>270</i>&nbsp;
+<b class="nc"><i>271</i>&nbsp;        } else if (type == Typ.shrt) {</b>
+<b class="nc"><i>272</i>&nbsp;            setShort(obj, toShort(value));</b>
+<i>273</i>&nbsp;
+<b class="nc"><i>274</i>&nbsp;        } else if (type == Typ.chr) {</b>
+<b class="nc"><i>275</i>&nbsp;            setChar(obj, toChar(value));</b>
+<i>276</i>&nbsp;
+<b class="nc"><i>277</i>&nbsp;        } else if (type == Typ.dbl) {</b>
+<b class="nc"><i>278</i>&nbsp;            setDouble(obj, toDouble(value));</b>
+<i>279</i>&nbsp;
+<b class="nc"><i>280</i>&nbsp;        } else if (type == Typ.flt) {</b>
+<b class="nc"><i>281</i>&nbsp;            setFloat(obj, toFloat(value));</b>
+<i>282</i>&nbsp;
+<i>283</i>&nbsp;        } else {
+<b class="nc"><i>284</i>&nbsp;            setObject(obj, Conversions.coerce(type, value));</b>
+<i>285</i>&nbsp;        }
+<b class="nc"><i>286</i>&nbsp;    }</b>
+<i>287</i>&nbsp;
+<i>288</i>&nbsp;    @Override
+<i>289</i>&nbsp;    public void setBoolean(Object obj, boolean value) {
+<i>290</i>&nbsp;        try {
+<b class="nc"><i>291</i>&nbsp;            field.setBoolean(obj, value);</b>
+<b class="nc"><i>292</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>293</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="nc"><i>294</i>&nbsp;        }</b>
+<i>295</i>&nbsp;
+<b class="nc"><i>296</i>&nbsp;    }</b>
+<i>297</i>&nbsp;
+<i>298</i>&nbsp;    @Override
+<i>299</i>&nbsp;    public void setInt(Object obj, int value) {
+<i>300</i>&nbsp;        try {
+<b class="fc"><i>301</i>&nbsp;            field.setInt(obj, value);</b>
+<b class="nc"><i>302</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>303</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>304</i>&nbsp;        }</b>
+<i>305</i>&nbsp;
+<b class="fc"><i>306</i>&nbsp;    }</b>
+<i>307</i>&nbsp;
+<i>308</i>&nbsp;    @Override
+<i>309</i>&nbsp;    public void setShort(Object obj, short value) {
+<i>310</i>&nbsp;        try {
+<b class="fc"><i>311</i>&nbsp;            field.setShort(obj, value);</b>
+<b class="nc"><i>312</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>313</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>314</i>&nbsp;        }</b>
+<i>315</i>&nbsp;
+<b class="fc"><i>316</i>&nbsp;    }</b>
+<i>317</i>&nbsp;
+<i>318</i>&nbsp;    @Override
+<i>319</i>&nbsp;    public void setChar(Object obj, char value) {
+<i>320</i>&nbsp;        try {
+<b class="fc"><i>321</i>&nbsp;            field.setChar(obj, value);</b>
+<b class="nc"><i>322</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>323</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>324</i>&nbsp;        }</b>
+<i>325</i>&nbsp;
+<b class="fc"><i>326</i>&nbsp;    }</b>
+<i>327</i>&nbsp;
+<i>328</i>&nbsp;    @Override
+<i>329</i>&nbsp;    public void setLong(Object obj, long value) {
+<i>330</i>&nbsp;        try {
+<b class="fc"><i>331</i>&nbsp;            field.setLong(obj, value);</b>
+<b class="nc"><i>332</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>333</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>334</i>&nbsp;        }</b>
+<i>335</i>&nbsp;
+<b class="fc"><i>336</i>&nbsp;    }</b>
+<i>337</i>&nbsp;
+<i>338</i>&nbsp;    @Override
+<i>339</i>&nbsp;    public void setDouble(Object obj, double value) {
+<i>340</i>&nbsp;        try {
+<b class="fc"><i>341</i>&nbsp;            field.setDouble(obj, value);</b>
+<b class="nc"><i>342</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>343</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>344</i>&nbsp;        }</b>
+<i>345</i>&nbsp;
+<b class="fc"><i>346</i>&nbsp;    }</b>
+<i>347</i>&nbsp;
+<i>348</i>&nbsp;    @Override
+<i>349</i>&nbsp;    public void setFloat(Object obj, float value) {
+<i>350</i>&nbsp;        try {
+<b class="fc"><i>351</i>&nbsp;            field.setFloat(obj, value);</b>
+<b class="nc"><i>352</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>353</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>354</i>&nbsp;        }</b>
+<i>355</i>&nbsp;
+<b class="fc"><i>356</i>&nbsp;    }</b>
+<i>357</i>&nbsp;
+<i>358</i>&nbsp;    @Override
+<i>359</i>&nbsp;    public void setByte(Object obj, byte value) {
+<i>360</i>&nbsp;        try {
+<b class="fc"><i>361</i>&nbsp;            field.setByte(obj, value);</b>
+<b class="nc"><i>362</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>363</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>364</i>&nbsp;        }</b>
+<i>365</i>&nbsp;
+<b class="fc"><i>366</i>&nbsp;    }</b>
+<i>367</i>&nbsp;
+<i>368</i>&nbsp;    @Override
+<i>369</i>&nbsp;    public void setObject(Object obj, Object value) {
+<i>370</i>&nbsp;        try {
+<b class="fc"><i>371</i>&nbsp;            field.set(obj, value);</b>
+<b class="nc"><i>372</i>&nbsp;        } catch (IllegalAccessException e) {</b>
+<b class="nc"><i>373</i>&nbsp;            analyzeError(e, obj);</b>
+<b class="fc"><i>374</i>&nbsp;        }</b>
+<i>375</i>&nbsp;
+<b class="fc"><i>376</i>&nbsp;    }</b>
+<i>377</i>&nbsp;
+<i>378</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

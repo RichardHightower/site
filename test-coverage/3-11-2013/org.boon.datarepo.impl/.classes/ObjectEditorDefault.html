@@ -1,0 +1,795 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ObjectEditorDefault</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ObjectEditorDefault (org.boon.datarepo.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ObjectEditorDefault</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    64.4%
+  </span>
+  <span class="absValue">
+    (56/ 87)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.2%
+  </span>
+  <span class="absValue">
+    (262/ 363)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.datarepo.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.datarepo.ObjectEditor;
+<i>4</i>&nbsp;import org.boon.datarepo.SearchableCollection;
+<i>5</i>&nbsp;import org.boon.criteria.Update;
+<i>6</i>&nbsp;import org.boon.datarepo.spi.ObjectEditorComposer;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import org.boon.core.reflection.fields.FieldAccess;
+<i>9</i>&nbsp;import org.boon.core.reflection.Reflection;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.util.Collection;
+<i>12</i>&nbsp;import java.util.LinkedHashMap;
+<i>13</i>&nbsp;import java.util.List;
+<i>14</i>&nbsp;import java.util.Map;
+<i>15</i>&nbsp;import java.util.logging.Level;
+<i>16</i>&nbsp;import java.util.logging.Logger;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<b class="fc"><i>20</i>&nbsp;public class ObjectEditorDefault&lt;KEY, ITEM&gt; implements ObjectEditorComposer&lt;KEY, ITEM&gt;, ObjectEditor&lt;KEY, ITEM&gt; {</b>
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;    private Logger log = Logger.getLogger(ObjectEditorDefault.class.getName());</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    protected SearchableCollection&lt;KEY, ITEM&gt; query;
+<b class="fc"><i>25</i>&nbsp;    protected Map&lt;String, FieldAccess&gt; fields = new LinkedHashMap&lt;&gt;();</b>
+<i>26</i>&nbsp;    private boolean hashCodeOptimization;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    private boolean lookupAndExcept;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    public void put(ITEM item) {
+<b class="nc"><i>33</i>&nbsp;        this.add(item);</b>
+<b class="nc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    public void removeByKey(KEY key) {
+<b class="nc"><i>37</i>&nbsp;        query.removeByKey(key);</b>
+<b class="nc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    public void removeAll(ITEM... items) {
+<b class="nc"><i>41</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="nc"><i>42</i>&nbsp;            this.delete(item);</b>
+<i>43</i>&nbsp;        }
+<b class="nc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    public void removeAllAsync(Collection&lt;ITEM&gt; items) {
+<b class="nc"><i>47</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="nc"><i>48</i>&nbsp;            this.delete(item);</b>
+<b class="nc"><i>49</i>&nbsp;        }</b>
+<b class="nc"><i>50</i>&nbsp;    }</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    public void addAll(ITEM... items) {
+<b class="nc"><i>53</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="nc"><i>54</i>&nbsp;            this.add(item);</b>
+<i>55</i>&nbsp;        }
+<b class="nc"><i>56</i>&nbsp;    }</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    public void addAllAsync(Collection&lt;ITEM&gt; items) {
+<b class="nc"><i>60</i>&nbsp;        query.addAll(items);</b>
+<b class="nc"><i>61</i>&nbsp;    }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public void modifyAll(ITEM... items) {
+<b class="nc"><i>64</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="nc"><i>65</i>&nbsp;            this.modify(item);</b>
+<i>66</i>&nbsp;        }
+<b class="nc"><i>67</i>&nbsp;    }</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    public void modifyAll(Collection&lt;ITEM&gt; items) {
+<b class="nc"><i>70</i>&nbsp;        for (ITEM item : items) {</b>
+<b class="nc"><i>71</i>&nbsp;            this.modify(item);</b>
+<b class="nc"><i>72</i>&nbsp;        }</b>
+<b class="nc"><i>73</i>&nbsp;    }</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public void modify(ITEM item) {
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;        /** See if we have an original. */
+<b class="nc"><i>78</i>&nbsp;        KEY key = query.getKey(item);</b>
+<b class="nc"><i>79</i>&nbsp;        ITEM oldItem = this.doGet(key);</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;        if (oldItem != null) {</b>
+<b class="nc"><i>82</i>&nbsp;            delete(oldItem);</b>
+<i>83</i>&nbsp;        } else {
+<b class="nc"><i>84</i>&nbsp;            log.warning(String.format(&quot;An original item was not in the repo %s&quot;, item));</b>
+<i>85</i>&nbsp;        }
+<i>86</i>&nbsp;
+<b class="nc"><i>87</i>&nbsp;        this.add(item);</b>
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;        if (log.isLoggable(Level.FINE)) {</b>
+<b class="nc"><i>90</i>&nbsp;            log.fine(String.format(&quot;This item %s was modified like this %s&quot;, oldItem, item));</b>
+<i>91</i>&nbsp;        }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;    }</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    public void modify(ITEM item, String property, Object value) {
+<b class="fc"><i>97</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>98</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>99</i>&nbsp;        fields.get(property).setObject(item, value);</b>
+<b class="fc"><i>100</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>101</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>102</i>&nbsp;    }</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    private void optimizeHash(ITEM item) {
+<b class="fc"><i>105</i>&nbsp;        if (!hashCodeOptimization) {</b>
+<b class="fc"><i>106</i>&nbsp;            return;</b>
+<i>107</i>&nbsp;        }
+<b class="nc"><i>108</i>&nbsp;        FieldAccess hashCode = fields.get(&quot;_hashCode&quot;);</b>
+<b class="nc"><i>109</i>&nbsp;        if (hashCode == null) {</b>
+<b class="nc"><i>110</i>&nbsp;            return;</b>
+<i>111</i>&nbsp;        } else {
+<b class="nc"><i>112</i>&nbsp;            hashCode.setInt(item, -1);</b>
+<b class="nc"><i>113</i>&nbsp;            hashCode.setInt(item, item.hashCode());</b>
+<i>114</i>&nbsp;        }
+<b class="nc"><i>115</i>&nbsp;    }</b>
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    public void modifyByValue(ITEM item, String property, String value) {
+<b class="nc"><i>118</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="nc"><i>119</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="nc"><i>120</i>&nbsp;        fields.get(property).setValue(item, value);</b>
+<b class="nc"><i>121</i>&nbsp;        optimizeHash(item);</b>
+<b class="nc"><i>122</i>&nbsp;        query.validateIndex(property, item);</b>
+<i>123</i>&nbsp;
+<b class="nc"><i>124</i>&nbsp;    }</b>
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;    public void modify(ITEM item, String property, int value) {
+<b class="fc"><i>127</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>128</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>129</i>&nbsp;        fields.get(property).setInt(item, value);</b>
+<b class="fc"><i>130</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>131</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>132</i>&nbsp;    }</b>
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    public void modify(ITEM item, String property, long value) {
+<b class="fc"><i>135</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>136</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>137</i>&nbsp;        fields.get(property).setLong(item, value);</b>
+<b class="fc"><i>138</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>139</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>140</i>&nbsp;    }</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    public void modify(ITEM item, String property, char value) {
+<b class="fc"><i>143</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>144</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>145</i>&nbsp;        fields.get(property).setChar(item, value);</b>
+<b class="fc"><i>146</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>147</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>148</i>&nbsp;    }</b>
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;    public void modify(ITEM item, String property, short value) {
+<b class="fc"><i>151</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>152</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>153</i>&nbsp;        fields.get(property).setShort(item, value);</b>
+<b class="fc"><i>154</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>155</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>156</i>&nbsp;    }</b>
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    public void modify(ITEM item, String property, byte value) {
+<b class="fc"><i>159</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>160</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>161</i>&nbsp;        fields.get(property).setByte(item, value);</b>
+<b class="fc"><i>162</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>163</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>164</i>&nbsp;    }</b>
+<i>165</i>&nbsp;
+<i>166</i>&nbsp;    public void modify(ITEM item, String property, float value) {
+<b class="fc"><i>167</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>168</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>169</i>&nbsp;        fields.get(property).setFloat(item, value);</b>
+<b class="fc"><i>170</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>171</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>172</i>&nbsp;    }</b>
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;    public void modify(ITEM item, String property, double value) {
+<b class="fc"><i>175</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="fc"><i>176</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>177</i>&nbsp;        fields.get(property).setDouble(item, value);</b>
+<b class="fc"><i>178</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>179</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>180</i>&nbsp;    }</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    public void modify(ITEM item, Update... values) {
+<b class="nc"><i>183</i>&nbsp;        item = lookupAndExpect(item);</b>
+<b class="nc"><i>184</i>&nbsp;        for (Update value : values) {</b>
+<b class="nc"><i>185</i>&nbsp;            query.invalidateIndex(value.getName(), item);</b>
+<b class="nc"><i>186</i>&nbsp;            value.doSet(this, item);</b>
+<b class="nc"><i>187</i>&nbsp;            optimizeHash(item);</b>
+<b class="nc"><i>188</i>&nbsp;            query.validateIndex(value.getName(), item);</b>
+<i>189</i>&nbsp;        }
+<i>190</i>&nbsp;
+<b class="nc"><i>191</i>&nbsp;    }</b>
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;    public void update(KEY key, String property, Object value) {
+<b class="fc"><i>194</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>195</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>196</i>&nbsp;        fields.get(property).setObject(item, value);</b>
+<b class="fc"><i>197</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>198</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>199</i>&nbsp;    }</b>
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;    public void updateByValue(KEY key, String property, String value) {
+<b class="nc"><i>202</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="nc"><i>203</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="nc"><i>204</i>&nbsp;        fields.get(property).setValue(item, value);</b>
+<b class="nc"><i>205</i>&nbsp;        optimizeHash(item);</b>
+<b class="nc"><i>206</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="nc"><i>207</i>&nbsp;    }</b>
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;    public void update(KEY key, String property, int value) {
+<b class="fc"><i>210</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>211</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>212</i>&nbsp;        fields.get(property).setInt(item, value);</b>
+<b class="fc"><i>213</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>214</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>215</i>&nbsp;    }</b>
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;    public void update(KEY key, String property, long value) {
+<b class="fc"><i>218</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>219</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>220</i>&nbsp;        fields.get(property).setLong(item, value);</b>
+<b class="fc"><i>221</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>222</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>223</i>&nbsp;    }</b>
+<i>224</i>&nbsp;
+<i>225</i>&nbsp;    public void update(KEY key, String property, char value) {
+<b class="fc"><i>226</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>227</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>228</i>&nbsp;        fields.get(property).setChar(item, value);</b>
+<b class="fc"><i>229</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>230</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>231</i>&nbsp;    }</b>
+<i>232</i>&nbsp;
+<i>233</i>&nbsp;    public void update(KEY key, String property, short value) {
+<b class="fc"><i>234</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>235</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>236</i>&nbsp;        fields.get(property).setShort(item, value);</b>
+<b class="fc"><i>237</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>238</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>239</i>&nbsp;    }</b>
+<i>240</i>&nbsp;
+<i>241</i>&nbsp;    public void update(KEY key, String property, byte value) {
+<b class="fc"><i>242</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>243</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>244</i>&nbsp;        fields.get(property).setByte(item, value);</b>
+<b class="fc"><i>245</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>246</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>247</i>&nbsp;    }</b>
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    public void update(KEY key, String property, float value) {
+<b class="fc"><i>250</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>251</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>252</i>&nbsp;        fields.get(property).setFloat(item, value);</b>
+<b class="fc"><i>253</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>254</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>255</i>&nbsp;    }</b>
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    public void update(KEY key, String property, double value) {
+<b class="fc"><i>258</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>259</i>&nbsp;        query.invalidateIndex(property, item);</b>
+<b class="fc"><i>260</i>&nbsp;        fields.get(property).setDouble(item, value);</b>
+<b class="fc"><i>261</i>&nbsp;        optimizeHash(item);</b>
+<b class="fc"><i>262</i>&nbsp;        query.validateIndex(property, item);</b>
+<b class="fc"><i>263</i>&nbsp;    }</b>
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;    public void update(KEY key, Update... values) {
+<b class="fc"><i>266</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<i>267</i>&nbsp;
+<b class="fc"><i>268</i>&nbsp;        for (Update value : values) {</b>
+<b class="fc"><i>269</i>&nbsp;            query.invalidateIndex(value.getName(), item);</b>
+<b class="fc"><i>270</i>&nbsp;            value.doSet(this, item);</b>
+<b class="fc"><i>271</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>272</i>&nbsp;            query.validateIndex(value.getName(), item);</b>
+<i>273</i>&nbsp;        }
+<b class="fc"><i>274</i>&nbsp;    }</b>
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, Object compare, Object value) {
+<b class="nc"><i>277</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="nc"><i>278</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="nc"><i>279</i>&nbsp;        boolean set = false;</b>
+<b class="nc"><i>280</i>&nbsp;        if (field.getObject(item).equals(compare)) {</b>
+<b class="nc"><i>281</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="nc"><i>282</i>&nbsp;            field.setObject(item, value);</b>
+<b class="nc"><i>283</i>&nbsp;            set = true;</b>
+<b class="nc"><i>284</i>&nbsp;            optimizeHash(item);</b>
+<b class="nc"><i>285</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>286</i>&nbsp;        }
+<b class="nc"><i>287</i>&nbsp;        return set;</b>
+<i>288</i>&nbsp;    }
+<i>289</i>&nbsp;
+<i>290</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, int compare, int value) {
+<b class="fc"><i>291</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>292</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>293</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>294</i>&nbsp;        if (field.getInt(item) == (compare)) {</b>
+<b class="fc"><i>295</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>296</i>&nbsp;            field.setInt(item, value);</b>
+<b class="fc"><i>297</i>&nbsp;            set = true;</b>
+<b class="fc"><i>298</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>299</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>300</i>&nbsp;        }
+<b class="fc"><i>301</i>&nbsp;        return set;</b>
+<i>302</i>&nbsp;    }
+<i>303</i>&nbsp;
+<i>304</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, long compare, long value) {
+<b class="fc"><i>305</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>306</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>307</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>308</i>&nbsp;        if (field.getLong(item) == (compare)) {</b>
+<b class="fc"><i>309</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>310</i>&nbsp;            field.setLong(item, value);</b>
+<b class="fc"><i>311</i>&nbsp;            set = true;</b>
+<b class="fc"><i>312</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>313</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>314</i>&nbsp;        }
+<b class="fc"><i>315</i>&nbsp;        return set;</b>
+<i>316</i>&nbsp;    }
+<i>317</i>&nbsp;
+<i>318</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, char compare, char value) {
+<b class="fc"><i>319</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>320</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>321</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>322</i>&nbsp;        if (field.getChar(item) == (compare)) {</b>
+<b class="fc"><i>323</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>324</i>&nbsp;            field.setChar(item, value);</b>
+<b class="fc"><i>325</i>&nbsp;            set = true;</b>
+<b class="fc"><i>326</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>327</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>328</i>&nbsp;        }
+<b class="fc"><i>329</i>&nbsp;        return set;</b>
+<i>330</i>&nbsp;    }
+<i>331</i>&nbsp;
+<i>332</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, short compare, short value) {
+<b class="fc"><i>333</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>334</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>335</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>336</i>&nbsp;        if (field.getShort(item) == (compare)) {</b>
+<b class="fc"><i>337</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>338</i>&nbsp;            field.setShort(item, value);</b>
+<b class="fc"><i>339</i>&nbsp;            set = true;</b>
+<b class="fc"><i>340</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>341</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>342</i>&nbsp;        }
+<b class="fc"><i>343</i>&nbsp;        return set;</b>
+<i>344</i>&nbsp;
+<i>345</i>&nbsp;    }
+<i>346</i>&nbsp;
+<i>347</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, byte compare, byte value) {
+<b class="fc"><i>348</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>349</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>350</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>351</i>&nbsp;        if (field.getByte(item) == (compare)) {</b>
+<b class="fc"><i>352</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>353</i>&nbsp;            field.setByte(item, value);</b>
+<b class="fc"><i>354</i>&nbsp;            set = true;</b>
+<b class="fc"><i>355</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>356</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>357</i>&nbsp;        }
+<b class="fc"><i>358</i>&nbsp;        return set;</b>
+<i>359</i>&nbsp;    }
+<i>360</i>&nbsp;
+<i>361</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, float compare, float value) {
+<b class="fc"><i>362</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>363</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>364</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>365</i>&nbsp;        if (field.getFloat(item) == (compare)) {</b>
+<b class="fc"><i>366</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>367</i>&nbsp;            field.setFloat(item, value);</b>
+<b class="fc"><i>368</i>&nbsp;            set = true;</b>
+<b class="fc"><i>369</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>370</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>371</i>&nbsp;        }
+<b class="fc"><i>372</i>&nbsp;        return set;</b>
+<i>373</i>&nbsp;    }
+<i>374</i>&nbsp;
+<i>375</i>&nbsp;    public boolean compareAndUpdate(KEY key, String property, double compare, double value) {
+<b class="fc"><i>376</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>377</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>378</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>379</i>&nbsp;        if (field.getDouble(item) == (compare)) {</b>
+<b class="fc"><i>380</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>381</i>&nbsp;            field.setDouble(item, value);</b>
+<b class="fc"><i>382</i>&nbsp;            set = true;</b>
+<b class="fc"><i>383</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>384</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>385</i>&nbsp;        }
+<b class="fc"><i>386</i>&nbsp;        return set;</b>
+<i>387</i>&nbsp;    }
+<i>388</i>&nbsp;
+<i>389</i>&nbsp;    public boolean compareAndIncrement(KEY key, String property, int compare) {
+<b class="fc"><i>390</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>391</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>392</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>393</i>&nbsp;        if (field.getInt(item) == (compare)) {</b>
+<b class="fc"><i>394</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>395</i>&nbsp;            field.setInt(item, (compare + 1));</b>
+<b class="fc"><i>396</i>&nbsp;            set = true;</b>
+<b class="fc"><i>397</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>398</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>399</i>&nbsp;        }
+<b class="fc"><i>400</i>&nbsp;        return set;</b>
+<i>401</i>&nbsp;
+<i>402</i>&nbsp;    }
+<i>403</i>&nbsp;
+<i>404</i>&nbsp;    public boolean compareAndIncrement(KEY key, String property, long compare) {
+<b class="fc"><i>405</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>406</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>407</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>408</i>&nbsp;        if (field.getLong(item) == (compare)) {</b>
+<b class="fc"><i>409</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>410</i>&nbsp;            field.setLong(item, (compare + 1));</b>
+<b class="fc"><i>411</i>&nbsp;            set = true;</b>
+<b class="fc"><i>412</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>413</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>414</i>&nbsp;        }
+<b class="fc"><i>415</i>&nbsp;        return set;</b>
+<i>416</i>&nbsp;    }
+<i>417</i>&nbsp;
+<i>418</i>&nbsp;    public boolean compareAndIncrement(KEY key, String property, short compare) {
+<b class="fc"><i>419</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>420</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>421</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>422</i>&nbsp;        if (field.getShort(item) == (compare)) {</b>
+<b class="fc"><i>423</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>424</i>&nbsp;            field.setShort(item, (short) (compare + 1));</b>
+<b class="fc"><i>425</i>&nbsp;            set = true;</b>
+<b class="fc"><i>426</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>427</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>428</i>&nbsp;        }
+<b class="fc"><i>429</i>&nbsp;        return set;</b>
+<i>430</i>&nbsp;    }
+<i>431</i>&nbsp;
+<i>432</i>&nbsp;    public boolean compareAndIncrement(KEY key, String property, byte compare) {
+<b class="fc"><i>433</i>&nbsp;        ITEM item = lookupAndExpectByKey(key);</b>
+<b class="fc"><i>434</i>&nbsp;        FieldAccess field = fields.get(property);</b>
+<b class="fc"><i>435</i>&nbsp;        boolean set = false;</b>
+<b class="fc"><i>436</i>&nbsp;        if (field.getByte(item) == (compare)) {</b>
+<b class="fc"><i>437</i>&nbsp;            query.invalidateIndex(property, item);</b>
+<b class="fc"><i>438</i>&nbsp;            field.setByte(item, (byte) (compare + 1));</b>
+<b class="fc"><i>439</i>&nbsp;            set = true;</b>
+<b class="fc"><i>440</i>&nbsp;            optimizeHash(item);</b>
+<b class="fc"><i>441</i>&nbsp;            query.validateIndex(property, item);</b>
+<i>442</i>&nbsp;        }
+<b class="fc"><i>443</i>&nbsp;        return set;</b>
+<i>444</i>&nbsp;    }
+<i>445</i>&nbsp;
+<i>446</i>&nbsp;    @Override
+<i>447</i>&nbsp;    public void addAll(List&lt;ITEM&gt; items) {
+<b class="fc"><i>448</i>&nbsp;        query.addAll(items);</b>
+<b class="fc"><i>449</i>&nbsp;    }</b>
+<i>450</i>&nbsp;
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;    public boolean add(ITEM item) {
+<b class="fc"><i>453</i>&nbsp;        return query.add(item);</b>
+<i>454</i>&nbsp;    }
+<i>455</i>&nbsp;
+<i>456</i>&nbsp;
+<i>457</i>&nbsp;    public void setFields(Map&lt;String, FieldAccess&gt; fields) {
+<b class="fc"><i>458</i>&nbsp;        this.fields = fields;</b>
+<b class="fc"><i>459</i>&nbsp;    }</b>
+<i>460</i>&nbsp;
+<i>461</i>&nbsp;
+<i>462</i>&nbsp;    @Override
+<i>463</i>&nbsp;    public void setSearchableCollection(SearchableCollection searchableCollection) {
+<b class="fc"><i>464</i>&nbsp;        this.query = searchableCollection;</b>
+<b class="fc"><i>465</i>&nbsp;    }</b>
+<i>466</i>&nbsp;
+<i>467</i>&nbsp;    @Override
+<i>468</i>&nbsp;    public void init() {
+<b class="fc"><i>469</i>&nbsp;    }</b>
+<i>470</i>&nbsp;
+<i>471</i>&nbsp;    @Override
+<i>472</i>&nbsp;    public void hashCodeOptimizationOn() {
+<b class="nc"><i>473</i>&nbsp;        this.hashCodeOptimization = true;</b>
+<b class="nc"><i>474</i>&nbsp;    }</b>
+<i>475</i>&nbsp;
+<i>476</i>&nbsp;
+<i>477</i>&nbsp;    public ITEM get(KEY key) {
+<b class="fc"><i>478</i>&nbsp;        return (ITEM) query.get(key);</b>
+<i>479</i>&nbsp;    }
+<i>480</i>&nbsp;
+<i>481</i>&nbsp;    private ITEM doGet(KEY key) {
+<b class="fc"><i>482</i>&nbsp;        return (ITEM) query.get(key);</b>
+<i>483</i>&nbsp;    }
+<i>484</i>&nbsp;
+<i>485</i>&nbsp;    @Override
+<i>486</i>&nbsp;    public KEY getKey(ITEM item) {
+<b class="fc"><i>487</i>&nbsp;        return (KEY) query.getKey(item);</b>
+<i>488</i>&nbsp;    }
+<i>489</i>&nbsp;
+<i>490</i>&nbsp;    private ITEM lookupAndExpect(ITEM item) {
+<b class="fc"><i>491</i>&nbsp;        if (!lookupAndExcept) {</b>
+<b class="fc"><i>492</i>&nbsp;            return item;</b>
+<i>493</i>&nbsp;        }
+<i>494</i>&nbsp;
+<b class="fc"><i>495</i>&nbsp;        KEY key = getKey(item);</b>
+<b class="fc"><i>496</i>&nbsp;        ITEM oldItem = this.doGet(key);</b>
+<i>497</i>&nbsp;
+<i>498</i>&nbsp;
+<b class="fc"><i>499</i>&nbsp;        if (oldItem == null) {</b>
+<b class="nc"><i>500</i>&nbsp;            throw new IllegalStateException(</b>
+<b class="nc"><i>501</i>&nbsp;                    String.format(&quot;An original item was not in the repo %s&quot;, item));</b>
+<i>502</i>&nbsp;
+<i>503</i>&nbsp;        }
+<b class="fc"><i>504</i>&nbsp;        return oldItem;</b>
+<i>505</i>&nbsp;    }
+<i>506</i>&nbsp;
+<i>507</i>&nbsp;    private ITEM lookupAndExpectByKey(KEY key) {
+<b class="fc"><i>508</i>&nbsp;        ITEM oldItem = this.doGet(key);</b>
+<i>509</i>&nbsp;
+<b class="fc"><i>510</i>&nbsp;        if (oldItem == null) {</b>
+<i>511</i>&nbsp;
+<b class="nc"><i>512</i>&nbsp;            throw new IllegalStateException(</b>
+<b class="nc"><i>513</i>&nbsp;                    String.format( &quot;An original item was not&quot; +</b>
+<i>514</i>&nbsp;                            &quot; in the repo at this key %s&quot;, key));
+<i>515</i>&nbsp;
+<i>516</i>&nbsp;
+<i>517</i>&nbsp;        }
+<b class="fc"><i>518</i>&nbsp;        return oldItem;</b>
+<i>519</i>&nbsp;    }
+<i>520</i>&nbsp;
+<i>521</i>&nbsp;
+<i>522</i>&nbsp;    @Override
+<i>523</i>&nbsp;    public void clear() {
+<b class="nc"><i>524</i>&nbsp;        query.clear();</b>
+<b class="nc"><i>525</i>&nbsp;    }</b>
+<i>526</i>&nbsp;
+<i>527</i>&nbsp;    @Override
+<i>528</i>&nbsp;    public boolean delete(ITEM item) {
+<b class="fc"><i>529</i>&nbsp;        return query.delete(item);</b>
+<i>530</i>&nbsp;
+<i>531</i>&nbsp;    }
+<i>532</i>&nbsp;
+<i>533</i>&nbsp;    @Override
+<i>534</i>&nbsp;    public List&lt;ITEM&gt; all() {
+<b class="nc"><i>535</i>&nbsp;        return query.all();  //To change body of implemented methods use File | Settings | File Templates.</b>
+<i>536</i>&nbsp;    }
+<i>537</i>&nbsp;
+<i>538</i>&nbsp;    @Override
+<i>539</i>&nbsp;    public int size() {
+<b class="nc"><i>540</i>&nbsp;        return query.size();</b>
+<i>541</i>&nbsp;
+<i>542</i>&nbsp;    }
+<i>543</i>&nbsp;
+<i>544</i>&nbsp;    @Override
+<i>545</i>&nbsp;    public Collection&lt;ITEM&gt; toCollection() {
+<b class="nc"><i>546</i>&nbsp;        return query;</b>
+<i>547</i>&nbsp;    }
+<i>548</i>&nbsp;
+<i>549</i>&nbsp;
+<i>550</i>&nbsp;    public SearchableCollection&lt;KEY, ITEM&gt; query() {
+<b class="nc"><i>551</i>&nbsp;        return query;</b>
+<i>552</i>&nbsp;    }
+<i>553</i>&nbsp;
+<i>554</i>&nbsp;
+<i>555</i>&nbsp;    @Override
+<i>556</i>&nbsp;    public Object readNestedValue(KEY key, String... properties) {
+<b class="nc"><i>557</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>558</i>&nbsp;        return Reflection.getPropertyValue(item, properties);</b>
+<i>559</i>&nbsp;    }
+<i>560</i>&nbsp;
+<i>561</i>&nbsp;
+<i>562</i>&nbsp;    @Override
+<i>563</i>&nbsp;    public int readNestedInt(KEY key, String... properties) {
+<b class="nc"><i>564</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>565</i>&nbsp;        return Reflection.getPropertyInt(item, properties);</b>
+<i>566</i>&nbsp;    }
+<i>567</i>&nbsp;
+<i>568</i>&nbsp;    @Override
+<i>569</i>&nbsp;    public short readNestedShort(KEY key, String... properties) {
+<b class="nc"><i>570</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>571</i>&nbsp;        return Reflection.getPropertyShort(item, properties);</b>
+<i>572</i>&nbsp;    }
+<i>573</i>&nbsp;
+<i>574</i>&nbsp;    @Override
+<i>575</i>&nbsp;    public char readNestedChar(KEY key, String... properties) {
+<b class="nc"><i>576</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>577</i>&nbsp;        return Reflection.getPropertyChar(item, properties);</b>
+<i>578</i>&nbsp;    }
+<i>579</i>&nbsp;
+<i>580</i>&nbsp;    @Override
+<i>581</i>&nbsp;    public byte readNestedByte(KEY key, String... properties) {
+<b class="nc"><i>582</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>583</i>&nbsp;        return Reflection.getPropertyByte(item, properties);</b>
+<i>584</i>&nbsp;    }
+<i>585</i>&nbsp;
+<i>586</i>&nbsp;    @Override
+<i>587</i>&nbsp;    public double readNestedDouble(KEY key, String... properties) {
+<b class="nc"><i>588</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>589</i>&nbsp;        return Reflection.getPropertyDouble(item, properties);</b>
+<i>590</i>&nbsp;    }
+<i>591</i>&nbsp;
+<i>592</i>&nbsp;    @Override
+<i>593</i>&nbsp;    public float readNestedFloat(KEY key, String... properties) {
+<b class="nc"><i>594</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>595</i>&nbsp;        return Reflection.getPropertyFloat(item, properties);</b>
+<i>596</i>&nbsp;    }
+<i>597</i>&nbsp;
+<i>598</i>&nbsp;    @Override
+<i>599</i>&nbsp;    public long readNestedLong(KEY key, String... properties) {
+<b class="nc"><i>600</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>601</i>&nbsp;        return Reflection.getPropertyLong(item, properties);</b>
+<i>602</i>&nbsp;    }
+<i>603</i>&nbsp;
+<i>604</i>&nbsp;
+<i>605</i>&nbsp;    @Override
+<i>606</i>&nbsp;    public Object readObject(KEY key, String property) {
+<b class="nc"><i>607</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>608</i>&nbsp;        return this.fields.get(property).getObject(item);</b>
+<i>609</i>&nbsp;    }
+<i>610</i>&nbsp;
+<i>611</i>&nbsp;
+<i>612</i>&nbsp;    @Override
+<i>613</i>&nbsp;    public &lt;T&gt; T readValue(KEY key, String property, Class&lt;T&gt; type) {
+<b class="nc"><i>614</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="nc"><i>615</i>&nbsp;        return (T) this.fields.get(property).getValue(item);</b>
+<i>616</i>&nbsp;    }
+<i>617</i>&nbsp;
+<i>618</i>&nbsp;    @Override
+<i>619</i>&nbsp;    public int readInt(KEY key, String property) {
+<b class="fc"><i>620</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="fc"><i>621</i>&nbsp;        return this.fields.get(property).getInt(item);</b>
+<i>622</i>&nbsp;    }
+<i>623</i>&nbsp;
+<i>624</i>&nbsp;    @Override
+<i>625</i>&nbsp;    public long readLong(KEY key, String property) {
+<b class="fc"><i>626</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="fc"><i>627</i>&nbsp;        return this.fields.get(property).getLong(item);</b>
+<i>628</i>&nbsp;    }
+<i>629</i>&nbsp;
+<i>630</i>&nbsp;    @Override
+<i>631</i>&nbsp;    public char readChar(KEY key, String property) {
+<b class="fc"><i>632</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="fc"><i>633</i>&nbsp;        return this.fields.get(property).getChar(item);</b>
+<i>634</i>&nbsp;    }
+<i>635</i>&nbsp;
+<i>636</i>&nbsp;    @Override
+<i>637</i>&nbsp;    public short readShort(KEY key, String property) {
+<b class="fc"><i>638</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="fc"><i>639</i>&nbsp;        return this.fields.get(property).getShort(item);</b>
+<i>640</i>&nbsp;    }
+<i>641</i>&nbsp;
+<i>642</i>&nbsp;    @Override
+<i>643</i>&nbsp;    public byte readByte(KEY key, String property) {
+<b class="fc"><i>644</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="fc"><i>645</i>&nbsp;        return this.fields.get(property).getByte(item);</b>
+<i>646</i>&nbsp;    }
+<i>647</i>&nbsp;
+<i>648</i>&nbsp;    @Override
+<i>649</i>&nbsp;    public float readFloat(KEY key, String property) {
+<b class="fc"><i>650</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="fc"><i>651</i>&nbsp;        return this.fields.get(property).getFloat(item);</b>
+<i>652</i>&nbsp;
+<i>653</i>&nbsp;    }
+<i>654</i>&nbsp;
+<i>655</i>&nbsp;    @Override
+<i>656</i>&nbsp;    public double readDouble(KEY key, String property) {
+<b class="fc"><i>657</i>&nbsp;        ITEM item = this.get(key);</b>
+<b class="fc"><i>658</i>&nbsp;        return this.fields.get(property).getDouble(item);</b>
+<i>659</i>&nbsp;
+<i>660</i>&nbsp;    }
+<i>661</i>&nbsp;
+<i>662</i>&nbsp;    @Override
+<i>663</i>&nbsp;    public Object getObject(ITEM item, String property) {
+<b class="nc"><i>664</i>&nbsp;        return this.fields.get(property).getObject(item);</b>
+<i>665</i>&nbsp;    }
+<i>666</i>&nbsp;
+<i>667</i>&nbsp;    @Override
+<i>668</i>&nbsp;    public &lt;T&gt; T getValue(ITEM item, String property, Class&lt;T&gt; type) {
+<b class="nc"><i>669</i>&nbsp;        return (T) this.fields.get(property).getValue(item);</b>
+<i>670</i>&nbsp;    }
+<i>671</i>&nbsp;
+<i>672</i>&nbsp;    @Override
+<i>673</i>&nbsp;    public int getInt(ITEM item, String property) {
+<b class="fc"><i>674</i>&nbsp;        return this.fields.get(property).getInt(item);</b>
+<i>675</i>&nbsp;    }
+<i>676</i>&nbsp;
+<i>677</i>&nbsp;    @Override
+<i>678</i>&nbsp;    public long getLong(ITEM item, String property) {
+<b class="fc"><i>679</i>&nbsp;        return this.fields.get(property).getLong(item);</b>
+<i>680</i>&nbsp;    }
+<i>681</i>&nbsp;
+<i>682</i>&nbsp;    @Override
+<i>683</i>&nbsp;    public char getChar(ITEM item, String property) {
+<b class="fc"><i>684</i>&nbsp;        return this.fields.get(property).getChar(item);</b>
+<i>685</i>&nbsp;    }
+<i>686</i>&nbsp;
+<i>687</i>&nbsp;    @Override
+<i>688</i>&nbsp;    public short getShort(ITEM item, String property) {
+<b class="fc"><i>689</i>&nbsp;        return this.fields.get(property).getShort(item);</b>
+<i>690</i>&nbsp;    }
+<i>691</i>&nbsp;
+<i>692</i>&nbsp;    @Override
+<i>693</i>&nbsp;    public byte getByte(ITEM item, String property) {
+<b class="fc"><i>694</i>&nbsp;        return this.fields.get(property).getByte(item);</b>
+<i>695</i>&nbsp;    }
+<i>696</i>&nbsp;
+<i>697</i>&nbsp;    @Override
+<i>698</i>&nbsp;    public float getFloat(ITEM item, String property) {
+<b class="fc"><i>699</i>&nbsp;        return this.fields.get(property).getFloat(item);</b>
+<i>700</i>&nbsp;    }
+<i>701</i>&nbsp;
+<i>702</i>&nbsp;    @Override
+<i>703</i>&nbsp;    public double getDouble(ITEM item, String property) {
+<b class="fc"><i>704</i>&nbsp;        return this.fields.get(property).getDouble(item);</b>
+<i>705</i>&nbsp;    }
+<i>706</i>&nbsp;
+<i>707</i>&nbsp;
+<i>708</i>&nbsp;    public void setLookupAndExcept(boolean lookupAndExcept) {
+<b class="fc"><i>709</i>&nbsp;        this.lookupAndExcept = lookupAndExcept;</b>
+<b class="fc"><i>710</i>&nbsp;    }</b>
+<i>711</i>&nbsp;
+<i>712</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

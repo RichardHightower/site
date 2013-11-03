@@ -1,0 +1,259 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BaseIndexWrapper</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.datarepo.impl.indexes</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BaseIndexWrapper (org.boon.datarepo.impl.indexes)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BaseIndexWrapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    23.3%
+  </span>
+  <span class="absValue">
+    (7/ 30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35.9%
+  </span>
+  <span class="absValue">
+    (14/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.datarepo.impl.indexes;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.datarepo.spi.SearchIndex;
+<i>4</i>&nbsp;import org.boon.predicates.Function;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.Collection;
+<i>7</i>&nbsp;import java.util.Comparator;
+<i>8</i>&nbsp;import java.util.List;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Allows more complex indexes.
+<i>13</i>&nbsp; * @see NestedKeySearchIndex
+<i>14</i>&nbsp; * @see TypeHierarchyIndex
+<i>15</i>&nbsp; */
+<i>16</i>&nbsp;public abstract class BaseIndexWrapper implements SearchIndex {
+<i>17</i>&nbsp;    protected final String[] path;
+<b class="fc"><i>18</i>&nbsp;    protected SearchIndexDefault index = new SearchIndexDefault(Object.class);</b>
+<i>19</i>&nbsp;
+<b class="fc"><i>20</i>&nbsp;    public BaseIndexWrapper(String... path) {</b>
+<b class="fc"><i>21</i>&nbsp;        this.path = path;</b>
+<b class="fc"><i>22</i>&nbsp;    }</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    @Override
+<i>25</i>&nbsp;    public Object findFirst() {
+<b class="nc"><i>26</i>&nbsp;        return index.findFirst();</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Override
+<i>30</i>&nbsp;    public Object findLast() {
+<b class="nc"><i>31</i>&nbsp;        return index.findLast();</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Override
+<i>35</i>&nbsp;    public Object findFirstKey() {
+<b class="nc"><i>36</i>&nbsp;        return index.findFirstKey();</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    @Override
+<i>40</i>&nbsp;    public Object findLastKey() {
+<b class="nc"><i>41</i>&nbsp;        return index.findLastKey();</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    @Override
+<i>45</i>&nbsp;    public List findEquals(Object o) {
+<b class="fc"><i>46</i>&nbsp;        return index.findEquals(o);</b>
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    @Override
+<i>50</i>&nbsp;    public List findStartsWith(Object keyFrag) {
+<b class="nc"><i>51</i>&nbsp;        return index.findEquals(keyFrag);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    @Override
+<i>55</i>&nbsp;    public List findEndsWith(Object keyFrag) {
+<b class="nc"><i>56</i>&nbsp;        return index.findEndsWith(keyFrag);</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    @Override
+<i>60</i>&nbsp;    public List findContains(Object keyFrag) {
+<b class="nc"><i>61</i>&nbsp;        return index.findContains(keyFrag);</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    @Override
+<i>65</i>&nbsp;    public List findBetween(Object start, Object end) {
+<b class="nc"><i>66</i>&nbsp;        return index.findBetween(start, end);</b>
+<i>67</i>&nbsp;    }
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    @Override
+<i>70</i>&nbsp;    public List findGreaterThan(Object o) {
+<b class="nc"><i>71</i>&nbsp;        return index.findGreaterThan(o);</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    @Override
+<i>75</i>&nbsp;    public List findLessThan(Object o) {
+<b class="nc"><i>76</i>&nbsp;        return index.findLessThan(o);</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    @Override
+<i>80</i>&nbsp;    public List findGreaterThanEqual(Object o) {
+<b class="nc"><i>81</i>&nbsp;        return index.findGreaterThanEqual(o);</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    @Override
+<i>86</i>&nbsp;    public List findLessThanEqual(Object o) {
+<b class="nc"><i>87</i>&nbsp;        return index.findLessThanEqual(o);</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    @Override
+<i>91</i>&nbsp;    public Object min() {
+<b class="nc"><i>92</i>&nbsp;        return index.min();</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    @Override
+<i>96</i>&nbsp;    public Object max() {
+<b class="nc"><i>97</i>&nbsp;        return index.max();</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    @Override
+<i>101</i>&nbsp;    public int count(Object o) {
+<b class="nc"><i>102</i>&nbsp;        return index.count(o);</b>
+<i>103</i>&nbsp;    }
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    @Override
+<i>106</i>&nbsp;    public void setComparator(Comparator collator) {
+<b class="fc"><i>107</i>&nbsp;        index.setComparator(collator);</b>
+<b class="fc"><i>108</i>&nbsp;    }</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    @Override
+<i>111</i>&nbsp;    public Object get(Object o) {
+<b class="nc"><i>112</i>&nbsp;        return index.get(o);</b>
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    @Override
+<i>116</i>&nbsp;    public void setKeyGetter(Function keyGetter) {
+<b class="nc"><i>117</i>&nbsp;        index.setKeyGetter(keyGetter);</b>
+<b class="nc"><i>118</i>&nbsp;    }</b>
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    @Override
+<i>121</i>&nbsp;    public List getAll(Object o) {
+<b class="nc"><i>122</i>&nbsp;        return index.getAll(o);</b>
+<i>123</i>&nbsp;    }
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;    @Override
+<i>126</i>&nbsp;    public boolean deleteByKey(Object o) {
+<b class="nc"><i>127</i>&nbsp;        return index.deleteByKey(o);</b>
+<i>128</i>&nbsp;    }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    @Override
+<i>131</i>&nbsp;    public boolean isPrimaryKeyOnly() {
+<b class="fc"><i>132</i>&nbsp;        return index.isPrimaryKeyOnly();</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    @Override
+<i>136</i>&nbsp;    public void init() {
+<b class="fc"><i>137</i>&nbsp;        index.init();</b>
+<b class="fc"><i>138</i>&nbsp;    }</b>
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;    @Override
+<i>141</i>&nbsp;    public void setInputKeyTransformer(Function func) {
+<b class="fc"><i>142</i>&nbsp;        index.setInputKeyTransformer(func);</b>
+<b class="fc"><i>143</i>&nbsp;    }</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    @Override
+<i>146</i>&nbsp;    public abstract boolean add(Object o);
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;    protected abstract List getKeys(Object o);
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;    @Override
+<i>151</i>&nbsp;    public abstract boolean delete(Object o);
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    @Override
+<i>154</i>&nbsp;    public List all() {
+<b class="nc"><i>155</i>&nbsp;        return index.all();</b>
+<i>156</i>&nbsp;    }
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;    @Override
+<i>159</i>&nbsp;    public int size() {
+<b class="nc"><i>160</i>&nbsp;        return index.size();</b>
+<i>161</i>&nbsp;    }
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;    @Override
+<i>164</i>&nbsp;    public Collection toCollection() {
+<b class="nc"><i>165</i>&nbsp;        return index.toCollection();</b>
+<i>166</i>&nbsp;    }
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;    @Override
+<i>169</i>&nbsp;    public void clear() {
+<b class="nc"><i>170</i>&nbsp;        index.clear();</b>
+<b class="nc"><i>171</i>&nbsp;    }</b>
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;    public void setBucketSize(int size) {
+<b class="fc"><i>174</i>&nbsp;        index.setBucketSize(size);</b>
+<b class="fc"><i>175</i>&nbsp;    }</b>
+<i>176</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

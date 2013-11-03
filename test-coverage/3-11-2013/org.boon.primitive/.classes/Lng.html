@@ -1,0 +1,411 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Lng</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon.primitive</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Lng (org.boon.primitive)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Lng</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 123)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon.primitive;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import org.boon.Universal;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.Objects;
+<i>6</i>&nbsp;
+<b class="nc"><i>7</i>&nbsp;public class Lng {</b>
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    public static long[] grow(long [] array, final int size) {
+<b class="nc"><i>12</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>13</i>&nbsp;
+<b class="nc"><i>14</i>&nbsp;        long [] newArray  = new long[array.length + size];</b>
+<b class="nc"><i>15</i>&nbsp;        System.arraycopy(array, 0, newArray, 0, array.length);</b>
+<b class="nc"><i>16</i>&nbsp;        return newArray;</b>
+<i>17</i>&nbsp;    }
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    public static long[] grow(long [] array) {
+<b class="nc"><i>22</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>23</i>&nbsp;
+<b class="nc"><i>24</i>&nbsp;        long [] newArray  = new long[array.length *2];</b>
+<b class="nc"><i>25</i>&nbsp;        System.arraycopy(array, 0, newArray, 0, array.length);</b>
+<b class="nc"><i>26</i>&nbsp;        return newArray;</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    public static long[] shrink(long[] array, int size) {
+<b class="nc"><i>31</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;        long[] newArray = new long[array.length - size];</b>
+<i>34</i>&nbsp;
+<b class="nc"><i>35</i>&nbsp;        System.arraycopy(array, 0, newArray, 0, array.length-size);</b>
+<b class="nc"><i>36</i>&nbsp;        return newArray;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    public static long[] compact(long[] array) {
+<b class="nc"><i>41</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;        int nullCount = 0;</b>
+<b class="nc"><i>44</i>&nbsp;        for (long ch : array) {</b>
+<i>45</i>&nbsp;
+<b class="nc"><i>46</i>&nbsp;            if (ch == &#39;\0&#39;) {</b>
+<b class="nc"><i>47</i>&nbsp;                nullCount++;</b>
+<i>48</i>&nbsp;            }
+<i>49</i>&nbsp;        }
+<b class="nc"><i>50</i>&nbsp;        long [] newArray = new long [array.length - nullCount];</b>
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;        int j = 0;</b>
+<b class="nc"><i>53</i>&nbsp;        for (long ch : array) {</b>
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;            if (ch == &#39;\0&#39;) {</b>
+<b class="nc"><i>56</i>&nbsp;                continue;</b>
+<i>57</i>&nbsp;            }
+<i>58</i>&nbsp;
+<b class="nc"><i>59</i>&nbsp;            newArray[j] = ch;</b>
+<b class="nc"><i>60</i>&nbsp;            j++;</b>
+<i>61</i>&nbsp;        }
+<b class="nc"><i>62</i>&nbsp;        return newArray;</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    /**
+<i>68</i>&nbsp;     * Creates an array of bytes
+<i>69</i>&nbsp;     * @param size size of the array you want to make
+<i>70</i>&nbsp;     * @return
+<i>71</i>&nbsp;     */
+<i>72</i>&nbsp;    public static  long[] arrayOfLong(final int size) {
+<b class="nc"><i>73</i>&nbsp;        return new long[size];</b>
+<i>74</i>&nbsp;    }
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    /**
+<i>77</i>&nbsp;     *
+<i>78</i>&nbsp;     * @param array
+<i>79</i>&nbsp;     * @return
+<i>80</i>&nbsp;     */
+<i>81</i>&nbsp;    @Universal
+<i>82</i>&nbsp;    public static long[] array(final long... array) {
+<b class="nc"><i>83</i>&nbsp;        Objects.requireNonNull(array);</b>
+<b class="nc"><i>84</i>&nbsp;        return array;</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    @Universal
+<i>89</i>&nbsp;    public static int len(long[] array) {
+<b class="nc"><i>90</i>&nbsp;        return array.length;</b>
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    @Universal
+<i>95</i>&nbsp;    public static long idx (final long[] array, final int index) {
+<b class="nc"><i>96</i>&nbsp;        final int i = calculateIndex(array, index);</b>
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;        return array[i];</b>
+<i>99</i>&nbsp;    }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;    @Universal
+<i>103</i>&nbsp;    public static void idx (final long[] array, int index, long value) {
+<b class="nc"><i>104</i>&nbsp;        final int i = calculateIndex(array, index);</b>
+<i>105</i>&nbsp;
+<b class="nc"><i>106</i>&nbsp;        array[i] = value;</b>
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    @Universal
+<i>112</i>&nbsp;    public static long[] slc(long[] array, int startIndex, int endIndex) {
+<b class="nc"><i>113</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>114</i>&nbsp;
+<b class="nc"><i>115</i>&nbsp;        final int start = calculateIndex(array, startIndex);</b>
+<b class="nc"><i>116</i>&nbsp;        final int end = calculateIndex(array, endIndex);</b>
+<b class="nc"><i>117</i>&nbsp;        final int newLength = end - start;</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        if (newLength &lt;0 ) {</b>
+<b class="nc"><i>120</i>&nbsp;            throw new ArrayIndexOutOfBoundsException(</b>
+<b class="nc"><i>121</i>&nbsp;                    String.format( &quot;start index %d, end index %d, length %d&quot;,</b>
+<b class="nc"><i>122</i>&nbsp;                            startIndex, endIndex, array.length )</b>
+<i>123</i>&nbsp;            );
+<i>124</i>&nbsp;        }
+<i>125</i>&nbsp;
+<b class="nc"><i>126</i>&nbsp;        long [] newArray = new long[newLength];</b>
+<b class="nc"><i>127</i>&nbsp;        System.arraycopy(array, start, newArray, 0, newLength);</b>
+<b class="nc"><i>128</i>&nbsp;        return newArray;</b>
+<i>129</i>&nbsp;    }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    @Universal
+<i>132</i>&nbsp;    public static long[] slc(long[] array, int startIndex) {
+<b class="nc"><i>133</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>134</i>&nbsp;
+<b class="nc"><i>135</i>&nbsp;        final int start = calculateIndex(array, startIndex);</b>
+<b class="nc"><i>136</i>&nbsp;        final int newLength = array.length - start;</b>
+<i>137</i>&nbsp;
+<b class="nc"><i>138</i>&nbsp;        if (newLength &lt;0 ) {</b>
+<b class="nc"><i>139</i>&nbsp;            throw new ArrayIndexOutOfBoundsException(</b>
+<b class="nc"><i>140</i>&nbsp;                    String.format( &quot;start index %d, length %d&quot;,</b>
+<b class="nc"><i>141</i>&nbsp;                            startIndex, array.length )</b>
+<i>142</i>&nbsp;            );
+<i>143</i>&nbsp;        }
+<i>144</i>&nbsp;
+<b class="nc"><i>145</i>&nbsp;        long [] newArray = new long[newLength];</b>
+<b class="nc"><i>146</i>&nbsp;        System.arraycopy(array, start, newArray, 0, newLength);</b>
+<b class="nc"><i>147</i>&nbsp;        return newArray;</b>
+<i>148</i>&nbsp;    }
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;    @Universal
+<i>151</i>&nbsp;    public static long[] slcEnd(long[] array, int endIndex) {
+<b class="nc"><i>152</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>153</i>&nbsp;
+<b class="nc"><i>154</i>&nbsp;        final int end = calculateIndex(array, endIndex);</b>
+<b class="nc"><i>155</i>&nbsp;        final int newLength = end; // +    (endIndex &lt; 0 ? 1 : 0);</b>
+<i>156</i>&nbsp;
+<b class="nc"><i>157</i>&nbsp;        if (newLength &lt;0 ) {</b>
+<b class="nc"><i>158</i>&nbsp;            throw new ArrayIndexOutOfBoundsException(</b>
+<b class="nc"><i>159</i>&nbsp;                    String.format( &quot;start index %d, length %d&quot;,</b>
+<b class="nc"><i>160</i>&nbsp;                            endIndex, array.length )</b>
+<i>161</i>&nbsp;            );
+<i>162</i>&nbsp;        }
+<i>163</i>&nbsp;
+<b class="nc"><i>164</i>&nbsp;        long [] newArray = new long[newLength];</b>
+<b class="nc"><i>165</i>&nbsp;        System.arraycopy(array, 0, newArray, 0, newLength);</b>
+<b class="nc"><i>166</i>&nbsp;        return newArray;</b>
+<i>167</i>&nbsp;    }
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;    @Universal
+<i>170</i>&nbsp;    public static boolean in(long value, long[] array) {
+<b class="nc"><i>171</i>&nbsp;        for (long currentValue : array) {</b>
+<b class="nc"><i>172</i>&nbsp;            if ( currentValue == value ) {</b>
+<b class="nc"><i>173</i>&nbsp;                return true;</b>
+<i>174</i>&nbsp;            }
+<i>175</i>&nbsp;        }
+<b class="nc"><i>176</i>&nbsp;        return false;</b>
+<i>177</i>&nbsp;    }
+<i>178</i>&nbsp;
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;
+<i>181</i>&nbsp;    @Universal
+<i>182</i>&nbsp;    public static long[] copy(long[] array) {
+<b class="nc"><i>183</i>&nbsp;        Objects.requireNonNull(array);</b>
+<b class="nc"><i>184</i>&nbsp;        long[] newArray = new long[array.length];</b>
+<b class="nc"><i>185</i>&nbsp;        System.arraycopy(array, 0, newArray, 0, array.length);</b>
+<b class="nc"><i>186</i>&nbsp;        return newArray;</b>
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;    @Universal
+<i>191</i>&nbsp;    public static long[] add(long[] array, long v) {
+<b class="nc"><i>192</i>&nbsp;        Objects.requireNonNull(array);</b>
+<b class="nc"><i>193</i>&nbsp;        long[] newArray = new long[array.length + 1];</b>
+<b class="nc"><i>194</i>&nbsp;        System.arraycopy(array, 0, newArray, 0, array.length);</b>
+<b class="nc"><i>195</i>&nbsp;        newArray[array.length] = v;</b>
+<b class="nc"><i>196</i>&nbsp;        return newArray;</b>
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    @Universal
+<i>200</i>&nbsp;    public static long[] add(long[] array, long[] array2) {
+<b class="nc"><i>201</i>&nbsp;        Objects.requireNonNull(array);</b>
+<b class="nc"><i>202</i>&nbsp;        long[] newArray = new long[array.length + array2.length];</b>
+<b class="nc"><i>203</i>&nbsp;        System.arraycopy(array, 0, newArray, 0, array.length);</b>
+<b class="nc"><i>204</i>&nbsp;        System.arraycopy(array2, 0, newArray, array.length, array2.length);</b>
+<b class="nc"><i>205</i>&nbsp;        return newArray;</b>
+<i>206</i>&nbsp;    }
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;
+<i>209</i>&nbsp;
+<i>210</i>&nbsp;    @Universal
+<i>211</i>&nbsp;    public static long[] insert(final long[] array, final int idx, final long v) {
+<b class="nc"><i>212</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>213</i>&nbsp;
+<b class="nc"><i>214</i>&nbsp;        if (idx &gt;= array.length) {</b>
+<b class="nc"><i>215</i>&nbsp;            return add(array, v);</b>
+<i>216</i>&nbsp;        }
+<i>217</i>&nbsp;
+<b class="nc"><i>218</i>&nbsp;        final int index = calculateIndex(array, idx);</b>
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;        //Object newArray = Array.newInstance(array.getClass().getComponentType(), array.length+1);
+<b class="nc"><i>221</i>&nbsp;        long [] newArray = new long[array.length+1];</b>
+<i>222</i>&nbsp;
+<b class="nc"><i>223</i>&nbsp;        if (index != 0) {</b>
+<i>224</i>&nbsp;            /* Copy up to the length in the array before the index. */
+<i>225</i>&nbsp;            /*                 src     sbegin  dst       dbegin   length of copy */
+<b class="nc"><i>226</i>&nbsp;            System.arraycopy( array,   0,      newArray, 0,       index );</b>
+<i>227</i>&nbsp;        }
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;
+<b class="nc"><i>230</i>&nbsp;        boolean lastIndex = index == array.length -1;</b>
+<b class="nc"><i>231</i>&nbsp;        int remainingIndex = array.length - index;</b>
+<i>232</i>&nbsp;
+<b class="nc"><i>233</i>&nbsp;        if (lastIndex ) {</b>
+<i>234</i>&nbsp;            /* Copy the area after the insert. Make sure we don&#39;t write over the end. */
+<i>235</i>&nbsp;            /*                 src  sbegin   dst       dbegin     length of copy */
+<b class="nc"><i>236</i>&nbsp;            System.arraycopy(array, index,   newArray, index + 1, remainingIndex );</b>
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;        } else {
+<i>239</i>&nbsp;            /* Copy the area after the insert.  */
+<i>240</i>&nbsp;            /*                 src  sbegin   dst       dbegin     length of copy */
+<b class="nc"><i>241</i>&nbsp;            System.arraycopy(array, index,   newArray, index + 1, remainingIndex );</b>
+<i>242</i>&nbsp;
+<i>243</i>&nbsp;        }
+<i>244</i>&nbsp;
+<b class="nc"><i>245</i>&nbsp;        newArray[index] = v;</b>
+<b class="nc"><i>246</i>&nbsp;        return  newArray;</b>
+<i>247</i>&nbsp;    }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;
+<i>250</i>&nbsp;    @Universal
+<i>251</i>&nbsp;    public static long[] insert(final long[] array, final int fromIndex, final long[] values) {
+<b class="nc"><i>252</i>&nbsp;        Objects.requireNonNull(array);</b>
+<i>253</i>&nbsp;
+<b class="nc"><i>254</i>&nbsp;        if (fromIndex &gt;= array.length) {</b>
+<b class="nc"><i>255</i>&nbsp;            return add(array, values);</b>
+<i>256</i>&nbsp;        }
+<i>257</i>&nbsp;
+<b class="nc"><i>258</i>&nbsp;        final int index = calculateIndex(array, fromIndex);</b>
+<i>259</i>&nbsp;
+<i>260</i>&nbsp;        //Object newArray = Array.newInstance(array.getClass().getComponentType(), array.length+1);
+<b class="nc"><i>261</i>&nbsp;        long [] newArray = new long[array.length +  values.length];</b>
+<i>262</i>&nbsp;
+<b class="nc"><i>263</i>&nbsp;        if (index != 0) {</b>
+<i>264</i>&nbsp;            /* Copy up to the length in the array before the index. */
+<i>265</i>&nbsp;            /*                 src     sbegin  dst       dbegin   length of copy */
+<b class="nc"><i>266</i>&nbsp;            System.arraycopy( array,   0,      newArray, 0,       index );</b>
+<i>267</i>&nbsp;        }
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;
+<b class="nc"><i>270</i>&nbsp;        boolean lastIndex = index == array.length -1;</b>
+<i>271</i>&nbsp;
+<b class="nc"><i>272</i>&nbsp;        int toIndex = index + values.length;</b>
+<b class="nc"><i>273</i>&nbsp;        int remainingIndex = newArray.length - toIndex;</b>
+<i>274</i>&nbsp;
+<b class="nc"><i>275</i>&nbsp;        if (lastIndex ) {</b>
+<i>276</i>&nbsp;            /* Copy the area after the insert. Make sure we don&#39;t write over the end. */
+<i>277</i>&nbsp;            /*                 src  sbegin   dst       dbegin     length of copy */
+<b class="nc"><i>278</i>&nbsp;            System.arraycopy(array, index,   newArray, index + values.length, remainingIndex );</b>
+<i>279</i>&nbsp;
+<i>280</i>&nbsp;        } else {
+<i>281</i>&nbsp;            /* Copy the area after the insert.  */
+<i>282</i>&nbsp;            /*                 src  sbegin   dst       dbegin     length of copy */
+<b class="nc"><i>283</i>&nbsp;            System.arraycopy(array, index,   newArray, index + values.length, remainingIndex );</b>
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;        }
+<i>286</i>&nbsp;
+<b class="nc"><i>287</i>&nbsp;        for (int i = index, j=0; i &lt; toIndex; i++, j++) {</b>
+<b class="nc"><i>288</i>&nbsp;            newArray[ i ] = values[ j ];</b>
+<i>289</i>&nbsp;        }
+<b class="nc"><i>290</i>&nbsp;        return  newArray;</b>
+<i>291</i>&nbsp;    }
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    /* End universal methods. */
+<i>296</i>&nbsp;    private static int calculateIndex(long[] array, int originalIndex) {
+<b class="nc"><i>297</i>&nbsp;        final int length = array.length;</b>
+<i>298</i>&nbsp;
+<b class="nc"><i>299</i>&nbsp;        Objects.requireNonNull(array, &quot;array cannot be null&quot;);</b>
+<i>300</i>&nbsp;
+<i>301</i>&nbsp;
+<b class="nc"><i>302</i>&nbsp;        int index = originalIndex;</b>
+<i>303</i>&nbsp;
+<i>304</i>&nbsp;        /* Adjust for reading from the right as in
+<i>305</i>&nbsp;        -1 reads the 4th element if the length is 5
+<i>306</i>&nbsp;         */
+<b class="nc"><i>307</i>&nbsp;        if (index &lt; 0) {</b>
+<b class="nc"><i>308</i>&nbsp;            index = length + index;</b>
+<i>309</i>&nbsp;        }
+<i>310</i>&nbsp;
+<i>311</i>&nbsp;        /* Bounds check
+<i>312</i>&nbsp;            if it is still less than 0, then they
+<i>313</i>&nbsp;            have an negative index that is greater than length
+<i>314</i>&nbsp;         */
+<i>315</i>&nbsp;         /* Bounds check
+<i>316</i>&nbsp;            if it is still less than 0, then they
+<i>317</i>&nbsp;            have an negative index that is greater than length
+<i>318</i>&nbsp;         */
+<b class="nc"><i>319</i>&nbsp;        if (index &lt; 0) {</b>
+<b class="nc"><i>320</i>&nbsp;            index = 0;</b>
+<i>321</i>&nbsp;        }
+<b class="nc"><i>322</i>&nbsp;        if (index &gt;= length) {</b>
+<b class="nc"><i>323</i>&nbsp;            index = length -1;</b>
+<i>324</i>&nbsp;        }
+<b class="nc"><i>325</i>&nbsp;        return index;</b>
+<i>326</i>&nbsp;    }
+<i>327</i>&nbsp;
+<i>328</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Boon</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Boon (org.boon)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Boon</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (9/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76.6%
+  </span>
+  <span class="absValue">
+    (36/ 47)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import org.boon.core.Sys;
+<i>5</i>&nbsp;import org.boon.primitive.CharBuf;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import static org.boon.Lists.toList;
+<i>8</i>&nbsp;
+<b class="nc"><i>9</i>&nbsp;public class Boon {</b>
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    public static void println(String message) {
+<b class="nc"><i>12</i>&nbsp;        Sys.println(message);</b>
+<b class="nc"><i>13</i>&nbsp;    }</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    public static void println() {
+<b class="fc"><i>16</i>&nbsp;        Sys.println(&quot;&quot;);</b>
+<b class="fc"><i>17</i>&nbsp;    }</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    public static void println(Object message) {
+<i>20</i>&nbsp;
+<b class="nc"><i>21</i>&nbsp;        print(message);</b>
+<b class="nc"><i>22</i>&nbsp;        println();</b>
+<b class="nc"><i>23</i>&nbsp;    }</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    public static void print(String message) {
+<b class="fc"><i>26</i>&nbsp;        Sys.print(message);</b>
+<b class="fc"><i>27</i>&nbsp;    }</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    public static void print(Object message) {
+<i>30</i>&nbsp;
+<b class="fc"><i>31</i>&nbsp;        if (message == null ) {</b>
+<b class="nc"><i>32</i>&nbsp;            print(&quot;&lt;NULL&gt;&quot;);</b>
+<b class="fc"><i>33</i>&nbsp;        } else if (message.getClass().isArray()) {</b>
+<b class="nc"><i>34</i>&nbsp;            print( toList(message).toString() );</b>
+<i>35</i>&nbsp;        } else {
+<b class="fc"><i>36</i>&nbsp;            print( message.toString());</b>
+<i>37</i>&nbsp;        }
+<b class="fc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    public static void puts(Object... messages) {
+<i>41</i>&nbsp;
+<b class="fc"><i>42</i>&nbsp;        for (Object message : messages) {</b>
+<b class="fc"><i>43</i>&nbsp;            print(message);</b>
+<b class="fc"><i>44</i>&nbsp;            print(&#39; &#39;);</b>
+<i>45</i>&nbsp;        }
+<b class="fc"><i>46</i>&nbsp;        println();</b>
+<i>47</i>&nbsp;
+<b class="fc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    public static void putl(Object... messages) {
+<i>51</i>&nbsp;
+<b class="fc"><i>52</i>&nbsp;        for (Object message : messages) {</b>
+<b class="fc"><i>53</i>&nbsp;            print(message);</b>
+<b class="fc"><i>54</i>&nbsp;            println();</b>
+<i>55</i>&nbsp;        }
+<b class="fc"><i>56</i>&nbsp;        println();</b>
+<i>57</i>&nbsp;
+<b class="fc"><i>58</i>&nbsp;    }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    public static String sputl (Object... messages) {
+<b class="fc"><i>61</i>&nbsp;        CharBuf buf = CharBuf.create(100);</b>
+<b class="fc"><i>62</i>&nbsp;        return sputl ( buf, messages );</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    public static String sputs(Object... messages) {
+<b class="fc"><i>66</i>&nbsp;         CharBuf buf = CharBuf.create(100);</b>
+<b class="fc"><i>67</i>&nbsp;         return sputs(buf, messages);</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public static String sputl (CharBuf buf, Object... messages) {
+<i>72</i>&nbsp;
+<b class="fc"><i>73</i>&nbsp;       for (Object message : messages) {</b>
+<b class="fc"><i>74</i>&nbsp;            if (message == null ) {</b>
+<b class="nc"><i>75</i>&nbsp;                buf.add(&quot;&lt;NULL&gt;&quot;);</b>
+<b class="fc"><i>76</i>&nbsp;            } else if (message.getClass().isArray()) {</b>
+<b class="nc"><i>77</i>&nbsp;                buf.add( toList(message).toString() );</b>
+<i>78</i>&nbsp;            } else {
+<b class="fc"><i>79</i>&nbsp;                buf.add( message.toString());</b>
+<i>80</i>&nbsp;            }
+<b class="fc"><i>81</i>&nbsp;            buf.add( &#39;\n&#39;);</b>
+<i>82</i>&nbsp;        }
+<b class="fc"><i>83</i>&nbsp;        buf.add(&#39;\n&#39;);</b>
+<i>84</i>&nbsp;
+<b class="fc"><i>85</i>&nbsp;        return buf.toString();</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    public static String sputs(CharBuf buf, Object... messages) {
+<i>91</i>&nbsp;
+<b class="fc"><i>92</i>&nbsp;        for (Object message : messages) {</b>
+<b class="fc"><i>93</i>&nbsp;            if (message == null ) {</b>
+<b class="fc"><i>94</i>&nbsp;                buf.add(&quot;&lt;NULL&gt;&quot;);</b>
+<b class="fc"><i>95</i>&nbsp;            } else if (message.getClass().isArray()) {</b>
+<b class="nc"><i>96</i>&nbsp;                buf.add( toList(message).toString() );</b>
+<i>97</i>&nbsp;            } else {
+<b class="fc"><i>98</i>&nbsp;                buf.add( message.toString());</b>
+<i>99</i>&nbsp;            }
+<i>100</i>&nbsp;        }
+<b class="fc"><i>101</i>&nbsp;        buf.add(&#39;\n&#39;);</b>
+<i>102</i>&nbsp;
+<b class="fc"><i>103</i>&nbsp;        return buf.toString();</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    }
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>

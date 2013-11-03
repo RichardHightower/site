@@ -1,0 +1,269 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Exceptions</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">org.boon</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Exceptions (org.boon)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Exceptions</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.7%
+  </span>
+  <span class="absValue">
+    (8/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (18/ 24)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Exceptions$SoftenedException</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (30/ 30)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    86.4%
+  </span>
+  <span class="absValue">
+    (19/ 22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88.9%
+  </span>
+  <span class="absValue">
+    (48/ 54)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package org.boon;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.PrintStream;
+<i>4</i>&nbsp;import java.io.PrintWriter;
+<i>5</i>&nbsp;
+<b class="nc"><i>6</i>&nbsp;public class Exceptions {</b>
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    public static boolean die() {
+<b class="nc"><i>10</i>&nbsp;        throw new SoftenedException(&quot;died&quot;);</b>
+<i>11</i>&nbsp;    }
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    public static boolean die(String message) {
+<b class="fc"><i>14</i>&nbsp;        throw new SoftenedException(message);</b>
+<i>15</i>&nbsp;    }
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    public static &lt;T&gt; T  die(Class&lt;T&gt; clazz, String message) {
+<b class="fc"><i>19</i>&nbsp;        throw new SoftenedException(message);</b>
+<i>20</i>&nbsp;    }
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    public static void handle(java.lang.Exception e) {
+<b class="fc"><i>23</i>&nbsp;        throw new SoftenedException(e);</b>
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    public static &lt;T&gt; T handle(Class&lt;T&gt; clazz, java.lang.Exception e) {
+<i>28</i>&nbsp;
+<b class="nc"><i>29</i>&nbsp;        if (e instanceof SoftenedException) {</b>
+<b class="nc"><i>30</i>&nbsp;            throw (SoftenedException) e;</b>
+<i>31</i>&nbsp;        }
+<b class="nc"><i>32</i>&nbsp;        throw new SoftenedException(e);</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public static &lt;T&gt; T handle(Class&lt;T&gt; clazz,  String message, java.lang.Exception e) {
+<i>36</i>&nbsp;
+<b class="fc"><i>37</i>&nbsp;        throw new SoftenedException(message, e);</b>
+<i>38</i>&nbsp;    }
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    public static &lt;T&gt; T tryIt (Class&lt;T&gt; clazz, TrialWithReturn&lt;T&gt; tryIt) {
+<i>42</i>&nbsp;         try {
+<b class="fc"><i>43</i>&nbsp;             return tryIt.tryIt();</b>
+<b class="fc"><i>44</i>&nbsp;         } catch (java.lang.Exception ex) {</b>
+<b class="fc"><i>45</i>&nbsp;             throw new SoftenedException(ex);</b>
+<i>46</i>&nbsp;         }
+<i>47</i>&nbsp;    }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    public static void tryIt (Trial tryIt) {
+<i>51</i>&nbsp;        try {
+<b class="fc"><i>52</i>&nbsp;            tryIt.tryIt();</b>
+<b class="fc"><i>53</i>&nbsp;        } catch (java.lang.Exception ex) {</b>
+<b class="fc"><i>54</i>&nbsp;            throw new SoftenedException(ex);</b>
+<b class="fc"><i>55</i>&nbsp;        }</b>
+<b class="fc"><i>56</i>&nbsp;    }</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public static void handle(String message, Throwable e) {
+<b class="fc"><i>59</i>&nbsp;        throw new SoftenedException(message, e);</b>
+<i>60</i>&nbsp;    }
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    public static void tryIt (String message, Trial tryIt) {
+<i>63</i>&nbsp;        try {
+<b class="fc"><i>64</i>&nbsp;            tryIt.tryIt();</b>
+<b class="fc"><i>65</i>&nbsp;        } catch (java.lang.Exception ex) {</b>
+<b class="fc"><i>66</i>&nbsp;            throw new SoftenedException(message, ex);</b>
+<b class="fc"><i>67</i>&nbsp;        }</b>
+<b class="fc"><i>68</i>&nbsp;    }</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public static interface Trial {
+<i>72</i>&nbsp;        void tryIt () throws java.lang.Exception;
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public static  interface TrialWithReturn &lt;T&gt;{
+<i>76</i>&nbsp;        T tryIt () throws java.lang.Exception;
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<b class="nc"><i>79</i>&nbsp;    public static class SoftenedException extends RuntimeException {</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;           public SoftenedException(String message) {
+<b class="fc"><i>82</i>&nbsp;               super(message);</b>
+<b class="fc"><i>83</i>&nbsp;           }</b>
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;           public SoftenedException(String message, Throwable cause) {
+<b class="fc"><i>86</i>&nbsp;               super(message, cause);</b>
+<b class="fc"><i>87</i>&nbsp;           }</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;           public SoftenedException(Throwable cause) {
+<b class="fc"><i>90</i>&nbsp;               super(&quot;Wrapped Exception&quot;, cause);</b>
+<b class="fc"><i>91</i>&nbsp;           }</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;           @Override
+<i>95</i>&nbsp;           public void printStackTrace(PrintStream s) {
+<b class="fc"><i>96</i>&nbsp;               if (getCause()!=null) {</b>
+<b class="fc"><i>97</i>&nbsp;                   s.println(&quot;This Exception was wrapped, the original exception\n&quot; +</b>
+<i>98</i>&nbsp;                           &quot;stack trace is:\n&quot;);
+<b class="fc"><i>99</i>&nbsp;                   getCause().printStackTrace(s);</b>
+<i>100</i>&nbsp;               }   else {
+<b class="fc"><i>101</i>&nbsp;                   super.printStackTrace(s);</b>
+<i>102</i>&nbsp;               }
+<i>103</i>&nbsp;
+<b class="fc"><i>104</i>&nbsp;           }</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;           @Override
+<i>107</i>&nbsp;           public String getMessage() {
+<b class="fc"><i>108</i>&nbsp;               return super.getMessage() + (getCause() == null ? &quot;&quot; :</b>
+<b class="fc"><i>109</i>&nbsp;                       getCauseMessage());</b>
+<i>110</i>&nbsp;           }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;        private String getCauseMessage() {
+<b class="fc"><i>113</i>&nbsp;            return &quot;\n CAUSE &quot; + getCause().getClass().getName() + &quot; :: &quot; +</b>
+<b class="fc"><i>114</i>&nbsp;                    getCause().getMessage();</b>
+<i>115</i>&nbsp;        }
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;        @Override
+<i>118</i>&nbsp;           public String getLocalizedMessage() {
+<b class="fc"><i>119</i>&nbsp;                return this.getMessage();</b>
+<i>120</i>&nbsp;           }
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;           @Override
+<i>123</i>&nbsp;           public StackTraceElement[] getStackTrace() {
+<b class="fc"><i>124</i>&nbsp;               if (getCause()!=null) {</b>
+<b class="fc"><i>125</i>&nbsp;                   return getCause().getStackTrace();</b>
+<i>126</i>&nbsp;               }   else {
+<b class="fc"><i>127</i>&nbsp;                   return super.getStackTrace();</b>
+<i>128</i>&nbsp;               }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;           }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;           @Override
+<i>133</i>&nbsp;           public  Throwable getCause() {
+<b class="fc"><i>134</i>&nbsp;               return super.getCause();</b>
+<i>135</i>&nbsp;           }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;           @Override
+<i>138</i>&nbsp;           public void printStackTrace(PrintWriter s) {
+<b class="fc"><i>139</i>&nbsp;               if (getCause()!=null) {</b>
+<b class="fc"><i>140</i>&nbsp;                   s.println(&quot;This Exception was wrapped, the original exception\n&quot; +</b>
+<i>141</i>&nbsp;                           &quot;stack trace is:\n&quot;);
+<b class="fc"><i>142</i>&nbsp;                   getCause().printStackTrace(s);</b>
+<i>143</i>&nbsp;               } else {
+<b class="fc"><i>144</i>&nbsp;                   super.printStackTrace(s);</b>
+<i>145</i>&nbsp;               }
+<b class="fc"><i>146</i>&nbsp;           }</b>
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;           @Override
+<i>149</i>&nbsp;           public void printStackTrace() {
+<b class="fc"><i>150</i>&nbsp;               if (getCause()!=null) {</b>
+<b class="fc"><i>151</i>&nbsp;                   System.err.println(&quot;This Exception was wrapped, the original exception\n&quot; +</b>
+<i>152</i>&nbsp;                           &quot;stack trace is:\n&quot;);
+<b class="fc"><i>153</i>&nbsp;                   getCause().printStackTrace();</b>
+<i>154</i>&nbsp;               } else {
+<b class="fc"><i>155</i>&nbsp;                   super.printStackTrace();</b>
+<i>156</i>&nbsp;               }
+<b class="fc"><i>157</i>&nbsp;           }</b>
+<i>158</i>&nbsp;       }
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2013-11-03 14:11</div>
+</div>
+</body>
+</html>
